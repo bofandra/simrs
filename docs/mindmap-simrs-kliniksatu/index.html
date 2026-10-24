@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Mind map interaktif fitur, halaman, field dan irisan SIMRS Sensi dengan KlinikSatu">
+<title>Mind Map SIMRS Sensi × KlinikSatu</title>
+<style>
+:root{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#182a41;background:#f7f9fc}*{box-sizing:border-box}body{margin:0}header{padding:34px max(24px,4vw) 22px;background:#142b4a;color:white}
+h1{font-size:clamp(23px,3vw,38px);margin:0 0 10px;line-height:1.2}header p{color:#c8d6e8;line-height:1.55;max-width:1050px}
+strong{font-weight:750}a{color:#036db4}header a{color:#a9defa}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;position:sticky;top:0;padding:13px max(24px,4vw);background:rgba(255,255,255,.98);border-bottom:1px solid #d8e2eb;z-index:5}
+input{padding:12px 14px;border:1px solid #c7d2df;border-radius:10px;font:inherit;flex:1;min-width:220px}
+button{background:white;border:1px solid #c6d1dc;padding:10px 14px;border-radius:10px;font:inherit;cursor:pointer}
+main{margin:auto;max-width:1920px;padding:26px max(17px,3vw)}
+.root{background:#173454;color:white;text-align:center;border-radius:18px;padding:17px 26px;margin:0 auto 35px;max-width:630px;box-shadow:0 5px 17px #1a33501d}
+.root strong{font-size:20px}.root p{font-size:14px;color:#cfdeed;margin:6px 0 0}
+.map{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:21px}
+.branch{position:relative;background:var(--soft);padding:19px;border-radius:18px;border-top:8px solid var(--color);align-self:start;min-width:0}
+.branch:before{content:"";position:absolute;left:50%;top:-35px;height:29px;width:0;border-left:3px solid var(--color);opacity:.7}
+.branch h2{color:var(--color);font-size:22px;margin:0 0 5px}
+.branch>p{color:#55657a;font-size:14px;margin:0 0 18px}
+.entry{background:white;border:1px solid #d8e0e9;border-radius:11px;margin:11px 0;overflow:hidden;box-shadow:0 1px 4px #263f5910}
+.entry summary{list-style:none;padding:13px 16px;font-weight:730;cursor:pointer;line-height:1.35}
+.entry summary::-webkit-details-marker{display:none}
+.entry summary:before{content:"⊕";color:var(--color);margin-right:8px;font-size:20px}
+.entry[open] summary:before{content:"⊖"}
+.info{border-top:1px solid #e6eaf0;padding:12px 16px 15px;font-size:14px;line-height:1.55;overflow-wrap:anywhere}
+.info p{margin:7px 0}.info small{color:#566b7c}.field{font-weight:650;color:#1d384e}
+#count{color:#64748b;font-size:14px}footer{margin:26px 0 0;color:#61718a;font-size:14px;line-height:1.6}
+@media(max-width:1100px){.map{grid-template-columns:1fr}.branch:before{display:none}}
+@media print{header{background:white;color:black}.controls{display:none}.map{display:block}.branch{break-inside:avoid;margin-bottom:20px}}
+</style></head><body>
+<header><h1>Mind Map SIMRS Sensi × KlinikSatu</h1><p>Fitur, halaman, field utama, dan area yang beririsan antara sistem informasi rumah sakit (FKTL) dan sistem klinik (FKTP). Klik nama modul untuk melihat detail.</p>
+<p>Basis inventaris: <a href="https://github.com/bofandra/simrs-sensi">SIMRS Sensi</a> dan <a href="https://github.com/bofandra/kliniksatu">KlinikSatu</a>, branch main, 24 Oktober 2026.</p></header>
+<div class="controls"><input id="search" aria-label="Cari modul, halaman, atau field" placeholder="Cari: pasien, diagnosis, antrian, SEP, PIC, obat…">
+<button type="button" id="expand">Buka semua</button><button type="button" id="collapse">Tutup semua</button><span id="count"></span></div>
+<main><div class="root"><strong>Ekosistem Sistem Informasi Kesehatan</strong><p>FKTP — domain pelayanan bersama — FKTL</p></div>
+<div class="map" id="map"></div>
+<footer>Catatan: keberadaan halaman atau form di kode tidak menjamin integrasi API eksternal telah aktif dalam produksi. <b>Beririsan</b> berarti fungsi/proses serupa, bukan kode atau database yang otomatis sama. Keterangan teknis bersifat ringkasan field utama.</footer>
+</main>
+<script>
+const DATA=[{"type":"clinic","name":"KlinikSatu","desc":"FKTP • fitur khusus klinik","color":"#7c4cc3","soft":"#f1eafd","rows":[{"title":"Onboarding & tim","route":"/login, /verify-email, /onboarding, /settings/team","fields":"Email, status verifikasi, organisasi, slug, anggota, role"},{"title":"Portal pasien","route":"/:slug/portal/*","fields":"Profil, antrean, kunjungan, hasil lab, resep, surat sakit, chat"},{"title":"QR check-in","route":"/checkin/:slug, /queue, /queue-monitor","fields":"Slug, pasien, jadwal, kehadiran, nomor antrean, status"},{"title":"Surat sakit","route":"/encounters/:id > surat sakit, /reports","fields":"Tanggal terbit (manual), mulai/selesai, diagnosis, tenaga kesehatan"},{"title":"Website klinik","route":"/website, /:slug, /:slug/posts","fields":"Nama, slug, konten, judul artikel, publikasi"},{"title":"Revenue & payout klinik","route":"/finance/revenue-cycle, /finance/disbursements","fields":"Invoice, fee, saldo tersedia/tertahan, pencairan, rekonsiliasi"},{"title":"BPJS PCare","route":"/settings/bpjs-pcare, /settings/bpjs-mapping","fields":"Cons ID, kode PPK, user key, secret key, environment, mapping"},{"title":"Knowledge base & eskalasi","route":"/knowledge-base, /escalations, /:slug/portal/chat","fields":"Artikel, kategori, pesan, status kasus, aturan eskalasi"}]},{"type":"shared","name":"Irisan kedua aplikasi","desc":"Domain pelayanan yang perlu disejajarkan","color":"#087e76","soft":"#eaf8f5","rows":[{"title":"Registrasi & identitas pasien","simrs":"/registrasi, /registry","klinik":"/patients, /patients/:id","fields":"No. RM, NIK, nama, tanggal lahir, jenis kelamin, kontak, IHS Number"},{"title":"Dokter & jadwal","simrs":"/master-dokter, /jadwal-dokter","klinik":"/practitioners","fields":"NIK, SIP, spesialisasi, lokasi/unit, jadwal, ID SATUSEHAT"},{"title":"Booking & antrean","simrs":"/booking, /antrean, /kiosk","klinik":"/queue, /queue-monitor","fields":"Pasien, jadwal, nomor antrean, unit, status, jam panggil dan hadir"},{"title":"Encounter / kunjungan","simrs":"/rawat-jalan, /rekam-medik","klinik":"/encounters, /encounters/:id","fields":"Encounter ID, nomor kunjungan, pasien, dokter, jenis, waktu, payer, status"},{"title":"RME / SOAP","simrs":"/rawat-jalan/:id, /rekam-medik","klinik":"/encounters/:id > SOAP","fields":"Subjective, Objective, Assessment, Plan, pencatat, waktu, revisi"},{"title":"Observasi & diagnosis","simrs":"/rekam-medik, detail layanan","klinik":"/observations, /diagnoses","fields":"Vital signs, kode LOINC, nilai/satuan, ICD-10, encounter, pencatat"},{"title":"Tindakan klinis","simrs":"/rawat-jalan, /master","klinik":"/procedures","fields":"Tindakan, kode ICD-9-CM, pelaksana, waktu, encounter, tarif"},{"title":"Pemeriksaan penunjang","simrs":"/lab, /radiologi","klinik":"/service-requests","fields":"Order, kode pemeriksaan, prioritas, peminta, spesimen, hasil, status"},{"title":"Resep & farmasi","simrs":"/farmasi, /eresep-queue","klinik":"/prescriptions","fields":"Obat KFA, dosis, rute, frekuensi, durasi, jumlah, stok, dispensing"},{"title":"Billing & pembayaran","simrs":"/billing, /bpjs-claims","klinik":"/finance, /finance/transactions","fields":"Penjamin, invoice, tarif, nominal, metode pembayaran, status, piutang"},{"title":"SATUSEHAT & laporan","simrs":"/satusehat, /laporan","klinik":"/integration, /reports","fields":"Organization ID, resource type, FHIR ID, status sync, error, periode"}]},{"type":"hospital","name":"SIMRS Sensi","desc":"FKTL • fitur khusus rumah sakit","color":"#b96819","soft":"#fff2e6","rows":[{"title":"IGD & triase","route":"/ugd, /ugd/:encounterId, /emergency-review","fields":"Triase, waktu datang, diagnosis, tindakan, disposisi/admisi"},{"title":"Rawat inap & discharge","route":"/rawat-inap, /rawat-inap/:admissionId","fields":"Admission ID, tanggal masuk, kelas, kamar, mutasi, resume pulang"},{"title":"Bed management","route":"/bed-mapping","fields":"Bed code, kamar, kelas, okupansi, status, riwayat mutasi"},{"title":"Asuhan keperawatan & EWS","route":"/asuhan-keperawatan","fields":"Assessment, intervensi, evaluasi, handover, EWS"},{"title":"Kamar operasi","route":"/kamar-operasi","fields":"Jadwal, tim, status, sign-in, time-out, sign-out, BMHP"},{"title":"Laboratorium RS","route":"/lab","fields":"Order, spesimen, hasil, satuan, reference range, abnormal flag, verifikator"},{"title":"Radiologi RS","route":"/radiologi","fields":"Order, modality, findings, impression, laporan, attachment, verifikasi"},{"title":"BPJS SEP & klaim","route":"/bpjs-claims, /verifikasi-dokumen","fields":"Eligibility, SEP, kelas rawat, claim case, amount, status, dokumen"},{"title":"Keuangan enterprise","route":"/accounts-payable, /finance-close, /finance-advanced, /erp-export","fields":"CoA, cost center, jurnal, AR/AP, bank matching, close, ERP batch"},{"title":"Procurement & inventori RS","route":"/procurement, /inventory-enterprise","fields":"Vendor, PR, PO, GRN, warehouse, batch, reorder, supplier return"},{"title":"HRIS, mutu & KPI","route":"/hris-remunerasi, /quality-accreditation, /dashboard-eksekutif","fields":"Pegawai, roster, remunerasi, indikator mutu, insiden, KPI"},{"title":"Unit khusus & penunjang","route":"/utd, /kia, /imunisasi, /parkir","fields":"Transaksi unit dan data pelayanan khusus sesuai modul"}]}];
+const map=document.getElementById("map");
+function esc(value){return String(value).replace(/[&<>"']/g,x=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[x]));}
+for(const group of DATA){
+ const section=document.createElement("section");
+ section.className="branch";
+ section.style.setProperty("--color",group.color);
+ section.style.setProperty("--soft",group.soft);
+ section.innerHTML="<h2>"+esc(group.name)+"</h2><p>"+esc(group.desc)+"</p>";
+ for(const row of group.rows){
+  const details=document.createElement("details");details.className="entry";
+  const places=group.type==="shared"
+   ? "<p><strong>SIMRS:</strong> "+esc(row.simrs)+"</p><p><strong>KlinikSatu:</strong> "+esc(row.klinik)+"</p>"
+   : "<p><strong>Halaman:</strong> "+esc(row.route)+"</p>";
+  details.innerHTML="<summary>"+esc(row.title)+"</summary><div class='info'>"+places+"<p class='field'><strong>Field utama:</strong> "+esc(row.fields)+"</p></div>";
+  details.dataset.search=Object.values(row).join(" ").toLocaleLowerCase("id-ID");
+  section.appendChild(details);
+ }
+ map.appendChild(section);
+}
+const all=[...document.querySelectorAll(".entry")];
+function filter(){const q=document.getElementById("search").value.toLocaleLowerCase("id-ID").trim();let n=0;
+ for(const el of all){const show=el.dataset.search.includes(q);el.hidden=!show;n+=show?1:0;}
+ document.getElementById("count").textContent=n+" modul";
+}
+document.getElementById("search").addEventListener("input",filter);
+document.getElementById("expand").addEventListener("click",()=>all.filter(el=>!el.hidden).forEach(el=>el.open=true));
+document.getElementById("collapse").addEventListener("click",()=>all.forEach(el=>el.open=false));
+filter();
+</script></body></html>
