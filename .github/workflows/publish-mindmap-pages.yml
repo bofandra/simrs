@@ -1,0 +1,47 @@
+name: Publish SIMRS KlinikSatu Mind Map
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/mindmap-simrs-kliniksatu/**'
+      - '.github/workflows/publish-mindmap-pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages-mindmap
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build mind map static site
+        run: |
+          mkdir -p _site/mindmap-simrs-kliniksatu
+          cp docs/mindmap-simrs-kliniksatu/index.html _site/mindmap-simrs-kliniksatu/index.html
+          printf '<!doctype html><html lang="id"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mind Map SIMRS dan KlinikSatu</title><meta http-equiv="refresh" content="0;url=./mindmap-simrs-kliniksatu/"><a href="./mindmap-simrs-kliniksatu/">Lihat Mind Map</a></html>' > _site/index.html
+          touch _site/.nojekyll
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+      - name: Deploy GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
