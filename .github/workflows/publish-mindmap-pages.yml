@@ -1,10 +1,10 @@
-name: Publish SIMRS KlinikSatu Mind Map
+name: Publish SIMRS-Sensi NUHA Gap Dashboard
 on:
   push:
     branches:
       - main
     paths:
-      - 'docs/mindmap-simrs-kliniksatu/**'
+      - 'docs/gap-simrs-sensi-nuha/**'
       - '.github/workflows/publish-mindmap-pages.yml'
   workflow_dispatch:
 
@@ -14,7 +14,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: github-pages-mindmap
+  group: github-pages-gap-simrs-sensi-nuha
   cancel-in-progress: true
 
 jobs:
@@ -27,11 +27,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build mind map static site
+      - name: Publish gap dashboard as site root
         run: |
-          mkdir -p _site/mindmap-simrs-kliniksatu
-          cp docs/mindmap-simrs-kliniksatu/index.html _site/mindmap-simrs-kliniksatu/index.html
-          printf '<!doctype html><html lang="id"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mind Map SIMRS dan KlinikSatu</title><meta http-equiv="refresh" content="0;url=./mindmap-simrs-kliniksatu/"><a href="./mindmap-simrs-kliniksatu/">Lihat Mind Map</a></html>' > _site/index.html
+          mkdir -p _site
+          cp docs/gap-simrs-sensi-nuha/index.html _site/index.html
           touch _site/.nojekyll
 
       - name: Configure Pages
