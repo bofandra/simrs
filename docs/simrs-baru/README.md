@@ -57,3 +57,17 @@ GitHub Pages menjalankan HTML/CSS/JavaScript mandiri supaya demo dapat dibuka ta
 **Batasan**: keseluruhan data tetap mock browser/localStorage tanpa backend. Nama 271 tabel bersumber dari workbook, namun detail seluruh 3.395 kolom dan 762 relasi belum disalin ke browser; file XLSX tetap sumber lengkap. Field contoh dan ERD lokal bukan keseluruhan desain database.
 
 Automated test: `node scripts/simrs-mockup-smoke.cjs` memverifikasi semua 15 halaman, state simulasi transaksi dan lintas modul. Workflow deployment menjalankan pengujian tersebut sebelum publish.
+
+## Mockup Lanjutan — Workspaces Spesialistik & Backoffice
+
+Tambahan layar yang tetap 100% menggunakan data sintetis dalam browser:
+
+- **Radiologi RIS/PACS**: order radiologi, akuisisi, ekspertise, release, contoh UID DICOM dan ilustrasi FHIR ImagingStudy.
+- **Kamar Operasi & Anestesi**: penjadwalan kasus, checklist, tindakan, recovery, charge; tahap operasi dikunci sampai set CSSD steril.
+- **Gizi Klinis & Dapur**: NutritionOrder demo → persiapan → produksi makanan → distribusi tray.
+- **CSSD**: status set dari dirty sampai distributed, contoh hubungan set steril ke operasi.
+- **Laundry**: siklus linen dari penerimaan sampai distribusi.
+- **HRIS**: master pegawai demo, penugasan shift, presensi.
+- **Pelaporan & Mutu**: KPI komputasi dari data demo; RL/SIRS adalah ilustrasi, bukan spesifikasi atau submission resmi.
+
+Transisi perubahan pada modul spesialistik menggunakan state `localStorage` dan memperlihatkan hubungan ke encounter, charge, outbox dan Database Explorer jika relevan. Sebagian besar modul lain pada katalog 68 fitur masih berupa blueprint.
