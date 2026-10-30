@@ -36,7 +36,7 @@ const table=(headers,rows)=>'<div class="table-wrap"><table><thead><tr>'+headers
 const td=x=>'<td>'+x+'</td>';
 const row=cells=>'<tr>'+cells.map(td).join("")+'</tr>';
 const kpi=(label,value,detail,icon,cls="")=>'<article class="kpi"><span>'+label+'</span><strong>'+value+'</strong><small>'+detail+'</small><div class="kpi-icon '+cls+'">'+icon+'</div></article>';
-const cardpatient=p=>'<div class="patient-name"><div class="initials '+(p.gender==="P"?"f":"")+'">'+initial(p.name)+'</div><div><div class="cell-primary">'+esc(p.name)+'</div><div class="cell-sub">'+esc(p.mrn)+'</div></div></div>';
+const cardpatient=p=>'<div class="patient-name"><div class="initials '+(p.gender==="P"?"f":"")+'">'+esc(initial(p.name))+'</div><div><div class="cell-primary">'+esc(p.name)+'</div><div class="cell-sub">'+esc(p.mrn)+'</div></div></div>';
 const empty=(heading,sub)=>'<div class="empty"><strong>'+heading+'</strong><span>'+sub+'</span></div>';
 const tab=(label,key)=>'<button data-action="clinical-tab" data-value="'+key+'" class="'+(ui.clinicalTab===key?"active":"")+'">'+label+'</button>';
 function selectEncounter(){return '<select class="form-input" id="encounter-select" aria-label="Pilih encounter">'+data.encounters.map(e=>'<option value="'+e.id+'" '+(ui.selectedEncounter===e.id?"selected":"")+'>'+e.id+' · '+esc(patientName(e.patientId))+' · '+e.type+'</option>').join("")+'</select>'}
