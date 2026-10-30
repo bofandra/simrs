@@ -44,3 +44,16 @@ GitHub Pages menjalankan HTML/CSS/JavaScript mandiri supaya demo dapat dibuka ta
 - `styles.css` desain responsif;
 - `catalog.js` daftar modul, contoh schema/field, synthetic data;
 - `app.js` interaksi UI dan simulasi CRUD.
+
+## Update: Mockup Workflow dan ERD v2 (30 Oktober 2026)
+
+- **Patient 360** — profil longitudinal, kunjungan, penjamin, appointment, observasi dan resep.
+- **Front Office & Bed Board** — appointment, check-in, nomor antrean, bed terisi.
+- **RME RJ/IGD/RI** — SOAP/CPPT, triase IGD, asuhan keperawatan RI, order, e-resep, resume dan status signing demo.
+- **LIS / Farmasi / Billing** — status specimen bertahap, verifikasi, dispensing dengan lot, mutasi stok, charge, invoice dan alokasi pembayaran parsial.
+- **Database Explorer v2** — katalog nama seluruh 271 tabel dari workbook, field contoh tabel inti, hubungan FK, navigasi ERD lokal, sample row sintetis.
+- **Record Lineage** — penelusuran patient_id / encounter_id ke data klinis, order, penunjang, invoice dan outbox.
+
+**Batasan**: keseluruhan data tetap mock browser/localStorage tanpa backend. Nama 271 tabel bersumber dari workbook, namun detail seluruh 3.395 kolom dan 762 relasi belum disalin ke browser; file XLSX tetap sumber lengkap. Field contoh dan ERD lokal bukan keseluruhan desain database.
+
+Automated test: `node scripts/simrs-mockup-smoke.cjs` memverifikasi semua 15 halaman, state simulasi transaksi dan lintas modul. Workflow deployment menjalankan pengujian tersebut sebelum publish.
