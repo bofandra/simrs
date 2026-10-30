@@ -5,6 +5,7 @@ on:
       - main
     paths:
       - 'docs/simrs-baru/**'
+      - 'scripts/simrs-mockup-smoke.cjs'
       - '.github/workflows/publish-mindmap-pages.yml'
   workflow_dispatch:
 
