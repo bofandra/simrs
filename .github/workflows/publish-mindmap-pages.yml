@@ -1,10 +1,10 @@
-name: Publish SIMRS-Sensi NUHA Gap Dashboard
+name: Publish SIMRS Baru Interactive Prototype
 on:
   push:
     branches:
       - main
     paths:
-      - 'docs/gap-simrs-sensi-nuha/**'
+      - 'docs/simrs-baru/**'
       - '.github/workflows/publish-mindmap-pages.yml'
   workflow_dispatch:
 
@@ -14,7 +14,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: github-pages-gap-simrs-sensi-nuha
+  group: github-pages-simrs-baru
   cancel-in-progress: true
 
 jobs:
@@ -27,10 +27,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Publish gap dashboard as site root
+      - name: Validate prototype JavaScript
+        run: |
+          node --check docs/simrs-baru/catalog.js
+          node --check docs/simrs-baru/app.js
+
+      - name: Publish SIMRS Baru as site root
         run: |
           mkdir -p _site
-          cp docs/gap-simrs-sensi-nuha/index.html _site/index.html
+          cp -a docs/simrs-baru/. _site/
           touch _site/.nojekyll
 
       - name: Configure Pages

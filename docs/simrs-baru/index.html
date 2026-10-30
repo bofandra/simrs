@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f4f7fb">
+<meta name="description" content="SIMRS Baru — prototipe interaktif FHIR-First dengan simulasi tabel PostgreSQL, alur klinis, penunjang, billing dan interoperabilitas.">
+<title>SIMRS Baru • Interactive Prototype</title>
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<a class="skip-link" href="#workspace">Lewati navigasi</a>
+<div class="app">
+ <aside class="sidebar" id="sidebar">
+  <div class="brand">
+   <div class="brand-symbol"><span>✳</span></div>
+   <div><strong>SIMRS <em>BARU</em></strong><small>FHIR-First Hospital OS</small></div>
+  </div>
+  <div class="environment"><span class="pulse-dot"></span><span>INTERACTIVE PROTOTYPE</span><span class="env-label">v1.0</span></div>
+  <div id="side-navigation"></div>
+  <div class="sidebar-foot">
+   <div class="sidebar-foot-title">Arsitektur yang disepakati</div>
+   <span>React + TypeScript <b>→</b> Go <b>→</b> PostgreSQL</span>
+   <span>FHIR R4 Adapter · tanpa FHIR Server</span>
+   <a href="https://github.com/bofandra/simrs" target="_blank" rel="noopener">Repository GitHub ↗</a>
+  </div>
+ </aside>
+ <div class="app-shell">
+  <header class="topbar">
+   <div class="top-left"><button class="icon-button mobile-trigger" id="menu-toggle" aria-label="Buka menu">☰</button><span class="breadcrumbs" id="breadcrumbs">Overview / Dashboard</span></div>
+   <div class="top-actions">
+    <span class="mock-indicator"><span class="pulse-dot"></span> DATA SIMULASI</span>
+    <button class="top-search" data-action="search" title="Cari pasien / encounter"><span>⌕</span> Cari pasien... <kbd>/</kbd></button>
+    <div class="avatar" title="Pengguna demonstrasi">DS</div>
+   </div>
+  </header>
+  <main id="workspace" tabindex="-1"></main>
+  <footer class="app-footer">
+   <span>SIMRS Baru · Prototype desain antarmuka & relasi data</span>
+   <span>Semua pasien, aktivitas dan transaksi adalah data sintetis. Belum terhubung ke database maupun SATUSEHAT.</span>
+  </footer>
+ </div>
+</div>
+<div class="mobile-backdrop" id="mobile-backdrop"></div>
+<div id="modal-root"></div>
+<div id="toast-root" aria-live="polite"></div>
+<script defer src="./catalog.js"></script>
+<script defer src="./app.js"></script>
+</body>
+</html>
