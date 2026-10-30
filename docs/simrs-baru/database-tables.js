@@ -1,0 +1,33 @@
+(function(){
+"use strict";
+// Qualified table names transcribed from the SIMRS PostgreSQL blueprint workbook.
+// These are design candidates, NOT deployed tables. Existing catalog.db describes a curated subset of columns.
+window.SIMRS_ALL_TABLES={
+identity:"tenants,tenant_memberships,users,roles,permissions,role_permissions,user_roles,sessions,mfa_factors,auth_events,access_policies,service_accounts",
+master:"organizations,organization_identifiers,organization_units,locations,rooms,beds,practitioners,practitioner_identifiers,practitioner_credentials,practitioner_assignments,service_catalog,tariff_catalog,payment_methods",
+terminology:"code_systems,concepts,value_sets,value_set_members,code_mappings,units",
+patient:"patients,patient_identifiers,patient_contacts,related_persons,patient_merges,patient_flags,patient_identity_reviews",
+scheduling:"schedules,slots,appointments,queue_tickets,queue_events,kiosk_checkins",
+encounter:"episodes_of_care,registrations,encounters,encounter_participants,admissions,bed_assignments,bed_movements,discharges,encounter_payers,emergency_triages",
+consent:"consent_records,consent_policies,consent_artifacts,consent_revocations,disclosure_requests,disclosure_events",
+clinical:"assessments,clinical_notes,note_addenda,diagnoses,observations,observation_components,procedures,allergies,care_plans,care_goals,care_plan_activities,care_teams,care_team_members,referrals,referral_responses,clinical_documents,document_signatures,nursing_tasks,clinical_alerts,medication_safety_screenings,early_warning_scores,clinical_pathways,pathway_steps,pathway_enrollments",
+orders:"service_orders,order_items,order_events,order_fulfillments,order_templates",
+laboratory:"test_catalog,lab_panels,panel_members,lab_orders,specimens,specimen_events,lab_results,lab_result_versions,lab_reports,analyzer_devices,analyzer_messages,lab_qc_results",
+radiology:"modalities,rad_orders,rad_exams,rad_reports,imaging_studies,imaging_series,modality_worklists,pacs_access_logs",
+pharmacy:"medications,prescriptions,prescription_items,prescription_verifications,dispenses,dispense_items,medication_administrations,bcma_scan_events,medication_reconciliations",
+inventory:"items,item_identifiers,item_uoms,warehouses,stock_lots,stock_movements,stock_reservations,stock_counts,stock_count_lines,stock_adjustments,reorder_rules",
+nutrition:"nutrition_assessments,diet_types,diet_orders,menus,menu_items,recipes,recipe_ingredients,production_batches,production_consumptions,meal_trays,tray_deliveries",
+procurement:"suppliers,purchase_requests,purchase_request_lines,purchase_orders,purchase_order_lines,goods_receipts,goods_receipt_lines,supplier_invoices,supplier_invoice_lines,purchase_returns",
+operations:"operating_rooms,surgery_schedules,surgery_checklists,surgery_events,anesthesia_records,anesthesia_observations,pacu_records,dialysis_sessions,rehabilitation_sessions,mcu_packages,mcu_package_items,blood_units,blood_crossmatches,transfusions,cssd_instruments,cssd_sets,cssd_set_items,cssd_cycles,cssd_cycle_items,cssd_distributions,linen_items,linen_batches,laundry_cycles,linen_movements,transport_requests,vehicles,transport_assignments,housekeeping_tasks,nonmedical_transactions,assets,asset_maintenances,facility_work_orders",
+billing:"payers,payer_contracts,coverages,coverage_authorizations,charge_rules,charges,charge_adjustments,service_packages,service_package_items,invoices,invoice_lines,payments,payment_allocations,refunds,deposits,claims,claim_items,claim_documents,claim_submissions,casemix_cases,casemix_codings,bpjs_transactions",
+finance:"chart_of_accounts,accounting_periods,journals,journal_lines,ap_bills,ap_payments,ar_balances,bank_accounts,bank_transactions,budgets,budget_lines,cost_centers,cost_allocations,doctor_fee_rules,doctor_fee_ledger,fixed_asset_depreciations",
+hr:"employees,employment_contracts,shifts,shift_assignments,attendance,leave_requests,payroll_runs,payroll_items,job_openings,applications,trainings,employee_trainings,competencies,employee_competencies,performance_reviews",
+quality:"patient_safety_incidents,incident_actions,hai_surveillance,hai_cases,risk_register,risk_actions,quality_indicators,indicator_runs,indicator_values,quality_audits,audit_findings,rl_reporting_periods,rl_report_submissions,data_quality_issues,management_approvals",
+integration:"external_systems,external_endpoints,integration_credentials,external_resource_links,outbox_events,integration_deliveries,delivery_attempts,inbox_messages,mapping_rules,integration_jobs,webhook_subscriptions",
+audit:"access_logs,change_logs,disclosure_logs,break_glass_events,export_logs",
+analytics:"report_definitions,report_runs,aggregate_snapshots,deid_datasets,model_registry"
+};
+const list=Object.entries(window.SIMRS_ALL_TABLES).flatMap(([schema,t])=>t.split(",").map(table=>schema+"."+table));
+window.SIMRS_ALL_TABLE_NAMES=list;
+if(list.length!==271)throw new Error("Expected exactly 271 blueprint tables, got "+list.length);
+})();

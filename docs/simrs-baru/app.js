@@ -6,13 +6,14 @@ const KEY="simrs-baru-interactive-demo-v1";
 const copy=x=>JSON.parse(JSON.stringify(x));
 let data;
 try{data=JSON.parse(localStorage.getItem(KEY))||copy(config.base)}catch(e){data=copy(config.base)}
+window.SIMRS_EXT?.init(data);
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){}};
 const groups=[
 {label:"OVERVIEW",items:[["dashboard","Dashboard","◫"],["modules","Katalog Modul","▦"]]},
-{label:"FRONT OFFICE & RME",items:[["patients","Master Pasien","♙"],["encounters","Registrasi & Encounter","▤"],["clinical","Workspace Klinis","✚"]]},
+{label:"FRONT OFFICE & RME",items:[["patients","Master Pasien","♙"],["patient360","Patient 360","♙"],["frontoffice","Front Office & Bed","◷"],["encounters","Registrasi & Encounter","▤"],["clinical","Workspace Klinis RJ/IGD/RI","✚"]]},
 {label:"PENUNJANG MEDIS",items:[["orders","CPOE / Order Layanan","☷"],["laboratory","Laboratorium LIS","⚗"],["pharmacy","Farmasi & Dispensing","✣"]]},
 {label:"BACKOFFICE & ERP",items:[["billing","Billing & Klaim","▣"],["inventory","Inventory & Stock","▥"]]},
-{label:"DATA & INTEGRASI",items:[["database","Database Explorer","▦"],["fhir","FHIR Adapter & Outbox","⇄"]]}
+{label:"DATA & INTEGRASI",items:[["journey","Record Lineage","⇄"],["database","Database Explorer v2","▦"],["fhir","FHIR Adapter & Outbox","⇄"]]}
 ];
 const pages=Object.fromEntries(groups.flatMap(g=>g.items.map(v=>[v[0],v[1]])));
 const views=Object.keys(pages);
@@ -44,13 +45,14 @@ function renderNavigation(){
 document.getElementById("side-navigation").innerHTML=groups.map(g=>'<nav class="nav-group" aria-label="'+g.label+'"><div class="nav-group-title">'+g.label+'</div>'+g.items.map(item=>'<button type="button" class="nav-item '+(ui.page===item[0]?"active":"")+'" data-nav="'+item[0]+'"><span class="nav-icon">'+item[2]+'</span><span>'+item[1]+'</span>'+(item[0]==="database"?'<small>23</small>':"")+'</button>').join("")+'</nav>').join("");
 }
 function navigate(p){if(!pages[p])return;ui.page=p;ui.query="";location.hash=p;render();window.scrollTo(0,0);document.getElementById("sidebar").classList.remove("open");document.getElementById("mobile-backdrop").classList.remove("open")}
-function render(){renderNavigation();breadcrumb();let map={dashboard:dashboard,modules:modules,patients:patients,encounters:encounters,clinical:clinical,orders:orders,laboratory:laboratory,pharmacy:pharmacy,billing:billing,inventory:inventory,database:database,fhir:fhir};document.getElementById("workspace").innerHTML=map[ui.page]();};
+function extContext(){return {data,ui,config,patient,enc,patientName,doctor,money,status,table,row,td,kpi,panel,pageHead,btn,empty,modal,closeModal,notice,save,render,navigate,pushEvent,pushActivity,ensureInvoice,invoiceTotal,newEncounter};}
+function render(){renderNavigation();breadcrumb();let map={dashboard:dashboard,modules:modules,patients:patients,encounters:encounters,clinical:clinical,orders:orders,laboratory:laboratory,pharmacy:pharmacy,billing:billing,inventory:inventory,database:database,fhir:fhir};let replacement=window.SIMRS_EXT?.render(ui.page,extContext());document.getElementById("workspace").innerHTML=replacement===null||replacement===undefined?map[ui.page]():replacement;};
 function recentEncounters(limit=5){return table(["Pasien","Encounter","Unit Pelayanan","Penjamin","Status",""],data.encounters.slice().reverse().slice(0,limit).map(e=>row([cardpatient(patient(e.patientId)), '<div class="cell-primary mono">'+e.id+'</div><div class="cell-sub">'+e.type+'</div>',esc(e.unit),'<span class="badge neutral">'+esc(e.payer)+'</span>',status(e.status),'<button class="link-button" data-action="open-encounter" data-id="'+e.id+'">Buka →</button>'])))}
 function dashboard(){
  const active=data.encounters.filter(x=>x.status==="in-progress").length;
  const verified=data.labs.filter(x=>x.status==="verified").length;
  const outstanding=data.invoices.filter(x=>x.status!=="paid").length;
- return pageHead("HOSPITAL OPERATIONS","Hospital Overview","Ringkasan operasional dari relasi data sintetis lintas domain. Semua angka dihitung dari record demo di browser.",btn("＋ Registrasi Pasien","new-patient","primary")+btn("↻ Reset Demo","reset-demo"))+
+ return pageHead("HOSPITAL OPERATIONS","Hospital Overview","Ringkasan operasional dari relasi data sintetis lintas domain. Semua angka dihitung dari record demo di browser.",btn("Patient 360","ext-open-patient","primary")+btn("↻ Reset Demo","reset-demo"))+
  '<div class="hero-panel"><div><div class="hero-tag">SIMRS BARU · FHIR-FIRST / NO FHIR SERVER</div><h2>Satu perjalanan pasien.<br>Satu model data yang terhubung.</h2><p>Uji alur dari pasien → encounter → order → hasil → billing → outbox FHIR. Transaksi simulasi memperbarui beberapa tampilan modul secara konsisten.</p>'+btn("Buka Workspace Klinis","goto-clinical","", 'style="background:#fff;color:#1857ae;border-color:#fff"')+' '+btn("Jelajahi Database","goto-database","", 'style="color:#fff;background:transparent;border-color:#9cc5ff"')+'</div><div class="hero-scheme"><div class="hero-node"><strong>React / TypeScript</strong>Rancangan frontend</div><div class="hero-arrow">↓</div><div class="hero-node"><strong>Go Backend</strong>Business rules & API</div><div class="hero-arrow">↓</div><div class="hero-node"><strong>PostgreSQL + FHIR Adapter</strong>Source of truth & integration</div></div></div>'+
  '<div class="grid cols4" style="margin:17px 0">'+kpi("Encounter Aktif",active,"encounter.encounters","▤")+kpi("Pasien Terdaftar",data.patients.length,"patient.patients","♙","teal")+kpi("Hasil Lab Verified",verified,"laboratory.lab_results","⚗","purple")+kpi("Invoice Terbuka",outstanding,"billing.invoices","▣","amber")+'</div>'+
  '<div class="grid layout-wide">'+panel("Encounter terkini","Pilih kunjungan untuk melihat seluruh rekam medis dan transaksi.",recentEncounters(),'<span class="badge neutral">Simulasi operasional</span>')+
@@ -214,6 +216,7 @@ if(b.dataset.nav){navigate(b.dataset.nav);return}
 if(b.dataset.schema){ui.schema=b.dataset.schema;ui.table=Object.keys(config.db[ui.schema].tables)[0];render();return}
 if(b.dataset.table){ui.table=b.dataset.table;render();return}
 let a=b.dataset.action,id=b.dataset.id;
+if(window.SIMRS_EXT?.action(a,id,b,extContext()))return;
 if(a==="new-patient")newPatient();
 else if(a==="new-encounter")newEncounter();
 else if(a==="new-vitals")newVitals();
@@ -225,7 +228,7 @@ else if(a==="new-payment")payInvoice(data.invoices.find(i=>i.status!=="paid")?.i
 else if(a==="pay-invoice")payInvoice(id);
 else if(a==="close-modal")closeModal();
 else if(a==="open-encounter"){ui.selectedEncounter=id;ui.clinicalTab="summary";navigate("clinical")}
-else if(a==="patient-journey"){let e=data.encounters.find(e=>e.patientId===id);if(e){ui.selectedEncounter=e.id;navigate("clinical")}else{notice("Pasien belum memiliki encounter. Buat encounter melalui Registrasi.");navigate("encounters")}}
+else if(a==="patient-journey"){ui.selectedPatientId=id;let e=data.encounters.find(e=>e.patientId===id);if(e)ui.selectedEncounter=e.id;navigate("patient360")}
 else if(a==="clinical-tab"){ui.clinicalTab=b.dataset.value;render()}
 else if(a==="finish-encounter"){let e=enc(ui.selectedEncounter);if(e){e.status="finished";pushEvent("Encounter",e.id,"encounter.finished");pushActivity("Encounter selesai",e.id);save();render();notice("Encounter demo diselesaikan.")}}
 else if(a==="validate-outbox"){let o=data.outbox.find(x=>x.id===id);if(o){o.status="validated";save();render();notice("Status validasi demo diperbarui. Tidak ada pengiriman eksternal.")}}
@@ -233,12 +236,12 @@ else if(a==="preview-fhir"){ui.fhirRef=id;navigate("fhir")}
 else if(a==="module-filter"){ui.moduleGroup=id;render()}
 else if(a==="module-open"){let g=b.dataset.group,m=b.dataset.module.toLowerCase();if(m.includes("lab"))navigate("laboratory");else if(m.includes("farmasi")||m.includes("dispens"))navigate("pharmacy");else if(m.includes("billing")||m.includes("charge")||m.includes("kasir")||m.includes("klaim"))navigate("billing");else if(m.includes("invent")||m.includes("stock"))navigate("inventory");else if(m.includes("registrasi")||m.includes("antrean"))navigate("encounters");else if(m.includes("patient")||m.includes("pasien")||m.includes("mpi"))navigate("patients");else if(m.includes("satusehat")||m.includes("integration"))navigate("fhir");else if(g==="RME")navigate("clinical");else navigate("database")}
 else if(a==="goto-clinical")navigate("clinical");else if(a==="goto-database")navigate("database");else if(a==="goto-fhir")navigate("fhir");else if(a==="goto-lab")navigate("laboratory");else if(a==="goto-inventory")navigate("inventory");else if(a==="goto-pharmacy")navigate("pharmacy");
-else if(a==="reset-demo"){if(confirm("Reset seluruh perubahan data sintetis pada browser ini?")){data=copy(config.base);save();ui.selectedEncounter="E-1001";navigate("dashboard");notice("Demo direset ke data awal.")}}
+else if(a==="reset-demo"){if(confirm("Reset seluruh perubahan data sintetis pada browser ini?")){data=copy(config.base);window.SIMRS_EXT?.init(data);save();ui.selectedEncounter="E-1001";ui.selectedPatientId="P-001";ui.extClinicalTab="soap";navigate("dashboard");notice("Demo direset ke data awal.")}}
 else if(a==="search"){navigate("patients");setTimeout(()=>document.querySelector('[data-filter="patients"]')?.focus(),0)}
 });
-document.addEventListener("submit",ev=>{let form=ev.target.closest("form[data-form]");if(!form)return;ev.preventDefault();performForm(form.dataset.form,new FormData(form))});
-document.addEventListener("change",ev=>{if(ev.target.id==="encounter-select"){ui.selectedEncounter=ev.target.value;render()}if(ev.target.id==="fhir-select"){ui.fhirRef=ev.target.value;render()}});
-document.addEventListener("input",ev=>{const input=ev.target;if(!input.dataset.filter)return;const term=input.value.trim().toLowerCase();document.querySelectorAll('[data-filter-body="'+input.dataset.filter+'"]').forEach(tr=>{tr.classList.toggle("hidden",!!term&&!tr.dataset.text.includes(term))})});
+document.addEventListener("submit",ev=>{let form=ev.target.closest("form[data-form]");if(!form)return;ev.preventDefault();let values=new FormData(form);if(window.SIMRS_EXT?.submit(form.dataset.form,values,extContext()))return;performForm(form.dataset.form,values)});
+document.addEventListener("change",ev=>{if(ev.target.id==="ext-patient-select"){ui.selectedPatientId=ev.target.value;render();return}if(ev.target.id==="encounter-select"){ui.selectedEncounter=ev.target.value;render()}if(ev.target.id==="fhir-select"){ui.fhirRef=ev.target.value;render()}});
+document.addEventListener("input",ev=>{const input=ev.target;if(input.id==="ext-db-search"){ui.dbSearch=input.value;document.querySelectorAll('[data-action="ext-db-select"]').forEach(x=>{x.style.display=x.dataset.id.toLowerCase().includes(input.value.toLowerCase())?"":"none"});return}if(!input.dataset.filter)return;const term=input.value.trim().toLowerCase();document.querySelectorAll('[data-filter-body="'+input.dataset.filter+'"]').forEach(tr=>{tr.classList.toggle("hidden",!!term&&!tr.dataset.text.includes(term))})});
 document.addEventListener("keydown",ev=>{if(ev.key==="Escape")closeModal();if(ev.key==="/"&&!ev.ctrlKey&&!ev.metaKey&&!["INPUT","TEXTAREA","SELECT"].includes(document.activeElement.tagName)){ev.preventDefault();navigate("patients");setTimeout(()=>document.querySelector('[data-filter="patients"]')?.focus(),0)}});
 document.getElementById("menu-toggle").addEventListener("click",()=>{document.getElementById("sidebar").classList.toggle("open");document.getElementById("mobile-backdrop").classList.toggle("open")});
 document.getElementById("mobile-backdrop").addEventListener("click",()=>{document.getElementById("sidebar").classList.remove("open");document.getElementById("mobile-backdrop").classList.remove("open")});
