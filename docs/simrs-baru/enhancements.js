@@ -108,6 +108,7 @@ function journey(c){
  linked("pharmacy.prescriptions",d.prescriptions,x=>x.encounterId===e.id,x=>x.medication);
  linked("billing.charges",d.charges,x=>x.encounterId===e.id,x=>x.source);
  linked("billing.invoices",d.invoices,x=>x.encounterId===e.id,x=>x.number);
+ rows.push(...(window.SIMRS_SPECIAL?.lineage(e.id,d)||[]));
  linked("integration.outbox_events",d.outbox,o=>o.ref===e.id||rows.some(x=>x[1]===o.ref),o=>o.type);
  const options=d.encounters.map(x=>'<option value="'+escape(x.id)+'" '+(x.id===e.id?"selected":"")+'>'+escape(x.id+" · "+d.patients.find(p=>p.id===x.patientId)?.name)+'</option>').join("");
  const records=rows.map(x=>tr(['<span class="mono">'+escape(x[0])+'</span>','<span class="mono">'+escape(x[1])+'</span>',escape(x[2]),c.btn("Lihat tabel","ext-open-db","small soft",'data-id="'+escape(x[0])+'"')]));
@@ -128,7 +129,7 @@ function database(c){
  let fk=fields.filter(f=>f.includes("FK → ")).map(f=>f.split("FK → ")[1]);
  let moduleLookup={patient:"Patient Registry",encounter:"RJ / IGD / Rawat Inap",clinical:"RME / CPPT",orders:"CPOE / Order",laboratory:"LIS",pharmacy:"Farmasi",radiology:"RIS/PACS",billing:"Finance, Billing & Claims",inventory:"Inventory & Pharmacy",scheduling:"Front Office",integration:"FHIR Adapter"};
  const dataSource={ "patient.patients":"patients","encounter.encounters":"encounters","clinical.observations":"observations","clinical.diagnoses":"diagnoses","orders.service_orders":"orders","laboratory.lab_results":"labs","pharmacy.prescriptions":"prescriptions","inventory.stock_lots":"stock","inventory.stock_movements":"movements","billing.charges":"charges","billing.invoices":"invoices","billing.payments":"payments","integration.outbox_events":"outbox","scheduling.appointments":"appointments"};
- let samples=c.data[dataSource[q]]||[];
+ let samples=c.data[dataSource[q]]||window.SIMRS_SPECIAL?.samples(q,c.data)||[];
  let schemaPicker='<div class="db-domains">'+schemas.map(x=>'<button class="db-domain '+(u.schema===x?"active":"")+'" data-action="ext-db-schema" data-id="'+x+'">'+escape(x)+' <small>'+blueprint()[x].split(",").length+'</small></button>').join("")+'</div>';
  let items=qualified.filter(n=>!u.dbSearch||n.toLowerCase().includes(u.dbSearch.toLowerCase()));
  let cards=fields.length?fields.map(f=>{let a=f.split("|");return tr(['<span class="mono">'+escape(a[0])+'</span>',escape(a[1]),xbadge(a[2].startsWith("FK")?"FK":a[2]||"—")])}):[];
