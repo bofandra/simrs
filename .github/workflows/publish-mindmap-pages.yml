@@ -27,6 +27,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Validate prototype JavaScript
+        run: |
+          node --check docs/simrs-baru/catalog.js
+          node --check docs/simrs-baru/app.js
+
       - name: Publish SIMRS Baru as site root
         run: |
           mkdir -p _site
