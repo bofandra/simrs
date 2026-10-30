@@ -98,24 +98,24 @@ function billing(c){
  panel("Relasi modul ke tabel","Rangkaian transaksi yang dicatat sebagai entitas terpisah.",'<div class="ext-trail"><span>billing.charges</span><b>→</b><span>billing.invoice_lines</span><b>→</b><span>billing.invoices</span><b>→</b><span>billing.payments</span><b>→</b><span>billing.payment_allocations</span></div>')+'</div>';
 }
 function journey(c){
- let {data:d,ui:u,pageHead,btn,panel,table}=c;
- let e=d.encounters.find(x=>x.id===u.selectedEncounter)||d.encounters[0],p=d.patients.find(x=>x.id===e.patientId);
- let rows=[
- ["patient.patients",p.id,"MRN "+p.mrn],
- ["encounter.encounters",e.id,e.type],
- ...d.observations.filter(x=>x.encounterId===e.id).map(x=>["clinical.observations",x.id,x.code+" · "+x.value+" "+x.unit]),
- ...d.diagnoses.filter(x=>x.encounterId===e.id).map(x=>["clinical.diagnoses",x.id,x.code]),
- ...d.orders.filter(x=>x.encounterId===e.id).map(x=>["orders.service_orders",x.id,x.service]),
- ...d.labs.filter(l=>d.orders.some(o=>o.id===l.orderId&&o.encounterId===e.id)).map(x=>["laboratory.lab_results",x.id,x.test+" · "+x.status]),
- ...d.prescriptions.filter(x=>x.encounterId===e.id).map(x=>["pharmacy.prescriptions",x.id,x.medication]),
- ...d.charges.filter(x=>x.encounterId===e.id).map(x=>["billing.charges",x.id,x.source]),
- ...d.invoices.filter(x=>x.encounterId===e.id).map(x=>["billing.invoices",x.id,x.number]),
- ...d.outbox.filter(o=>o.ref===e.id||d.observations.some(v=>v.encounterId===e.id&&v.id===o.ref)||d.orders.some(v=>v.encounterId===e.id&&v.id===o.ref)).map(x=>["integration.outbox_events",x.id,x.type])];
- let select='<select id="encounter-select" class="form-input">'+d.encounters.map(x=>'<option value="'+x.id+'" '+(x.id===e.id?"selected":"")+'>'+escape(x.id+" · "+d.patients.find(p=>p.id===x.patientId)?.name)+'</option>').join("")+'</select>';
- return pageHead("RELATIONAL DATABASE / DATA LINEAGE","Patient Journey & Record Trace","Lihat tabel dan record apa saja yang direferensikan oleh satu encounter demo, bukan hanya diagram konseptual.",btn("Buka RME","ext-open-rme","primary",'data-id="'+e.id+'"'))+
- '<div class="panel" style="margin-bottom:16px"><div class="grid cols3"><div><div class="detail-label">Patient</div><h3>'+escape(p.name)+'</h3><div class="muted-small">'+escape(p.mrn)+'</div></div><div><div class="detail-label">Encounter</div><h3>'+escape(e.id+" · "+e.type)+'</h3><div class="muted-small">'+escape(e.unit)+'</div></div><label class="form-label">Pilih Encounter'+select+'</label></div></div>'+
- '<div class="grid layout-wide">'+panel("Table × Record Trace","Klik tabel untuk membuka field, PK/FK dan penggunaannya.",table(["Source Table","Record ID","Business Context","Aksi"],rows.map(x=>tr(['<span class="mono">'+escape(x[0])+'</span>','<span class="mono">'+escape(x[1])+'</span>',escape(x[2]),btn("Lihat tabel","ext-open-db","small soft",'data-id="'+escape(x[0])+'"')])))+
- panel("How joins work","Kunci pasien dan encounter menjadi penghubung antardomain.",'<div class="ext-trail"><span>patient.patients</span><b>1:N ↓</b><span>encounter.encounters</span><b>1:N ↓</b><span>orders.service_orders</span><b>1:N ↓</b><span>laboratory.lab_orders</span></div><div class="ext-stats"><strong>'+rows.length+'</strong><small>record references dalam trace simulasi</small></div><p class="muted-small">Tidak ada cross-domain SQL query nyata. Semua join pada halaman ini dibuat dari foreign key simulasi dan ID record.</p>')+'</div>';
+ const d=c.data,u=c.ui,e=d.encounters.find(x=>x.id===u.selectedEncounter)||d.encounters[0],p=d.patients.find(x=>x.id===e.patientId);
+ const rows=[["patient.patients",p.id,p.mrn],["encounter.encounters",e.id,e.type]];
+ const linked=(table,collection,condition,caption)=>collection.filter(condition).forEach(x=>rows.push([table,x.id,caption(x)]));
+ linked("clinical.observations",d.observations,x=>x.encounterId===e.id,x=>x.code+" · "+x.value+" "+x.unit);
+ linked("clinical.diagnoses",d.diagnoses,x=>x.encounterId===e.id,x=>x.code);
+ linked("orders.service_orders",d.orders,x=>x.encounterId===e.id,x=>x.service);
+ linked("laboratory.lab_results",d.labs,x=>d.orders.some(o=>o.id===x.orderId&&o.encounterId===e.id),x=>x.test+" · "+x.status);
+ linked("pharmacy.prescriptions",d.prescriptions,x=>x.encounterId===e.id,x=>x.medication);
+ linked("billing.charges",d.charges,x=>x.encounterId===e.id,x=>x.source);
+ linked("billing.invoices",d.invoices,x=>x.encounterId===e.id,x=>x.number);
+ linked("integration.outbox_events",d.outbox,o=>o.ref===e.id||rows.some(x=>x[1]===o.ref),o=>o.type);
+ const options=d.encounters.map(x=>'<option value="'+escape(x.id)+'" '+(x.id===e.id?"selected":"")+'>'+escape(x.id+" · "+d.patients.find(p=>p.id===x.patientId)?.name)+'</option>').join("");
+ const records=rows.map(x=>tr(['<span class="mono">'+escape(x[0])+'</span>','<span class="mono">'+escape(x[1])+'</span>',escape(x[2]),c.btn("Lihat tabel","ext-open-db","small soft",'data-id="'+escape(x[0])+'"')]));
+ const left=c.panel("Table × Record Trace","Klik tabel untuk membuka field, PK/FK dan penggunaannya.",c.table(["Source Table","Record ID","Business Context","Aksi"],records));
+ const right=c.panel("How joins work","Kunci pasien dan encounter menjadi penghubung antardomain.",'<div class="ext-trail"><span>patient.patients</span><b>1:N ↓</b><span>encounter.encounters</span><b>1:N ↓</b><span>orders.service_orders</span><b>1:N ↓</b><span>laboratory.lab_orders</span></div><div class="ext-stats"><strong>'+rows.length+'</strong><small>referensi record dalam simulasi</small></div>');
+ return c.pageHead("RELATIONAL DATABASE / DATA LINEAGE","Patient Journey & Record Trace","Lihat record dari satu encounter demo yang terhubung lewat ID.",c.btn("Buka RME","ext-open-rme","primary",'data-id="'+e.id+'"'))+
+ '<div class="panel" style="margin-bottom:16px"><div class="grid cols3"><div><div class="detail-label">Patient</div><h3>'+escape(p.name)+'</h3><div class="muted-small">'+escape(p.mrn)+'</div></div><div><div class="detail-label">Encounter</div><h3>'+escape(e.id+" · "+e.type)+'</h3><div class="muted-small">'+escape(e.unit)+'</div></div><label class="form-label">Pilih Encounter<select id="encounter-select" class="form-input">'+options+'</select></label></div></div>'+
+ '<div class="grid layout-wide">'+left+right+'</div>';
 }
 function database(c){
  let {ui:u,config, pageHead,btn,panel,table}=c;
