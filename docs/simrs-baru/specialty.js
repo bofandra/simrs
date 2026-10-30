@@ -50,7 +50,7 @@ function renderWorkflow(name,c){
  const done=records.filter(x=>x.status===phases.at(-1)).length;
  const stat='<div class="grid cols4" style="margin-bottom:16px">'+M("Total Worklist",records.length,def.table)+M("Belum Selesai",records.length-done,"Tahap proses")+M("Selesai",done,phases.at(-1))+M("Tahapan Workflow",phases.length,"Transisi demo")+'</div>';
  const relations=P("Tabel & Data Lineage","Nama tabel sesuai blueprint database SIMRS.",'<div class="special-relations">'+def.relations.map(s=>'<p><code>'+e(s)+'</code></p>').join("")+'</div>'+notes);
- let details=records.map(r=>'<div class="special-record"><div><strong>'+e(r.id)+'</strong><p class="muted-small">'+e(name==="radiology"?"StudyInstanceUID: "+r.studyUid:name==="surgery"?"Set instrumen: "+r.cssdId:name==="nutrition"?"Produksi: "+(r.kitchenBatch||"belum ada"):"Riwayat proses: "+(r.history||[]).join(" → "))+'</p><p class="muted-small">'+e(r.report||r.notes||"")+'</p></div>'+((name==="surgery")?B("sp-anesthesia","Catatan Anestesi",r.id,"small soft"):name==="radiology"?B("sp-trace","Data Lineage",r.encounterId,"small soft"):"")+'</div>').join("");
+ let details=records.map(r=>'<div class="special-record"><div><strong>'+e(r.id)+'</strong><p class="muted-small">'+e(name==="radiology"?"StudyInstanceUID: "+r.studyUid:name==="surgery"?"Set instrumen: "+r.cssdId:name==="nutrition"?"Produksi: "+(r.kitchenBatch||"belum ada"):"Riwayat proses: "+(r.history||[]).join(" → "))+'</p><p class="muted-small">'+e(r.report||r.notes||"")+'</p></div>'+((name==="surgery")?B("sp-anesthesia","Catatan Anestesi",r.id,"small soft"):"")+(r.encounterId?B("sp-trace","Data Lineage",r.encounterId,"small soft"):"")+'</div>').join("");
  return H(def.eyebrow,def.title,def.description,B("sp-create",def.create,name,"primary"))+
  stat+P("Daftar Proses & Worklist","Klik tahap untuk memperbarui state dan record sintetis.",T(def.cols,rows))+
  '<div class="grid cols2" style="margin-top:16px">'+P("Record & Detail", "Referensi antarmodul berdasarkan ID sintetis.",details)+relations+'</div>';
@@ -102,6 +102,7 @@ function nextStep(name,id,c){
    if(!d.charges.some(x=>x.source==="RAD · "+r.id)){
     d.charges.push({id:"CH-RAD-"+r.id,encounterId:r.encounterId,source:"RAD · "+r.id,amount:195000});c.ensureInvoice(r.encounterId);
    }
+   let sourceOrder=d.orders.find(x=>x.id===r.orderId);if(sourceOrder)sourceOrder.status="completed";
    c.pushEvent("DiagnosticReport",r.id,"radiology.report.released");
  }
  if(name==="surgery"&&next==="completed"&&!r.billed){
