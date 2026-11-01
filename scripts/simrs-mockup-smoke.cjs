@@ -49,7 +49,7 @@ check("feature workspace includes selected workflow",el("workspace").innerHTML.i
 click({action:"feature-open",module:"Laboratorium LIS"});
 check("feature-open links catalog to LIS workflow",el("workspace").innerHTML.includes("LIS: permintaan hingga hasil"));
 click({action:"feature-db",id:"laboratory.lab_orders"});
-check("feature table opens explorer",loc.hash==="#database"&&el("workspace").innerHTML.includes("laboratory.lab_orders"));
+check("feature table opens explorer",loc.hash.replace(/^#/, "")==="database"&&el("workspace").innerHTML.includes("laboratory.lab_orders"));
 click({nav:"feature-map"});
 click({action:"feature-group",id:"FIN"});
 check("feature group filter navigable",el("workspace").innerHTML.includes("Klaim BPJS & Swasta"));
