@@ -1,0 +1,16 @@
+.rwl-notice{background:#f1f7ff;border:1px solid #cfddf2;color:#385d82;padding:13px 16px;border-radius:10px;font-size:12px;line-height:1.6;margin-bottom:16px}
+.rwl-layout{display:grid;grid-template-columns:minmax(215px,250px) minmax(0,1fr);gap:16px;align-items:start}
+.rwl-sidebar{position:sticky;top:82px}.rwl-sidebar h2{font-size:15px;margin-bottom:13px}.rwl-roles{display:grid;gap:7px}
+.rwl-role{background:#fff;border:1px solid #e3ebf5;border-radius:9px;color:#485e7d;display:flex;flex-direction:column;gap:5px;padding:11px;text-align:left;cursor:pointer}
+.rwl-role strong{font-size:12px}.rwl-role small{font-size:10px;color:#8192a9}.rwl-role.active,.rwl-role:hover{background:#eef6ff;border-color:#9dbfed;color:#1d5ca6}
+.rwl-body{min-width:0;display:grid;gap:16px}.rwl-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.rwl-metrics>div{background:white;border:1px solid #e3ebf5;border-radius:9px;padding:13px}
+.rwl-metrics small{display:block;font-size:11px;color:#8191a8}.rwl-metrics strong{font-size:24px;color:#2670b8}
+.rwl-filters{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0}
+.rwl-records{display:grid;gap:8px}.rwl-record{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid #e6eef7;border-radius:10px;padding:12px;background:#fbfdff}
+.rwl-record-body{min-width:0}.rwl-record-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.rwl-record-head strong{font-size:13px;color:#28466c}
+.rwl-record-meta{font:600 10px ui-monospace,monospace;color:#8a99ac;margin-top:6px}.rwl-record p{font-size:11px;color:#59738f;margin-top:5px}
+.rwl-actions{display:flex;gap:7px;flex-wrap:wrap;flex:none}.rwl-integrity-title{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.rwl-ok{color:#22836f;font-size:12px}.rwl-note{font-size:10px;color:#8292a7;margin-top:12px}.rwl-empty{color:#8094a8;font-size:12px;text-align:center;padding:20px}
+@media(max-width:1150px){.rwl-layout{grid-template-columns:1fr}.rwl-sidebar{position:static}.rwl-roles{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:750px){.rwl-roles,.rwl-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.rwl-record{flex-direction:column;align-items:stretch}.rwl-actions{justify-content:flex-start}}
