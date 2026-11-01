@@ -6,6 +6,7 @@ on:
     paths:
       - 'docs/simrs-baru/**'
       - 'scripts/simrs-mockup-smoke.cjs'
+      - 'scripts/simrs-mockup-browser.cjs'
       - '.github/workflows/publish-mindmap-pages.yml'
   workflow_dispatch:
 
@@ -21,6 +22,7 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -39,6 +41,23 @@ jobs:
           node --check docs/simrs-baru/care-journey.js
           node --check docs/simrs-baru/role-worklists.js
           node scripts/simrs-mockup-smoke.cjs
+
+      - name: Install Chromium browser test dependencies
+        run: |
+          npm install --prefix .browser-ci --ignore-scripts --no-audit --no-fund --no-package-lock playwright@1.56.1
+          .browser-ci/node_modules/.bin/playwright install chromium
+
+      - name: Verify responsive UI in Chromium
+        run: |
+          NODE_PATH="$PWD/.browser-ci/node_modules" node scripts/simrs-mockup-browser.cjs
+
+      - name: Upload UI screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: simrs-role-worklists-browser-shots
+          path: artifacts/browser/
+          if-no-files-found: ignore
 
       - name: Publish SIMRS Baru as site root
         run: |

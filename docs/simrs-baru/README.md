@@ -95,3 +95,7 @@ Semua data tetap berada di localStorage browser. Simulasi peran **bukan autentik
 ## Worklist Petugas v3.3 (1 November 2026)
 
 Enam perspektif role demo tersedia pada `#role-worklists`: Front Office, Dokter/DPJP, Perawat, Laboratorium, Farmasi dan Kasir. Status actionable/waiting/completed dihitung dari data sintetik bersama, bukan tabel worklist terpisah. Front Office dapat melakukan check-in demo idempotent; perawat dapat mencatat asuhan keperawatan sekali per encounter; modul lain mempunyai deep-link ke encounter E2E. Pemeriksaan integritas read-only memeriksa beberapa relasi dan saldo, bukan validasi backend. Pilihan peran **bukan autentikasi, RBAC, atau otorisasi klinis**.
+
+## Pengujian Browser Nyata
+
+Workflow publikasi menjalankan Chromium/Playwright pada desktop 1440×900, tablet 768×1024 dan mobile 390×844, termasuk halaman worklist enam peran, pencatatan keperawatan, LIS, farmasi, kasir, alur E2E, pengecekan JavaScript exception dan overflow horizontal. Screenshot tersimpan di GitHub Actions artifact `simrs-role-worklists-browser-shots`. Pengujian ini adalah browser smoke test, bukan sertifikasi aksesibilitas, keamanan atau UAT klinis.
