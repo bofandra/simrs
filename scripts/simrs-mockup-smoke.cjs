@@ -52,7 +52,7 @@ click({action:"feature-db",id:"laboratory.lab_orders"});
 check("feature table opens explorer",loc.hash.replace(/^#/, "")==="database"&&el("workspace").innerHTML.includes("laboratory.lab_orders"));
 click({nav:"feature-map"});
 click({action:"feature-group",id:"FIN"});
-check("feature group filter navigable",el("workspace").innerHTML.includes("Klaim BPJS & Swasta"));
+check("feature group filter navigable",el("workspace").innerHTML.includes("Klaim BPJS &amp; Swasta"));
 click({action:"ext-book-appointment"});
 submit("ext-appointment",{patientId:"P-006",date:"2026-10-30",slot:"13:00",unit:"Poli Anak"});
 let a=state().appointments.at(-1);
