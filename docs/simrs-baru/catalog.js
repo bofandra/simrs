@@ -56,9 +56,9 @@ specimens:["id|uuid|PK","lab_order_id|uuid|FK → laboratory.lab_orders","barcod
 lab_results:["id|uuid|PK","lab_order_id|uuid|FK → laboratory.lab_orders","specimen_id|uuid|FK → laboratory.specimens","result_value|numeric|","verified_at|timestamptz|"],
 lab_reports:["id|uuid|PK","lab_order_id|uuid|FK → laboratory.lab_orders","report_number|varchar|","released_at|timestamptz|"]}},
 radiology:{label:"Radiology RIS",tables:{
-radiology_orders:["id|uuid|PK","service_order_id|uuid|FK → orders.service_orders","status|varchar|"],
-imaging_studies:["id|uuid|PK","radiology_order_id|uuid|FK → radiology.radiology_orders","study_instance_uid|varchar|"],
-radiology_reports:["id|uuid|PK","radiology_order_id|uuid|FK → radiology.radiology_orders","report_status|varchar|"]}},
+rad_orders:["id|uuid|PK","service_order_id|uuid|FK → orders.service_orders","status|varchar|"],
+imaging_studies:["id|uuid|PK","radiology_order_id|uuid|FK → radiology.rad_orders","study_instance_uid|varchar|"],
+rad_reports:["id|uuid|PK","radiology_order_id|uuid|FK → radiology.rad_orders","report_status|varchar|"]}},
 pharmacy:{label:"Pharmacy",tables:{
 medications:["id|uuid|PK","medication_code|varchar|","kfa_code|varchar|","generic_name|varchar|"],
 prescriptions:["id|uuid|PK","encounter_id|uuid|FK → encounter.encounters","patient_id|uuid|FK → patient.patients","prescriber_id|uuid|FK → master.practitioners","status|varchar|"],
@@ -70,15 +70,15 @@ items:["id|uuid|PK","item_code|varchar|","item_name|varchar|","medication_id|uui
 stock_lots:["id|uuid|PK","item_id|uuid|FK → inventory.items","warehouse_id|uuid|FK → inventory.warehouses","lot_number|varchar|","expiry_date|date|"],
 stock_movements:["id|uuid|PK","item_id|uuid|FK → inventory.items","lot_id|uuid|FK → inventory.stock_lots","quantity_delta|numeric|","movement_type|varchar|"]}},
 nutrition:{label:"Nutrition & Kitchen",tables:{
-nutrition_orders:["id|uuid|PK","encounter_id|uuid|FK → encounter.encounters","patient_id|uuid|FK → patient.patients","diet_code|varchar|"],
-meal_productions:["id|uuid|PK","production_date|date|","status|varchar|"]}},
+diet_orders:["id|uuid|PK","encounter_id|uuid|FK → encounter.encounters","patient_id|uuid|FK → patient.patients","diet_code|varchar|"],
+production_batches:["id|uuid|PK","production_date|date|","status|varchar|"]}},
 operations:{label:"Hospital Operations",tables:{
-surgery_cases:["id|uuid|PK","encounter_id|uuid|FK → encounter.encounters","status|varchar|"],
-cssd_batches:["id|uuid|PK","batch_code|varchar|","sterilization_status|varchar|"],
+surgery_schedules:["id|uuid|PK","encounter_id|uuid|FK → encounter.encounters","status|varchar|"],
+cssd_cycles:["id|uuid|PK","batch_code|varchar|","sterilization_status|varchar|"],
 assets:["id|uuid|PK","asset_code|varchar|","location_id|uuid|FK → master.locations"]}},
 procurement:{label:"Procurement",tables:{
 purchase_orders:["id|uuid|PK","supplier_id|uuid|","po_number|varchar|","status|varchar|"],
-purchase_order_items:["id|uuid|PK","purchase_order_id|uuid|FK → procurement.purchase_orders","item_id|uuid|FK → inventory.items"]}},
+purchase_order_lines:["id|uuid|PK","purchase_order_id|uuid|FK → procurement.purchase_orders","item_id|uuid|FK → inventory.items"]}},
 billing:{label:"Billing & Claims",tables:{
 payers:["id|uuid|PK","payer_code|varchar|","payer_name|varchar|"],
 coverages:["id|uuid|PK","patient_id|uuid|FK → patient.patients","payer_id|uuid|FK → billing.payers"],
@@ -88,13 +88,13 @@ invoice_lines:["id|uuid|PK","invoice_id|uuid|FK → billing.invoices","charge_id
 payments:["id|uuid|PK","patient_id|uuid|FK → patient.patients","amount|numeric|"],
 claims:["id|uuid|PK","encounter_id|uuid|FK → encounter.encounters","coverage_id|uuid|FK → billing.coverages","claim_amount|numeric|"]}},
 finance:{label:"Finance ERP",tables:{
-journal_entries:["id|uuid|PK","journal_date|date|","status|varchar|"],
-journal_lines:["id|uuid|PK","journal_entry_id|uuid|FK → finance.journal_entries","debit_amount|numeric|","credit_amount|numeric|"]}},
+journals:["id|uuid|PK","journal_date|date|","status|varchar|"],
+journal_lines:["id|uuid|PK","journal_entry_id|uuid|FK → finance.journals","debit_amount|numeric|","credit_amount|numeric|"]}},
 hr:{label:"Human Resources",tables:{
 employees:["id|uuid|PK","employee_number|varchar|","organization_id|uuid|FK → master.organizations"],
 payroll_runs:["id|uuid|PK","period_month|date|","status|varchar|"]}},
 quality:{label:"Quality & Reporting",tables:{
-incidents:["id|uuid|PK","encounter_id|uuid|FK → encounter.encounters","incident_type|varchar|","status|varchar|"],
+patient_safety_incidents:["id|uuid|PK","encounter_id|uuid|FK → encounter.encounters","incident_type|varchar|","status|varchar|"],
 quality_indicators:["id|uuid|PK","indicator_code|varchar|","numerator|numeric|","denominator|numeric|"]}},
 integration:{label:"FHIR & External Integration",tables:{
 external_systems:["id|uuid|PK","system_code|varchar|","system_type|varchar|"],
@@ -103,10 +103,10 @@ outbox_events:["id|uuid|PK","event_type|varchar|","aggregate_id|uuid|","payload|
 integration_deliveries:["id|uuid|PK","outbox_event_id|uuid|FK → integration.outbox_events","external_system_id|uuid|FK → integration.external_systems","status|varchar|"]}},
 audit:{label:"Audit & Compliance",tables:{
 access_logs:["id|uuid|PK","user_id|uuid|FK → identity.users","action|varchar|","occurred_at|timestamptz|"],
-data_change_logs:["id|uuid|PK","entity_type|varchar|","entity_id|uuid|","action|varchar|"]}},
+change_logs:["id|uuid|PK","entity_type|varchar|","entity_id|uuid|","action|varchar|"]}},
 analytics:{label:"Analytics & BI",tables:{
 report_definitions:["id|uuid|PK","report_code|varchar|","query_config|jsonb|"],
-daily_snapshots:["id|uuid|PK","snapshot_date|date|","metric_value|numeric|"]}}
+aggregate_snapshots:["id|uuid|PK","snapshot_date|date|","metric_value|numeric|"]}}
 };
 const base={
 patients:[

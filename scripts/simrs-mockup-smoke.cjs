@@ -22,7 +22,7 @@ const loc={hash:""};
 const storage={getItem:key=>saved[key]||null,setItem(key,val){saved[key]=val}};
 class DemoFormData{constructor(form){this.values=form.values}get(key){return this.values[key]}}
 const context=vm.createContext({window:browser,document,location:loc,localStorage:storage,confirm:()=>true,setTimeout:()=>{},FormData:DemoFormData,console});
-for(const f of ["catalog.js","database-tables.js","enhancements.js","specialty.js","app.js"]){
+for(const f of ["catalog.js","database-tables.js","enhancements.js","specialty.js","feature-map.js","app.js"]){
  const source=fs.readFileSync(path.join(root,f),"utf8");
  new vm.Script(source,{filename:f}).runInContext(context);
 }
@@ -33,10 +33,26 @@ const check=(name,test)=>{assert.ok(test,name);console.log("PASS",name)};
 check("271 table names",browser.SIMRS_ALL_TABLE_NAMES.length===271);
 check("23 schemas",Object.keys(browser.SIMRS_ALL_TABLES).length===23);
 check("68 modules",browser.SIMRS_CATALOG.moduleGroups.reduce((n,g)=>n+g.modules.length,0)===68);
-for(const page of ["dashboard","modules","patients","patient360","frontoffice","encounters","clinical","orders","laboratory","pharmacy","radiology","surgery","nutrition","cssd","laundry","hr","reports","billing","inventory","journey","database","fhir"]){
+const fmap=browser.SIMRS_FEATURE_MAP;
+check("feature mapping covers 68 modules",fmap.features.length===68&&fmap.features.every(f=>fmap.workflows[f.workflowId]));
+check("feature workflow tables canonical",fmap.invalidTables.length===0&&Object.values(fmap.workflows).every(w=>w.tables.every(t=>browser.SIMRS_ALL_TABLE_NAMES.includes(t))));
+const fieldTables=Object.entries(browser.SIMRS_CATALOG.db).flatMap(([schema,g])=>Object.keys(g.tables).map(t=>schema+"."+t));
+check("catalog detailed tables canonical",fieldTables.every(t=>browser.SIMRS_ALL_TABLE_NAMES.includes(t)));
+const fieldFks=Object.values(browser.SIMRS_CATALOG.db).flatMap(g=>Object.values(g.tables).flatMap(fs=>fs.filter(f=>f.includes("FK → ")).map(f=>f.split("FK → ")[1])));
+check("catalog FK targets canonical",fieldFks.every(t=>browser.SIMRS_ALL_TABLE_NAMES.includes(t)));
+for(const page of ["dashboard","modules","feature-map","patients","patient360","frontoffice","encounters","clinical","orders","laboratory","pharmacy","radiology","surgery","nutrition","cssd","laundry","hr","reports","billing","inventory","journey","database","fhir"]){
  click({nav:page});
  check("route "+page,el("workspace").innerHTML.length>500);
 }
+click({nav:"feature-map"});
+check("feature workspace includes selected workflow",el("workspace").innerHTML.includes("Rawat Jalan")&&el("workspace").innerHTML.includes("Resource HL7 FHIR R4"));
+click({action:"feature-open",module:"Laboratorium LIS"});
+check("feature-open links catalog to LIS workflow",el("workspace").innerHTML.includes("LIS: permintaan hingga hasil"));
+click({action:"feature-db",id:"laboratory.lab_orders"});
+check("feature table opens explorer",loc.hash==="#database"&&el("workspace").innerHTML.includes("laboratory.lab_orders"));
+click({nav:"feature-map"});
+click({action:"feature-group",id:"FIN"});
+check("feature group filter navigable",el("workspace").innerHTML.includes("Klaim BPJS & Swasta"));
 click({action:"ext-book-appointment"});
 submit("ext-appointment",{patientId:"P-006",date:"2026-10-30",slot:"13:00",unit:"Poli Anak"});
 let a=state().appointments.at(-1);

@@ -56,7 +56,7 @@ GitHub Pages menjalankan HTML/CSS/JavaScript mandiri supaya demo dapat dibuka ta
 
 **Batasan**: keseluruhan data tetap mock browser/localStorage tanpa backend. Nama 271 tabel bersumber dari workbook, namun detail seluruh 3.395 kolom dan 762 relasi belum disalin ke browser; file XLSX tetap sumber lengkap. Field contoh dan ERD lokal bukan keseluruhan desain database.
 
-Automated test: `node scripts/simrs-mockup-smoke.cjs` memverifikasi semua 15 halaman, state simulasi transaksi dan lintas modul. Workflow deployment menjalankan pengujian tersebut sebelum publish.
+Automated test: `node scripts/simrs-mockup-smoke.cjs` memverifikasi semua 22 halaman, state simulasi transaksi dan lintas modul. Workflow deployment menjalankan pengujian tersebut sebelum publish.
 
 ## Mockup Lanjutan — Workspaces Spesialistik & Backoffice
 
@@ -71,3 +71,11 @@ Tambahan layar yang tetap 100% menggunakan data sintetis dalam browser:
 - **Pelaporan & Mutu**: KPI komputasi dari data demo; RL/SIRS adalah ilustrasi, bukan spesifikasi atau submission resmi.
 
 Transisi perubahan pada modul spesialistik menggunakan state `localStorage` dan memperlihatkan hubungan ke encounter, charge, outbox dan Database Explorer jika relevan. Sebagian besar modul lain pada katalog 68 fitur masih berupa blueprint.
+
+## Peta Fitur → Workflow → Database → FHIR (1 November 2026)
+
+- Navigasi baru **Peta Fitur & Database** (`#feature-map`) menghubungkan seluruh 68 modul dengan workflow kandidat, aktor, 7 usulan domain PIC, subset tabel canonical PostgreSQL, kandidat HL7 FHIR R4, dan workspace demo yang relevan.
+- Setiap modul mempunyai tautan **Peta Fitur** dari Katalog Modul. Tabel dapat dibuka langsung ke Database Explorer. Domain PIC hanya usulan (belum ada penugasan nama individu); koordinator konsolidasi mengawal keputusan lintas PIC.
+- Sebanyak 11 nama tabel lama dalam katalog `catalog.js` diselaraskan dengan daftar canonical `database-tables.js`, termasuk seluruh referensi foreign key pada katalog yang terkait.
+- Smoke test memeriksa ke-68 modul mapped, seluruh tabel workflow valid terhadap blueprint 271 tabel, katalog detail valid, dan navigasi antarworkspace.
+- Peta FHIR bukan validasi profil SATUSEHAT; data tetap sintetis pada localStorage dan tidak boleh untuk penggunaan klinis riil.
