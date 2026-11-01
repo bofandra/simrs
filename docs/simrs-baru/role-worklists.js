@@ -108,7 +108,9 @@ function action(a,id,node,c){
  if(a==="rwl-checkin"){
   if(u.rwlRole!=="frontoffice")return true;
   const ap=d.appointments.find(x=>x.id===id);
-  if(!ap||ap.status!=="booked"||d.queue.some(q=>q.appointmentId===id))return true;
+  if(!ap||ap.status!=="booked")return true;
+  const existing=d.queue.find(q=>q.appointmentId===id);
+  if(existing){ap.status="checked-in";c.pushActivity("Rekonsiliasi check-in demo",id+" · "+existing.id);c.save();c.render();return true;}
   const newId="Q-"+String(Math.max(0,...d.queue.map(q=>Number(String(q.id).match(/^Q-(\d+)$/)?.[1]||0)))+1).padStart(3,"0");
   ap.status="checked-in";d.queue.push({id:newId,appointmentId:id,patientId:ap.patientId,number:"A-"+String(d.queue.length+13).padStart(3,"0"),status:"waiting"});
   c.pushActivity("Check-in worklist demo",id+" · "+newId);c.save();c.render();return true;
