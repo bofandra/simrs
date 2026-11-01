@@ -22,7 +22,7 @@ const loc={hash:""};
 const storage={getItem:key=>saved[key]||null,setItem(key,val){saved[key]=val}};
 class DemoFormData{constructor(form){this.values=form.values}get(key){return this.values[key]}}
 const context=vm.createContext({window:browser,document,location:loc,localStorage:storage,confirm:()=>true,setTimeout:()=>{},FormData:DemoFormData,console});
-for(const f of ["catalog.js","database-tables.js","enhancements.js","specialty.js","feature-map.js","app.js"]){
+for(const f of ["catalog.js","database-tables.js","enhancements.js","specialty.js","feature-map.js","care-journey.js","app.js"]){
  const source=fs.readFileSync(path.join(root,f),"utf8");
  new vm.Script(source,{filename:f}).runInContext(context);
 }
@@ -40,7 +40,7 @@ const fieldTables=Object.entries(browser.SIMRS_CATALOG.db).flatMap(([schema,g])=
 check("catalog detailed tables canonical",fieldTables.every(t=>browser.SIMRS_ALL_TABLE_NAMES.includes(t)));
 const fieldFks=Object.values(browser.SIMRS_CATALOG.db).flatMap(g=>Object.values(g.tables).flatMap(fs=>fs.filter(f=>f.includes("FK → ")).map(f=>f.split("FK → ")[1])));
 check("catalog FK targets canonical",fieldFks.every(t=>browser.SIMRS_ALL_TABLE_NAMES.includes(t)));
-for(const page of ["dashboard","modules","feature-map","patients","patient360","frontoffice","encounters","clinical","orders","laboratory","pharmacy","radiology","surgery","nutrition","cssd","laundry","hr","reports","billing","inventory","journey","database","fhir"]){
+for(const page of ["dashboard","modules","feature-map","care-journey","patients","patient360","frontoffice","encounters","clinical","orders","laboratory","pharmacy","radiology","surgery","nutrition","cssd","laundry","hr","reports","billing","inventory","journey","database","fhir"]){
  click({nav:page});
  check("route "+page,el("workspace").innerHTML.length>500);
 }

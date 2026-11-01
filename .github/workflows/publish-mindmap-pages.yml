@@ -36,6 +36,7 @@ jobs:
           node --check docs/simrs-baru/enhancements.js
           node --check docs/simrs-baru/specialty.js
           node --check docs/simrs-baru/feature-map.js
+          node --check docs/simrs-baru/care-journey.js
           node scripts/simrs-mockup-smoke.cjs
 
       - name: Publish SIMRS Baru as site root
