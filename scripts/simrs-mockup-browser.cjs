@@ -56,7 +56,8 @@ const server=http.createServer((req,res)=>{
    assert.deepEqual(errors,[],size.name+" JS exceptions after journey");
    await page.goto(origin+"/#clinical-pathway",{waitUntil:"networkidle"});
    await page.locator("#workspace .cp-table").waitFor();
-   assert.ok((await page.locator("#workspace").innerText()).includes("Asuhan keperawatan"));
+   assert.equal(await page.locator("#workspace .cp-category").count(),6);
+   assert.equal(await page.locator("#workspace .cp-cell").count(),24);
    await page.locator('[data-action="cp-step"][data-id="medis-2"]').click();
    await page.locator("#modal-root textarea[name=note]").fill("Visite terlaksana (demo)");
    await page.locator("#modal-root button[type=submit]").click();
