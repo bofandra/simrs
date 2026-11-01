@@ -2,7 +2,7 @@
 "use strict";
 // Synthetic browser-only end-to-end SIMRS; shared demo collections across modules.
 const esc=v=>String(v??"").replace(/[&<>"']/g,x=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[x]));
-const roles=[["frontoffice","Front Office"],["doctor","Dokter/DPJP"],["lab","Analis Lab"],["pharmacy","Farmasis"],["cashier","Kasir"]];
+const roles=[["frontoffice","Front Office"],["doctor","Dokter/DPJP"],["nurse","Perawat"],["lab","Analis Lab"],["pharmacy","Farmasis"],["cashier","Kasir"]];
 const stageRole={new:"frontoffice",clinical:"doctor",sign:"doctor",order:"doctor",labnext:"lab",verify:"lab",rx:"doctor",rxverify:"pharmacy",dispense:"pharmacy",pay:"cashier",close:"doctor"};
 const amount=n=>"Rp "+Number(n||0).toLocaleString("id-ID");
 const next=(a,prefix)=>prefix+"-"+String(Math.max(0,...a.map(x=>Number(String(x.id).match(new RegExp("^"+prefix+"-([0-9]+)$"))?.[1]||0)))+1).padStart(4,"0");

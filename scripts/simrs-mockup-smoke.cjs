@@ -22,7 +22,7 @@ const loc={hash:""};
 const storage={getItem:key=>saved[key]||null,setItem(key,val){saved[key]=val}};
 class DemoFormData{constructor(form){this.values=form.values}get(key){return this.values[key]}}
 const context=vm.createContext({window:browser,document,location:loc,localStorage:storage,confirm:()=>true,setTimeout:()=>{},FormData:DemoFormData,console});
-for(const f of ["catalog.js","database-tables.js","enhancements.js","specialty.js","feature-map.js","care-journey.js","app.js"]){
+for(const f of ["catalog.js","database-tables.js","enhancements.js","specialty.js","feature-map.js","care-journey.js","role-worklists.js","app.js"]){
  const source=fs.readFileSync(path.join(root,f),"utf8");
  new vm.Script(source,{filename:f}).runInContext(context);
 }
@@ -40,7 +40,7 @@ const fieldTables=Object.entries(browser.SIMRS_CATALOG.db).flatMap(([schema,g])=
 check("catalog detailed tables canonical",fieldTables.every(t=>browser.SIMRS_ALL_TABLE_NAMES.includes(t)));
 const fieldFks=Object.values(browser.SIMRS_CATALOG.db).flatMap(g=>Object.values(g.tables).flatMap(fs=>fs.filter(f=>f.includes("FK → ")).map(f=>f.split("FK → ")[1])));
 check("catalog FK targets canonical",fieldFks.every(t=>browser.SIMRS_ALL_TABLE_NAMES.includes(t)));
-for(const page of ["dashboard","modules","feature-map","care-journey","patients","patient360","frontoffice","encounters","clinical","orders","laboratory","pharmacy","radiology","surgery","nutrition","cssd","laundry","hr","reports","billing","inventory","journey","database","fhir"]){
+for(const page of ["dashboard","modules","feature-map","care-journey","role-worklists","patients","patient360","frontoffice","encounters","clinical","orders","laboratory","pharmacy","radiology","surgery","nutrition","cssd","laundry","hr","reports","billing","inventory","journey","database","fhir"]){
  click({nav:page});
  check("route "+page,el("workspace").innerHTML.length>500);
 }
@@ -199,5 +199,40 @@ click({nav:"fhir"});
 check("E2E FHIR preview can select Hb result",el("workspace").innerHTML.includes(care().lab.resultObservationId));
 click({action:"reset-demo"});
 check("E2E reset removes linked audit",state().e2eAudit.length===0&&state().e2eRegistrations.length===0);
+
+
+/* Role worklists: status view, nurse documentation, check-in idempotency and shared records. */
+click({action:"reset-demo"});
+click({nav:"role-worklists"});
+const roleview=browser.SIMRS_ROLE_WORKLISTS;
+check("six role worklist groups",roleview.roles.length===6&&roleview.roles.some(x=>x[0]==="nurse"));
+check("doctor worklist has actionable encounter",roleview.worklist(state(),"doctor").some(x=>x.state==="action"));
+click({action:"rwl-role",id:"frontoffice"});
+const book=state().appointments.find(x=>x.status==="booked"),qBefore=state().queue.length;
+click({action:"rwl-checkin",id:book.id});
+check("front office check-in creates queue",state().queue.length===qBefore+1&&state().appointments.find(x=>x.id===book.id).status==="checked-in");
+click({action:"rwl-checkin",id:book.id});
+check("replayed check-in does not double queue",state().queue.length===qBefore+1);
+click({action:"rwl-role",id:"nurse"});
+submit("rwl-nursing",{encounterId:"E-1001",intervention:"Pantau TTV",outcome:"Stabil"});
+check("nursing note stored on existing encounter",state().nursingNotes.some(n=>n.encounterId==="E-1001"&&n.role==="nurse"&&n.status==="completed"));
+const noteCount=state().nursingNotes.length;
+submit("rwl-nursing",{encounterId:"E-1001",intervention:"Duplikat",outcome:"Duplikat"});
+check("nursing note repeated submit no duplicate",state().nursingNotes.length===noteCount);
+click({action:"rwl-open",id:"E-1002"});
+check("nurse goes to selected clinical RME",loc.hash.replace(/^#/,"")==="clinical");
+click({nav:"role-worklists"});
+click({action:"rwl-role",id:"lab"});
+check("LIS worklist reuses lab fixtures",roleview.worklist(state(),"lab").some(x=>x.id==="LAB-02"));
+click({action:"rwl-filter",id:"action"});
+check("role status filter displays action items",el("workspace").innerHTML.includes("Perlu tindakan"));
+click({action:"rwl-role",id:"pharmacy"});
+check("pharmacy worklist reuses Rx fixtures",roleview.worklist(state(),"pharmacy").some(x=>x.id==="RX-01"));
+click({action:"rwl-role",id:"cashier"});
+check("cashier worklist reuses invoices",roleview.worklist(state(),"cashier").some(x=>x.id==="INV-01"));
+check("read-model integrity reports no fixture orphan",roleview.integrity(state()).length===0);
+click({action:"rwl-open",id:"E-1001"});
+check("cashier deep-link opens same encounter E2E",loc.hash.replace(/^#/,"")==="care-journey");
+click({action:"reset-demo"});
 
 console.log("All SIMRS mockup smoke tests passed.");

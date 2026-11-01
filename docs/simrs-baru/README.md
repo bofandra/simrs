@@ -92,3 +92,6 @@ Menu **Perjalanan Pasien E2E** (`#care-journey`) memperlihatkan transaksi sintet
 - Penutupan encounter hanya dapat dilakukan setelah kelima tahap lengkap; event transisi dicatat di audit demo dan terlihat melalui halaman rekam terkait.
 
 Semua data tetap berada di localStorage browser. Simulasi peran **bukan autentikasi ataupun RBAC**. Modul ini tidak terhubung ke BPJS, SATUSEHAT, alat medis, database RS, atau transaksi keuangan riil. Belum dilakukan pengujian visual di browser nyata; pemeriksaan otomatis mencakup JavaScript syntax serta state-machine dan E2E smoke test di Node.js.
+## Worklist Petugas v3.3 (1 November 2026)
+
+Enam perspektif role demo tersedia pada `#role-worklists`: Front Office, Dokter/DPJP, Perawat, Laboratorium, Farmasi dan Kasir. Status actionable/waiting/completed dihitung dari data sintetik bersama, bukan tabel worklist terpisah. Front Office dapat melakukan check-in demo idempotent; perawat dapat mencatat asuhan keperawatan sekali per encounter; modul lain mempunyai deep-link ke encounter E2E. Pemeriksaan integritas read-only memeriksa beberapa relasi dan saldo, bukan validasi backend. Pilihan peran **bukan autentikasi, RBAC, atau otorisasi klinis**.
