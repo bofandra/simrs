@@ -79,3 +79,16 @@ Transisi perubahan pada modul spesialistik menggunakan state `localStorage` dan 
 - Sebanyak 11 nama tabel lama dalam katalog `catalog.js` diselaraskan dengan daftar canonical `database-tables.js`, termasuk seluruh referensi foreign key pada katalog yang terkait.
 - Smoke test memeriksa ke-68 modul mapped, seluruh tabel workflow valid terhadap blueprint 271 tabel, katalog detail valid, dan navigasi antarworkspace.
 - Peta FHIR bukan validasi profil SATUSEHAT; data tetap sintetis pada localStorage dan tidak boleh untuk penggunaan klinis riil.
+
+## Workflow Simulasi Terpadu (1 November 2026)
+
+Menu **Perjalanan Pasien E2E** (`#care-journey`) memperlihatkan transaksi sintetis dalam satu Encounter, dari Front Office ke RME, Laboratorium LIS, Farmasi/Inventory, hingga Billing.
+
+- Front Office membuat appointment, queue, encounter, dan relasi pendaftaran simulasi.
+- RME menulis SOAP, ICD-10, dua Observation tekanan darah dan status signed (bukan tanda tangan legal).
+- LIS menambah order, specimen, hasil Hb Observation LOINC 718-7, verifikasi, release, outbox, serta charge idempotent.
+- Farmasi melakukan e-resep, verifikasi farmasis, dispensing yang memeriksa kecocokan lot/stok/kedaluwarsa, dan membuat stock movement dan charge.
+- Billing menghitung outstanding dari charge dan payment allocation, mendukung pembayaran parsial serta menolak overpayment.
+- Penutupan encounter hanya dapat dilakukan setelah kelima tahap lengkap; event transisi dicatat di audit demo dan terlihat melalui halaman rekam terkait.
+
+Semua data tetap berada di localStorage browser. Simulasi peran **bukan autentikasi ataupun RBAC**. Modul ini tidak terhubung ke BPJS, SATUSEHAT, alat medis, database RS, atau transaksi keuangan riil. Belum dilakukan pengujian visual di browser nyata; pemeriksaan otomatis mencakup JavaScript syntax serta state-machine dan E2E smoke test di Node.js.
