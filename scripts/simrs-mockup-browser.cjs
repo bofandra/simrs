@@ -54,8 +54,23 @@ const server=http.createServer((req,res)=>{
    const journeyOverflow=await page.evaluate(()=>({page:document.documentElement.scrollWidth,viewport:window.innerWidth}));
    assert.ok(journeyOverflow.page<=journeyOverflow.viewport+2,size.name+": journey overflow "+JSON.stringify(journeyOverflow));
    assert.deepEqual(errors,[],size.name+" JS exceptions after journey");
+   await page.goto(origin+"/#clinical-pathway",{waitUntil:"networkidle"});
+   await page.locator("#workspace .cp-table").waitFor();
+   assert.equal(await page.locator("#workspace .cp-category").count(),6);
+   assert.equal(await page.locator("#workspace .cp-cell").count(),24);
+   await page.locator('[data-action="cp-step"][data-id="medis-2"]').click();
+   await page.locator("#modal-root textarea[name=note]").fill("Visite terlaksana (demo)");
+   await page.locator("#modal-root button[type=submit]").click();
+   assert.ok((await page.locator('[data-action="cp-step"][data-id="medis-2"]').innerText()).includes("Selesai"));
+   await page.locator('[data-action="cp-tab"][data-id="variance"]').click();
+   assert.ok((await page.locator("#workspace").innerText()).includes("Toleransi asupan"));
+   await page.locator('[data-action="cp-tab"][data-id="matrix"]').click();
+   await page.screenshot({path:path.join(dest,"clinical-pathway-"+size.name+".png"),fullPage:true});
+   const pathwayOverflow=await page.evaluate(()=>({page:document.documentElement.scrollWidth,viewport:window.innerWidth}));
+   assert.ok(pathwayOverflow.page<=pathwayOverflow.viewport+2,size.name+": pathway overflow "+JSON.stringify(pathwayOverflow));
+   assert.deepEqual(errors,[],size.name+" JS exceptions after Clinical Pathway");
    await context.close();
-   process.stdout.write("PASS Chromium "+size.name+" ("+size.width+"x"+size.height+"), six roles, nursing, LIS, pharmacy, cashier, screenshots\n");
+   process.stdout.write("PASS Chromium "+size.name+" ("+size.width+"x"+size.height+"), six roles, nursing, LIS, pharmacy, cashier, pathway, screenshots\n");
   }
   console.log("All browser responsive smoke tests passed.");
  }finally{if(browser)await browser.close();await new Promise(resolve=>server.close(resolve));}

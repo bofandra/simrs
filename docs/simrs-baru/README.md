@@ -15,6 +15,7 @@ Halaman publik: https://bofandra.github.io/simrs/
 - Database Explorer: 23 schema, subset field dan FK per tabel dari rancangan awal;
 - FHIR Adapter: contoh transformasi JSON R4 dan status outbox simulasi;
 - Katalog cakupan 68 modul SIMRS.
+- Clinical Pathway interaktif: matriks H1–H4, catatan eksekusi dan bukti, varian, evaluasi outcome, serta relasi encounter.
 
 Mockup memanfaatkan **model data yang disederhanakan** dari blueprint database versi 1, dengan 271 tabel kandidat, 3.395 kolom usulan, 762 foreign key dan 1.003 indeks. Jumlah tersebut merupakan cakupan **desain**, bukan jumlah tabel yang sudah diimplementasikan.
 
@@ -22,6 +23,16 @@ Mockup memanfaatkan **model data yang disederhanakan** dari blueprint database v
 `React + TypeScript → Go modular monolith → PostgreSQL`, dengan `FHIR R4 mapper + validator + outbox worker` untuk SATUSEHAT. Dedicated FHIR Server **tidak digunakan**.
 
 GitHub Pages menjalankan HTML/CSS/JavaScript mandiri supaya demo dapat dibuka tanpa backend. Simulasi transaksi hanya disimpan pada `localStorage` browser yang mengakses halaman.
+
+## Clinical Pathway (prototipe 1 Nov 2026)
+- Buka menu **Clinical Pathway** (hash `#clinical-pathway`) atau tombol dari **Workspace Klinis**.
+- Default: encounter rawat inap `E-1003`, dengan template `DEMO-RI` versi 1.0 dan beberapa catatan simulasi.
+- Klik sel pada matriks H1–H4 untuk menulis pelaksana, waktu, catatan realisasi, serta bukti terkait encounter jika ada.
+- Jika terdapat penyimpangan, pilih **Catat varian**, isi alasan, dampak, tindak lanjut; pantau dan tutup melalui tab **Varian & tindak lanjut**.
+- Nilai target melalui tab **Outcome & evaluasi**; tab **Relasi & bukti data** menampilkan kandidat relasi dan referensi ke record RME/CPOE/farmasi.
+- Encounter non-rawat inap tidak otomatis masuk pathway. Enrollment baru untuk rawat inap lain dilakukan secara eksplisit.
+- Data dan tindakan contoh tersimpan hanya di `localStorage`; gunakan **Reset Demo** untuk kembali ke contoh awal.
+- **Penting:** Ini mockup alur kerja, **bukan** pedoman klinis yang telah disetujui. Tabel `clinical.pathway_step_executions`, `clinical.pathway_variances`, dan `clinical.pathway_outcome_assessments` masih *usulan detail blueprint* (belum DDL/implementasi PostgreSQL). Assessment outcome tidak dilakukan otomatis.
 
 ## Pengujian demo
 1. Buka Dashboard.
@@ -43,7 +54,8 @@ GitHub Pages menjalankan HTML/CSS/JavaScript mandiri supaya demo dapat dibuka ta
 - `index.html` shell aplikasi;
 - `styles.css` desain responsif;
 - `catalog.js` daftar modul, contoh schema/field, synthetic data;
-- `app.js` interaksi UI dan simulasi CRUD.
+- `app.js` interaksi UI dan simulasi CRUD;
+- `clinical-pathway.js` dan `clinical-pathway.css` modul interaktif pathway;
 
 ## Update: Mockup Workflow dan ERD v2 (30 Oktober 2026)
 

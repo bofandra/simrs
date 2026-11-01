@@ -22,7 +22,7 @@ const loc={hash:""};
 const storage={getItem:key=>saved[key]||null,setItem(key,val){saved[key]=val}};
 class DemoFormData{constructor(form){this.values=form.values}get(key){return this.values[key]}}
 const context=vm.createContext({window:browser,document,location:loc,localStorage:storage,confirm:()=>true,setTimeout:()=>{},FormData:DemoFormData,console});
-for(const f of ["catalog.js","database-tables.js","enhancements.js","specialty.js","feature-map.js","care-journey.js","role-worklists.js","app.js"]){
+for(const f of ["catalog.js","database-tables.js","enhancements.js","specialty.js","feature-map.js","care-journey.js","role-worklists.js","clinical-pathway.js","app.js"]){
  const source=fs.readFileSync(path.join(root,f),"utf8");
  new vm.Script(source,{filename:f}).runInContext(context);
 }
@@ -40,7 +40,7 @@ const fieldTables=Object.entries(browser.SIMRS_CATALOG.db).flatMap(([schema,g])=
 check("catalog detailed tables canonical",fieldTables.every(t=>browser.SIMRS_ALL_TABLE_NAMES.includes(t)));
 const fieldFks=Object.values(browser.SIMRS_CATALOG.db).flatMap(g=>Object.values(g.tables).flatMap(fs=>fs.filter(f=>f.includes("FK → ")).map(f=>f.split("FK → ")[1])));
 check("catalog FK targets canonical",fieldFks.every(t=>browser.SIMRS_ALL_TABLE_NAMES.includes(t)));
-for(const page of ["dashboard","modules","feature-map","care-journey","role-worklists","patients","patient360","frontoffice","encounters","clinical","orders","laboratory","pharmacy","radiology","surgery","nutrition","cssd","laundry","hr","reports","billing","inventory","journey","database","fhir"]){
+for(const page of ["dashboard","modules","feature-map","care-journey","role-worklists","patients","patient360","frontoffice","encounters","clinical","clinical-pathway","orders","laboratory","pharmacy","radiology","surgery","nutrition","cssd","laundry","hr","reports","billing","inventory","journey","database","fhir"]){
  click({nav:page});
  check("route "+page,el("workspace").innerHTML.length>500);
 }
@@ -239,5 +239,40 @@ check("read-model integrity reports no fixture orphan",roleview.integrity(state(
 click({action:"rwl-open",id:"E-1001"});
 check("cashier deep-link opens same encounter E2E",loc.hash.replace(/^#/,"")==="care-journey");
 click({action:"reset-demo"});
+
+
+/* Clinical Pathway: encounter isolation, variance lifecycle, outcome and reset. */
+click({action:"reset-demo"});
+click({nav:"clinical-pathway"});
+check("pathway matrix visible",el("workspace").innerHTML.includes("Matriks harian")&&el("workspace").innerHTML.includes("Asuhan keperawatan"));
+check("pathway seed belongs to inpatient encounter",state().pathwayDemo.enrollments.length===1&&state().pathwayDemo.enrollments[0].encounterId==="E-1003");
+const cp=()=>state().pathwayDemo;
+const initialExec=cp().executions.length;
+click({action:"cp-step",id:"medis-2"});
+submit("cp-execution",{stepId:"medis-2",actor:"DPJP Demo",actualAt:"2026-10-31T09:00",evidenceRef:"DX-03",note:"Visite terlaksana"});
+check("pathway execution references encounter evidence",cp().executions.length===initialExec+1&&cp().executions.some(x=>x.stepId==="medis-2"&&x.evidenceRef==="DX-03"));
+submit("cp-execution",{stepId:"medis-2",actor:"DPJP Demo",actualAt:"2026-10-31T09:00",evidenceRef:"DX-03",note:"Review"});
+check("pathway execution upsert avoids duplicates",cp().executions.length===initialExec+1);
+submit("cp-execution",{stepId:"medis-3",actor:"Demo",actualAt:"2026-11-01T09:00",evidenceRef:"OBS-01",note:"Bukti tidak sesuai encounter"});
+check("cross-encounter evidence is blocked",!cp().executions.some(x=>x.stepId==="medis-3"));
+click({action:"cp-tab",id:"variance"});
+check("pathway variance tab displays synthetic variance",el("workspace").innerHTML.includes("Toleransi asupan"));
+click({action:"cp-resolve",id:"CPV-001"});
+submit("cp-resolve",{varianceId:"CPV-001",resolution:"Diet dievaluasi kembali (demo)"});
+check("pathway variance closed with resolution",cp().variances[0].status==="resolved"&&Boolean(cp().variances[0].resolvedAt));
+submit("cp-variance",{stepId:"penunjang-3",actor:"Lab Demo",reasonCode:"operational",reason:"Pemeriksaan ditunda",impact:"Evaluasi dijadwalkan",followUp:"Koordinasi penunjang"});
+check("pathway new variance captured",cp().variances.length===2&&cp().variances.at(-1).status==="open");
+submit("cp-variance",{stepId:"penunjang-3",actor:"Lab Demo",reasonCode:"operational",reason:"Duplikat",impact:"Duplikat",followUp:"Duplikat"});
+check("pathway prevents double-open variance",cp().variances.length===2);
+click({action:"cp-tab",id:"outcomes"});
+submit("cp-outcome",{stepId:"outcome-2",actor:"DPJP Demo",result:"achieved",note:"Target tercapai (demo)"});
+check("pathway outcome evaluation is stored",cp().outcomes.some(x=>x.stepId==="outcome-2"&&x.result==="achieved"));
+listeners.change({target:{id:"cp-encounter",value:"E-1001"}});
+check("outpatient encounter cannot automatically enroll",cp().enrollments.length===1&&el("workspace").innerHTML.includes("Belum berlaku untuk encounter ini"));
+listeners.change({target:{id:"cp-encounter",value:"E-1003"}});
+check("selecting inpatient returns to its pathway",el("workspace").innerHTML.includes("Clinical Pathway")&&el("workspace").innerHTML.includes("Target tercapai"));
+click({action:"reset-demo"});
+click({nav:"clinical-pathway"});
+check("pathway reset restores synthetic seed",state().pathwayDemo.variances.length===1&&state().pathwayDemo.variances[0].status==="open"&&state().pathwayDemo.executions.length===3);
 
 console.log("All SIMRS mockup smoke tests passed.");
