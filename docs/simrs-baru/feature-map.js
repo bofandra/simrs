@@ -57,7 +57,7 @@ function action(a,id,node,c){
  if(a==="feature-select"){if(assignment[id]){c.ui.featureId=id;c.render();}return true;}
  if(a==="feature-group"){c.ui.featureGroup=id;c.ui.featureQuery="";c.render();return true;}
  if(a==="feature-db"){if(candidateTables.has(id)){const schema=id.split(".")[0];c.ui.schema=schema;c.ui.dbQualified=id;c.ui.dbSearch="";c.navigate("database");}return true;}
- if(a==="feature-screen"){if(c.ui&&c.navigate)c.navigate(id);return true;}
+ if(a==="feature-screen"){const wf=workflows[assignment[c.ui.featureId]];if(wf&&["outpatient","emergency","inpatient"].includes(wf.id)){c.ui.careMode={outpatient:"Rawat Jalan",emergency:"IGD",inpatient:"Rawat Inap"}[wf.id];c.ui.careEncounter="";}if(c.ui&&c.navigate)c.navigate(id);return true;}
  return false;
 }
 window.SIMRS_FEATURE_MAP={features,workflows,assignment,invalidTables,render,action};
