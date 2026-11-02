@@ -56,6 +56,7 @@ GitHub Pages menjalankan HTML/CSS/JavaScript mandiri supaya demo dapat dibuka ta
 - `catalog.js` daftar modul, contoh schema/field, synthetic data;
 - `app.js` interaksi UI dan simulasi CRUD;
 - `clinical-pathway.js` dan `clinical-pathway.css` modul interaktif pathway;
+- `design-workflows.js` simulasi Master Data, Rujukan, dan BPJS/Klaim berbasis data sintetis;
 
 ## Update: Mockup Workflow dan ERD v2 (30 Oktober 2026)
 
@@ -68,7 +69,7 @@ GitHub Pages menjalankan HTML/CSS/JavaScript mandiri supaya demo dapat dibuka ta
 
 **Batasan**: keseluruhan data tetap mock browser/localStorage tanpa backend. Nama 271 tabel bersumber dari workbook, namun detail seluruh 3.395 kolom dan 762 relasi belum disalin ke browser; file XLSX tetap sumber lengkap. Field contoh dan ERD lokal bukan keseluruhan desain database.
 
-Automated test: `node scripts/simrs-mockup-smoke.cjs` memverifikasi semua 22 halaman, state simulasi transaksi dan lintas modul. Workflow deployment menjalankan pengujian tersebut sebelum publish.
+Automated test: `node scripts/simrs-mockup-smoke.cjs` memverifikasi semua 29 halaman, state simulasi transaksi dan lintas modul. Workflow deployment menjalankan pengujian tersebut sebelum publish.
 
 ## Mockup Lanjutan — Workspaces Spesialistik & Backoffice
 
@@ -111,3 +112,14 @@ Enam perspektif role demo tersedia pada `#role-worklists`: Front Office, Dokter/
 ## Pengujian Browser Nyata
 
 Workflow publikasi menjalankan Chromium/Playwright pada desktop 1440×900, tablet 768×1024 dan mobile 390×844, termasuk halaman worklist enam peran, pencatatan keperawatan, LIS, farmasi, kasir, alur E2E, pengecekan JavaScript exception dan overflow horizontal. Screenshot tersimpan di GitHub Actions artifact `simrs-role-worklists-browser-shots`. Pengujian ini adalah browser smoke test, bukan sertifikasi aksesibilitas, keamanan atau UAT klinis.
+
+## Pembaruan 2 November 2026 — Kontrak Desain & Workspace Prioritas
+
+- **Master Data & Tarif** (`#master-data`): tambah unit, layanan/tarif, penugasan practitioner dan bed dengan validasi kode unik, harga non-negatif dan relasi unit. Ini bukan master DB nyata.
+- **Rujukan** (`#referrals`): permintaan pada encounter aktif, cek duplikasi tujuan, lalu status requested → accepted/rejected sekali. Tidak ada pengiriman Task/ServiceRequest/CarePlan ke SATUSEHAT.
+- **BPJS & Klaim** (`#claims`): draft, checklist Encounter finished + payer BPJS + diagnosis + charge positif, validasi, submission sintetis, retur, revisi. Tidak mengakses SEP, grouper INA-CBG ataupun API BPJS.
+- **Peta Fitur**: Master, Rujukan, Klaim, dan Clinical Pathway ditandai memiliki alur demo dan terhubung ke workspace terkait. Status tersebut **bukan** implementasi penuh modul.
+- **CI/Browser**: smoke test tambahan untuk validasi gagal, state transition dan layar desktop, tablet, mobile.
+- **Handoff 7 PIC + 1 koordinator**: keputusan workflow dan kebutuhan produksi di [WORKFLOW_CONTRACTS_V1.md](./WORKFLOW_CONTRACTS_V1.md).
+
+Semua transaksi tetap bersifat simulasi browser/localStorage. Login, RBAC, multi-tenant, database, integrasi FHIR/BPJS dan transaksi riil belum tersedia.
