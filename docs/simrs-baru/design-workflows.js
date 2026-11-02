@@ -23,7 +23,7 @@ function init(d){
 }
 const store=d=>(init(d),d.designWorkflows);
 const label=(options,id)=>options.find(x=>x.id===id)?.name||id;
-const result=(c,message)=>{c.save();c.render();c.notice(message)};
+const result=(c,message)=>{c.save();c.render();c.notice(message);return true};
 const error=(c,message)=>{c.notice(message);return true};
 const opt=(id,label)=>'<option value="'+esc(id)+'">'+esc(label)+'</option>';
 const rows=(headers,items)=>'<div class="table-wrap"><table><thead><tr>'+headers.map(x=>'<th>'+esc(x)+'</th>').join("")+'</tr></thead><tbody>'+items.join("")+'</tbody></table></div>';
