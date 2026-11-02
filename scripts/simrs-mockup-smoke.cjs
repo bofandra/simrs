@@ -22,7 +22,7 @@ const loc={hash:""};
 const storage={getItem:key=>saved[key]||null,setItem(key,val){saved[key]=val}};
 class DemoFormData{constructor(form){this.values=form.values}get(key){return this.values[key]}}
 const context=vm.createContext({window:browser,document,location:loc,localStorage:storage,confirm:()=>true,setTimeout:()=>{},FormData:DemoFormData,console});
-for(const f of ["catalog.js","database-tables.js","enhancements.js","specialty.js","feature-map.js","care-journey.js","role-worklists.js","clinical-pathway.js","app.js"]){
+for(const f of ["catalog.js","database-tables.js","enhancements.js","specialty.js","feature-map.js","care-journey.js","role-worklists.js","clinical-pathway.js","design-workflows.js","app.js"]){
  const source=fs.readFileSync(path.join(root,f),"utf8");
  new vm.Script(source,{filename:f}).runInContext(context);
 }
@@ -35,12 +35,13 @@ check("23 schemas",Object.keys(browser.SIMRS_ALL_TABLES).length===23);
 check("68 modules",browser.SIMRS_CATALOG.moduleGroups.reduce((n,g)=>n+g.modules.length,0)===68);
 const fmap=browser.SIMRS_FEATURE_MAP;
 check("feature mapping covers 68 modules",fmap.features.length===68&&fmap.features.every(f=>fmap.workflows[f.workflowId]));
+check("feature workflow has new demo routes",["master","referral","claims","pathway"].every(id=>fmap.workflows[id].demo&&!!fmap.workflows[id].screen));
 check("feature workflow tables canonical",fmap.invalidTables.length===0&&Object.values(fmap.workflows).every(w=>w.tables.every(t=>browser.SIMRS_ALL_TABLE_NAMES.includes(t))));
 const fieldTables=Object.entries(browser.SIMRS_CATALOG.db).flatMap(([schema,g])=>Object.keys(g.tables).map(t=>schema+"."+t));
 check("catalog detailed tables canonical",fieldTables.every(t=>browser.SIMRS_ALL_TABLE_NAMES.includes(t)));
 const fieldFks=Object.values(browser.SIMRS_CATALOG.db).flatMap(g=>Object.values(g.tables).flatMap(fs=>fs.filter(f=>f.includes("FK → ")).map(f=>f.split("FK → ")[1])));
 check("catalog FK targets canonical",fieldFks.every(t=>browser.SIMRS_ALL_TABLE_NAMES.includes(t)));
-for(const page of ["dashboard","modules","feature-map","care-journey","role-worklists","patients","patient360","frontoffice","encounters","clinical","clinical-pathway","orders","laboratory","pharmacy","radiology","surgery","nutrition","cssd","laundry","hr","reports","billing","inventory","journey","database","fhir"]){
+for(const page of ["dashboard","modules","feature-map","care-journey","role-worklists","patients","patient360","frontoffice","encounters","clinical","clinical-pathway","master-data","referrals","claims","orders","laboratory","pharmacy","radiology","surgery","nutrition","cssd","laundry","hr","reports","billing","inventory","journey","database","fhir"]){
  click({nav:page});
  check("route "+page,el("workspace").innerHTML.length>500);
 }
@@ -143,11 +144,11 @@ check("reset seeds enhanced fixture",state().appointments.length===2 && state().
 click({action:"reset-demo"});
 click({nav:"care-journey"});
 click({action:"e2e-new"});
-submit("e2e-create",{patientId:"P-006",doctor:"PR-01",unit:"Poli Umum",date:"2026-11-01",slot:"10:30"});
+submit("e2e-create",{patientId:"P-001",doctor:"PR-01",unit:"Poli Umum",date:"2026-11-01",slot:"10:30"});
 const integratedId=state().encounters.at(-1).id;
 const care=()=>browser.SIMRS_CARE_JOURNEY.inspect(state(),integratedId);
 check("E2E registration creates queue appointment and encounter",state().e2eRegistrations.some(x=>x.encounterId===integratedId)&&state().queue.some(q=>q.id===state().e2eRegistrations.at(-1).queueId));
-check("E2E patient identity linked",care().patient.id==="P-006");
+check("E2E patient identity linked",care().patient.id==="P-001");
 click({action:"e2e-order"});
 check("E2E lab order blocked without signed RME",!care().lab);
 listeners.change({target:{id:"e2e-role",value:"doctor"}});
@@ -197,8 +198,19 @@ click({action:"e2e-close"});
 check("E2E close idempotent",state().outbox.filter(x=>x.ref===integratedId&&x.type==="encounter.finished").length===1);
 click({nav:"fhir"});
 check("E2E FHIR preview can select Hb result",el("workspace").innerHTML.includes(care().lab.resultObservationId));
+click({nav:"claims"});
+submit("dw-claim",{encounterId:integratedId});
+const claimId=state().designWorkflows.claims.at(-1).id;
+check("BPJS claim draft linked to completed encounter",state().designWorkflows.claims.at(-1).encounterId===integratedId);
+click({action:"dw-claim-validate",id:claimId});
+check("claim draft passes completeness gate only with finished BPJS encounter, diagnosis and charge",state().designWorkflows.claims.at(-1).status==="validated");
+click({action:"dw-claim-submit",id:claimId});
+check("claim simulated submission",state().designWorkflows.claims.at(-1).status==="submitted");
+click({action:"dw-claim-return",id:claimId});
+click({action:"dw-claim-revise",id:claimId});
+check("claim returned to versioned draft",state().designWorkflows.claims.at(-1).status==="draft"&&state().designWorkflows.claims.at(-1).revision===2);
 click({action:"reset-demo"});
-check("E2E reset removes linked audit",state().e2eAudit.length===0&&state().e2eRegistrations.length===0);
+check("E2E reset removes linked audit and demo claims",state().e2eAudit.length===0&&state().e2eRegistrations.length===0&&state().designWorkflows.claims.length===0);
 
 
 /* Role worklists: status view, nurse documentation, check-in idempotency and shared records. */
@@ -274,5 +286,41 @@ check("selecting inpatient returns to its pathway",el("workspace").innerHTML.inc
 click({action:"reset-demo"});
 click({nav:"clinical-pathway"});
 check("pathway reset restores synthetic seed",state().pathwayDemo.variances.length===1&&state().pathwayDemo.variances[0].status==="open"&&state().pathwayDemo.executions.length===3);
+
+
+/* Design workflow regressions: uniqueness, FK guard, referral finality, claim negative gate. */
+click({action:"reset-demo"});
+click({nav:"master-data"});
+check("master data seeded",state().designWorkflows.units.length===3);
+submit("dw-unit",{code:"POLI-JANTUNG",name:"Poli Jantung"});
+check("new master unit added",state().designWorkflows.units.some(x=>x.code==="POLI-JANTUNG"));
+const unitsCount=state().designWorkflows.units.length;
+submit("dw-unit",{code:"POLI-JANTUNG",name:"Duplicate"});
+check("master unit unique code enforced",state().designWorkflows.units.length===unitsCount);
+submit("dw-service",{code:"SVC-JANTUNG",name:"Konsultasi Jantung",price:"120000",unitId:"UNIT-004"});
+check("service references valid unit",state().designWorkflows.services.some(x=>x.code==="SVC-JANTUNG"&&x.unitId==="UNIT-004"));
+const svcCount=state().designWorkflows.services.length;
+submit("dw-service",{code:"SVC-GAGAL",name:"Tidak valid",price:"-20",unitId:"UNIT-004"});
+check("negative service tariff rejected",state().designWorkflows.services.length===svcCount);
+submit("dw-assign",{practitionerId:"PR-02",unitId:"UNIT-004"});
+check("practitioner assignment linked",state().designWorkflows.assignments.some(x=>x.practitionerId==="PR-02"&&x.unitId==="UNIT-004"));
+submit("dw-bed",{code:"JANTUNG-01",unitId:"UNIT-004"});
+check("bed master linked to unit",state().designWorkflows.beds.some(x=>x.code==="JANTUNG-01"));
+click({nav:"referrals"});
+submit("dw-referral",{encounterId:"E-1001",destination:"RS Tujuan Demo",reason:"Memerlukan perawatan spesialis"});
+check("referral requested",state().designWorkflows.referrals.length===1&&state().designWorkflows.referrals[0].status==="requested");
+submit("dw-referral",{encounterId:"E-1001",destination:"RS Tujuan Demo",reason:"Permintaan duplikat"});
+check("duplicate active referral rejected",state().designWorkflows.referrals.length===1);
+const refId=state().designWorkflows.referrals[0].id;
+click({action:"dw-referral-accept",id:refId});
+click({action:"dw-referral-reject",id:refId});
+check("accepted referral cannot become rejected",state().designWorkflows.referrals[0].status==="accepted");
+click({nav:"claims"});
+submit("dw-claim",{encounterId:"E-1004"});
+const negativeClaim=state().designWorkflows.claims[0].id;
+click({action:"dw-claim-validate",id:negativeClaim});
+check("claim validation rejects missing diagnosis and charge",state().designWorkflows.claims[0].status==="draft");
+click({action:"reset-demo"});
+check("reset clears design workspace transactions",state().designWorkflows.units.length===3&&state().designWorkflows.referrals.length===0&&state().designWorkflows.claims.length===0);
 
 console.log("All SIMRS mockup smoke tests passed.");
