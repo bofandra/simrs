@@ -42,6 +42,7 @@ jobs:
           node --check docs/simrs-baru/role-worklists.js
           node --check docs/simrs-baru/clinical-pathway.js
           node --check docs/simrs-baru/design-workflows.js
+          node --check docs/simrs-baru/care-expansion.js
           node scripts/simrs-mockup-smoke.cjs
 
       - name: Install Chromium browser test dependencies
