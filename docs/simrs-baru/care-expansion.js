@@ -67,7 +67,7 @@ function careRender(c){
     (a.bedId?'<p>Bed terpilih: '+esc((d.designWorkflows?.beds||[]).find(b=>b.id===a.bedId)?.code||a.bedId)+'</p>':""));
    content+=panel("Tahap rawat inap",'<p>Asuhan terdokumentasi adalah keberadaan nursing note sintetis; bukan penilaian kelayakan discharge.</p>'+btn("cfx-next",enc.id,"Lanjut tahap","primary"));
   }
-  if(a.step===steps.length-1)content+=panel("Hasil",'<strong>'+esc(a.disposition?"Disposisi: "+a.disposition:"Alur administrasi demo selesai")+'</strong><p>Data klinis dan encounter utama tidak diubah oleh skenario ini.</p>');
+  if(a.step===steps.length-1&&(u.careMode!=="IGD"||a.disposition))content+=panel("Hasil",'<strong>'+esc(a.disposition?"Disposisi: "+a.disposition:"Alur administrasi demo selesai")+'</strong><p>Data klinis dan encounter utama tidak diubah oleh skenario ini.</p>');
   content+=panel("Jejak perubahan demo",'<ol class="cfx-history">'+a.history.map(h=>'<li>'+esc(h)+'</li>').join("")+'</ol>');
  }
  return c.pageHead("RME / WORKFLOW SETTING / DATA SINTETIS","Rawat Jalan, IGD & Rawat Inap","Detail alur administratif yang dapat diuji, terikat Encounter yang sudah ada. Tidak membuat keputusan medis.")+content;
