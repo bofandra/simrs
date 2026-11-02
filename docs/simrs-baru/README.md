@@ -123,3 +123,18 @@ Workflow publikasi menjalankan Chromium/Playwright pada desktop 1440×900, table
 - **Handoff 7 PIC + 1 koordinator**: keputusan workflow dan kebutuhan produksi di [WORKFLOW_CONTRACTS_V1.md](./WORKFLOW_CONTRACTS_V1.md).
 
 Semua transaksi tetap bersifat simulasi browser/localStorage. Login, RBAC, multi-tenant, database, integrasi FHIR/BPJS dan transaksi riil belum tersedia.
+
+
+## Pembaruan 2 November 2026 — Pendalaman Alur & Layanan Spesialistik
+
+- **Skenario RJ/IGD/RI** pada halaman #care-settings: workflow per konteks, relasi ke Encounter contoh, pemeriksaan dokumentasi RJ, keharusan adanya triase IGD, disposisi simulasi final, bed assignment/transfer RI, dan keterkaitan nursing note. **Tidak mengubah status Encounter asli**.
+- **Hemodialisis** (#hemodialysis): contoh urutan administrasi permintaan hingga review sesi.
+- **Rehabilitasi Medik** (#rehabilitation): contoh urutan permintaan, asesmen, rencana, sesi, evaluasi.
+- **MCU** (#mcu): paket, item pemeriksaan, draft laporan dan review administratif.
+- **Bank Darah** (#blood-bank): hanya status dokumentasi permintaan, sampel, kompatibilitas dan verifikasi. **Tidak menguji kompatibilitas, me-release unit, atau melakukan transfusi**.
+- Keempat layanan mempunyai episode per Encounter aktif, pencegahan duplikat, transisi satu arah, pembatalan beralasan dan event history simulasi.
+- Peta Fitur mengarahkan tujuh workflow baru ke layar terkait dan membedakan hubungan modul/workflow dari implementasi produksi.
+- **Draft desain DB/API**: [DATABASE_API_HANDOFF_V2.md](./DATABASE_API_HANDOFF_V2.md) dan [OPENAPI_CARE_SPECIALTY_DRAFT.yaml](./OPENAPI_CARE_SPECIALTY_DRAFT.yaml). Dokumen ini **belum disetujui oleh 7 PIC maupun koordinator**.
+- Smoke test Node dan Chromium desktop/tablet/mobile mencakup navigasi, transisi positif/negatif dan overflow.
+
+Batasan: seluruh workflow baru hanya untuk review desain dengan data sintetis/localStorage. Tidak ada SOP klinis final, order/stock movement medis, tindakan pasien, charge, API nyata, auth/RBAC atau database produksi.

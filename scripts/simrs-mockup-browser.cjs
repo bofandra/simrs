@@ -93,7 +93,26 @@ const server=http.createServer((req,res)=>{
    await page.locator('form[data-form="dw-claim"] button[type="submit"]').click();
    assert.ok((await page.locator("#workspace").innerText()).includes("CLM-001"),"claim draft works in browser");
    assert.deepEqual(errors,[],size.name+": design workflow browser errors");
-await context.close();
+   for(const [route,heading] of [["care-settings","Rawat Jalan, IGD & Rawat Inap"],["hemodialysis","Hemodialisis"],["rehabilitation","Rehabilitasi Medik"],["mcu","Medical Check Up"],["blood-bank","Bank Darah"]]){
+    await page.goto(origin+"/#"+route,{waitUntil:"networkidle"});
+    await page.locator("#workspace h1").waitFor();
+    assert.ok((await page.locator("#workspace h1").innerText()).includes(heading),route+" heading");
+    const width=await page.evaluate(()=>({page:document.documentElement.scrollWidth,viewport:window.innerWidth}));
+    assert.ok(width.page<=width.viewport+2,size.name+" "+route+" overflow "+JSON.stringify(width));
+    await page.screenshot({path:path.join(dest,route+"-"+size.name+".png"),fullPage:true});
+    assert.deepEqual(errors,[],size.name+" "+route+" browser exceptions");
+   }
+   await page.goto(origin+"/#care-settings",{waitUntil:"networkidle"});
+   await page.locator('[data-action="cfx-start"][data-id="E-1001"]').click();
+   assert.ok((await page.locator("#workspace").innerText()).includes("Tahap aktif"),"RJ scenario can start");
+   await page.locator('[data-action="cfx-mode"][data-id="IGD"]').click();
+   await page.locator('[data-action="cfx-start"][data-id="E-1002"]').click();
+   assert.ok((await page.locator("#workspace").innerText()).includes("Triase terdokumentasi"),"IGD scenario can start");
+   await page.goto(origin+"/#mcu",{waitUntil:"networkidle"});
+   await page.locator('form[data-form="cfx-specialty-start"] button[type=submit]').click();
+   assert.ok((await page.locator("#workspace").innerText()).includes("SPX-001"),"MCU episode created");
+   assert.deepEqual(errors,[],size.name+" expanded workflow browser exceptions");
+   await context.close();
    process.stdout.write("PASS Chromium "+size.name+" ("+size.width+"x"+size.height+"), six roles, nursing, LIS, pharmacy, cashier, pathway, screenshots\n");
   }
   console.log("All browser responsive smoke tests passed.");

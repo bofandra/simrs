@@ -1,0 +1,468 @@
+openapi: 3.0.3
+info:
+  title: SIMRS Baru - Candidate Care Settings and Specialty API
+  version: 0.2.0-draft
+  description: >
+    FOR ARCHITECTURE WORKSHOP ONLY. Endpoints are proposed, not implemented.
+    No production clinical actions, transfusion releases, BPJS calls or SATUSEHAT writes.
+servers:
+  - url: https://simrs.example.invalid
+    description: Placeholder only; no live server.
+security:
+  - bearerAuth: []
+tags:
+  - name: CareFlow
+  - name: SpecialtyEpisode
+paths:
+  /api/v1/encounters/{encounterId}/care-flow:
+    parameters:
+      - $ref: '#/components/parameters/EncounterId'
+    get:
+      tags: [CareFlow]
+      operationId: getCareFlow
+      summary: Read state and history for an encounter-scoped care workflow
+      responses:
+        '200':
+          description: Care flow state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CareFlow'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      tags: [CareFlow]
+      operationId: startCareFlow
+      summary: Propose starting a care flow for an active encounter
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [setting]
+              properties:
+                setting:
+                  type: string
+                  enum: [outpatient, emergency, inpatient]
+      responses:
+        '201':
+          description: New care flow
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CareFlow'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/Validation'
+  /api/v1/encounters/{encounterId}/care-flow/transitions:
+    parameters:
+      - $ref: '#/components/parameters/EncounterId'
+    post:
+      tags: [CareFlow]
+      operationId: transitionCareFlow
+      summary: Request a validated state transition with optimistic concurrency
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [targetState, reason]
+              properties:
+                targetState:
+                  type: string
+                  maxLength: 64
+                reason:
+                  type: string
+                  minLength: 8
+                  maxLength: 500
+      responses:
+        '200':
+          description: Updated state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CareFlow'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '412':
+          $ref: '#/components/responses/StaleVersion'
+        '422':
+          $ref: '#/components/responses/Validation'
+  /api/v1/encounters/{encounterId}/disposition:
+    parameters:
+      - $ref: '#/components/parameters/EncounterId'
+    post:
+      tags: [CareFlow]
+      operationId: setEmergencyDisposition
+      summary: Record authorized IGD disposition; must link downstream episode if applicable
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [disposition, reason]
+              properties:
+                disposition:
+                  type: string
+                  enum: [discharged, admitted, referred]
+                reason:
+                  type: string
+                  minLength: 8
+                targetEncounterId:
+                  type: string
+                  format: uuid
+                  nullable: true
+                referralId:
+                  type: string
+                  format: uuid
+                  nullable: true
+      responses:
+        '200':
+          description: Disposition recorded and version advanced
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CareFlow'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/Validation'
+  /api/v1/encounters/{encounterId}/bed-movements:
+    parameters:
+      - $ref: '#/components/parameters/EncounterId'
+    post:
+      tags: [CareFlow]
+      operationId: moveInpatientBed
+      summary: Allocate or transfer a bed with occupancy conflict protection
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [targetBedId, effectiveAt]
+              properties:
+                targetBedId:
+                  type: string
+                  format: uuid
+                effectiveAt:
+                  type: string
+                  format: date-time
+                reason:
+                  type: string
+                  maxLength: 500
+      responses:
+        '201':
+          description: Immutable bed movement recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BedMovement'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '412':
+          $ref: '#/components/responses/StaleVersion'
+  /api/v1/specialty-episodes:
+    post:
+      tags: [SpecialtyEpisode]
+      operationId: createSpecialtyEpisode
+      summary: Create a specialty episode linked to active encounter
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [encounterId, serviceType]
+              properties:
+                encounterId:
+                  type: string
+                  format: uuid
+                serviceType:
+                  $ref: '#/components/schemas/SpecialtyType'
+                serviceOrderId:
+                  type: string
+                  format: uuid
+                  nullable: true
+      responses:
+        '201':
+          description: Specialty episode created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpecialtyEpisode'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/Validation'
+  /api/v1/specialty-episodes/{episodeId}:
+    parameters:
+      - $ref: '#/components/parameters/EpisodeId'
+    get:
+      tags: [SpecialtyEpisode]
+      operationId: getSpecialtyEpisode
+      summary: Read scoped episode state and events
+      responses:
+        '200':
+          description: Episode state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpecialtyEpisode'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/v1/specialty-episodes/{episodeId}/transitions:
+    parameters:
+      - $ref: '#/components/parameters/EpisodeId'
+    post:
+      tags: [SpecialtyEpisode]
+      operationId: transitionSpecialtyEpisode
+      summary: Record documentation status only; never a medical clearance or product release
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [targetState, evidenceId]
+              properties:
+                targetState:
+                  type: string
+                  maxLength: 64
+                evidenceId:
+                  type: string
+                  format: uuid
+                notes:
+                  type: string
+                  maxLength: 500
+      responses:
+        '200':
+          description: Episode state updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpecialtyEpisode'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '412':
+          $ref: '#/components/responses/StaleVersion'
+        '422':
+          $ref: '#/components/responses/Validation'
+  /api/v1/specialty-episodes/{episodeId}/cancellation:
+    parameters:
+      - $ref: '#/components/parameters/EpisodeId'
+    post:
+      tags: [SpecialtyEpisode]
+      operationId: cancelSpecialtyEpisode
+      summary: Cancel a nonterminal episode with reason and audit
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason]
+              properties:
+                reason:
+                  type: string
+                  minLength: 8
+                  maxLength: 500
+      responses:
+        '200':
+          description: Cancelled episode
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpecialtyEpisode'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '412':
+          $ref: '#/components/responses/StaleVersion'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    EncounterId:
+      name: encounterId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    EpisodeId:
+      name: episodeId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema:
+        type: string
+        minLength: 8
+        maxLength: 128
+    IfMatch:
+      name: If-Match
+      in: header
+      required: true
+      description: ETag/version of resource used for optimistic concurrency
+      schema:
+        type: string
+  responses:
+    Unauthorized:
+      description: Missing or invalid authentication
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Forbidden:
+      description: No permission to act on scoped resource
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    NotFound:
+      description: Resource missing or inaccessible under scope
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Conflict:
+      description: Duplicate, conflicting bed occupancy or invalid state transition
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    StaleVersion:
+      description: If-Match mismatch, retry after refreshing state
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Validation:
+      description: Business rule violation or missing required evidence
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+  schemas:
+    SpecialtyType:
+      type: string
+      enum: [hemodialysis, rehabilitation, mcu, blood_bank]
+    CareFlow:
+      type: object
+      required: [id, encounterId, setting, status, version]
+      properties:
+        id:
+          type: string
+          format: uuid
+        encounterId:
+          type: string
+          format: uuid
+        setting:
+          type: string
+          enum: [outpatient, emergency, inpatient]
+        status:
+          type: string
+        disposition:
+          type: string
+          nullable: true
+          enum: [discharged, admitted, referred]
+        version:
+          type: integer
+          minimum: 1
+        updatedAt:
+          type: string
+          format: date-time
+    BedMovement:
+      type: object
+      required: [id, encounterId, bedId, effectiveAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        encounterId:
+          type: string
+          format: uuid
+        bedId:
+          type: string
+          format: uuid
+        effectiveAt:
+          type: string
+          format: date-time
+        version:
+          type: integer
+    SpecialtyEpisode:
+      type: object
+      required: [id, encounterId, serviceType, status, version]
+      properties:
+        id:
+          type: string
+          format: uuid
+        encounterId:
+          type: string
+          format: uuid
+        serviceType:
+          $ref: '#/components/schemas/SpecialtyType'
+        status:
+          type: string
+        version:
+          type: integer
+          minimum: 1
+        cancelled:
+          type: boolean
+        updatedAt:
+          type: string
+          format: date-time
+    Problem:
+      type: object
+      required: [code, message, requestId]
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        requestId:
+          type: string
+        fieldErrors:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              reason:
+                type: string

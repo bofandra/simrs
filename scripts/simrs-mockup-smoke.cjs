@@ -22,7 +22,7 @@ const loc={hash:""};
 const storage={getItem:key=>saved[key]||null,setItem(key,val){saved[key]=val}};
 class DemoFormData{constructor(form){this.values=form.values}get(key){return this.values[key]}}
 const context=vm.createContext({window:browser,document,location:loc,localStorage:storage,confirm:()=>true,setTimeout:()=>{},FormData:DemoFormData,console});
-for(const f of ["catalog.js","database-tables.js","enhancements.js","specialty.js","feature-map.js","care-journey.js","role-worklists.js","clinical-pathway.js","design-workflows.js","app.js"]){
+for(const f of ["catalog.js","database-tables.js","enhancements.js","specialty.js","feature-map.js","care-journey.js","role-worklists.js","clinical-pathway.js","design-workflows.js","care-expansion.js","app.js"]){
  const source=fs.readFileSync(path.join(root,f),"utf8");
  new vm.Script(source,{filename:f}).runInContext(context);
 }
@@ -35,13 +35,13 @@ check("23 schemas",Object.keys(browser.SIMRS_ALL_TABLES).length===23);
 check("68 modules",browser.SIMRS_CATALOG.moduleGroups.reduce((n,g)=>n+g.modules.length,0)===68);
 const fmap=browser.SIMRS_FEATURE_MAP;
 check("feature mapping covers 68 modules",fmap.features.length===68&&fmap.features.every(f=>fmap.workflows[f.workflowId]));
-check("feature workflow has new demo routes",["master","referral","claims","pathway"].every(id=>fmap.workflows[id].demo&&!!fmap.workflows[id].screen));
+check("feature workflow has new demo routes",["master","referral","claims","pathway","outpatient","emergency","inpatient","dialysis","rehab","mcu","blood"].every(id=>fmap.workflows[id].demo&&!!fmap.workflows[id].screen));
 check("feature workflow tables canonical",fmap.invalidTables.length===0&&Object.values(fmap.workflows).every(w=>w.tables.every(t=>browser.SIMRS_ALL_TABLE_NAMES.includes(t))));
 const fieldTables=Object.entries(browser.SIMRS_CATALOG.db).flatMap(([schema,g])=>Object.keys(g.tables).map(t=>schema+"."+t));
 check("catalog detailed tables canonical",fieldTables.every(t=>browser.SIMRS_ALL_TABLE_NAMES.includes(t)));
 const fieldFks=Object.values(browser.SIMRS_CATALOG.db).flatMap(g=>Object.values(g.tables).flatMap(fs=>fs.filter(f=>f.includes("FK → ")).map(f=>f.split("FK → ")[1])));
 check("catalog FK targets canonical",fieldFks.every(t=>browser.SIMRS_ALL_TABLE_NAMES.includes(t)));
-for(const page of ["dashboard","modules","feature-map","care-journey","role-worklists","patients","patient360","frontoffice","encounters","clinical","clinical-pathway","master-data","referrals","claims","orders","laboratory","pharmacy","radiology","surgery","nutrition","cssd","laundry","hr","reports","billing","inventory","journey","database","fhir"]){
+for(const page of ["dashboard","modules","feature-map","care-journey","role-worklists","patients","patient360","frontoffice","encounters","clinical","clinical-pathway","master-data","referrals","claims","care-settings","hemodialysis","rehabilitation","mcu","blood-bank","orders","laboratory","pharmacy","radiology","surgery","nutrition","cssd","laundry","hr","reports","billing","inventory","journey","database","fhir"]){
  click({nav:page});
  check("route "+page,el("workspace").innerHTML.length>500);
 }
@@ -322,5 +322,58 @@ click({action:"dw-claim-validate",id:negativeClaim});
 check("claim validation rejects missing diagnosis and charge",state().designWorkflows.claims[0].status==="draft");
 click({action:"reset-demo"});
 check("reset clears design workspace transactions",state().designWorkflows.units.length===3&&state().designWorkflows.referrals.length===0&&state().designWorkflows.claims.length===0);
+
+
+/* Expanded RJ/IGD/RI workflow scenarios are isolated from operational Encounter state. */
+click({action:"reset-demo"});
+click({nav:"care-settings"});
+click({action:"cfx-start",id:"E-1001"});
+check("RJ scenario attached to Encounter",state().careExpansion.care["E-1001"].type==="Rawat Jalan");
+for(let i=0;i<3;i++)click({action:"cfx-next",id:"E-1001"});
+check("RJ scenario reaches completion",state().careExpansion.care["E-1001"].step===3);
+check("RJ administrative scenario leaves encounter unchanged",state().encounters.find(x=>x.id==="E-1001").status==="in-progress");
+click({action:"cfx-start",id:"E-1001"});
+check("RJ duplicate scenario prevented",Object.keys(state().careExpansion.care).length===1);
+click({action:"cfx-mode",id:"IGD"});
+click({action:"cfx-start",id:"E-1002"});
+for(let i=0;i<3;i++)click({action:"cfx-next",id:"E-1002"});
+check("IGD triage required and disposition step reached",state().careExpansion.care["E-1002"].step===3);
+click({action:"cfx-disposition",id:"E-1002|admit"});
+click({action:"cfx-disposition",id:"E-1002|discharge"});
+check("IGD disposition final cannot be replaced",state().careExpansion.care["E-1002"].disposition==="admit");
+click({action:"cfx-mode",id:"Rawat Inap"});
+click({action:"cfx-start",id:"E-1003"});
+click({action:"cfx-next",id:"E-1003"});
+check("RI cannot advance without bed",state().careExpansion.care["E-1003"].step===0);
+submit("cfx-bed",{encounterId:"E-1003",bedId:"BED-001"});
+check("RI bed held by encounter in demo",state().designWorkflows.beds.find(x=>x.id==="BED-001").heldBy==="E-1003");
+click({action:"cfx-next",id:"E-1003"});
+click({action:"cfx-next",id:"E-1003"});
+click({action:"cfx-next",id:"E-1003"});
+click({action:"cfx-next",id:"E-1003"});
+check("RI sequence completes with nursing note and frees bed",state().careExpansion.care["E-1003"].step===4&&state().designWorkflows.beds.find(x=>x.id==="BED-001").status==="available");
+check("RI scenario does not mutate encounter",state().encounters.find(x=>x.id==="E-1003").status==="in-progress");
+
+/* Four specialist services: idempotent episode, step history and cancellation. */
+for(const [type,route] of [["hemodialysis","hemodialysis"],["rehabilitation","rehabilitation"],["mcu","mcu"],["blood","blood-bank"]]){
+ click({nav:route});
+ submit("cfx-specialty-start",{type,encounterId:"E-1001"});
+ const match=()=>state().careExpansion.specialties.filter(x=>x.type===type);
+ check(type+" episode started",match().length===1&&match()[0].encounterId==="E-1001");
+ submit("cfx-specialty-start",{type,encounterId:"E-1001"});
+ check(type+" duplicate episode prevented",match().length===1);
+ const id=match()[0].id;
+ if(type==="rehabilitation"){
+  submit("cfx-specialty-cancel",{caseId:id,reason:"Jadwal pasien berubah"});
+  click({action:"cfx-specialty-next",id});
+  check(type+" cancellation is final",match()[0].cancelled&&match()[0].step===0);
+ }else{
+  for(let i=0;i<4;i++)click({action:"cfx-specialty-next",id});
+  click({action:"cfx-specialty-next",id});
+  check(type+" completed and cannot double-advance",match()[0].step===4&&match()[0].history.length===5);
+ }
+}
+click({action:"reset-demo"});
+check("reset clears care and specialty cases",Object.keys(state().careExpansion.care).length===0&&state().careExpansion.specialties.length===0);
 
 console.log("All SIMRS mockup smoke tests passed.");
