@@ -69,7 +69,31 @@ const server=http.createServer((req,res)=>{
    const pathwayOverflow=await page.evaluate(()=>({page:document.documentElement.scrollWidth,viewport:window.innerWidth}));
    assert.ok(pathwayOverflow.page<=pathwayOverflow.viewport+2,size.name+": pathway overflow "+JSON.stringify(pathwayOverflow));
    assert.deepEqual(errors,[],size.name+" JS exceptions after Clinical Pathway");
-   await context.close();
+      // New design workspaces must work at desktop, tablet and mobile viewports.
+   for(const [route,heading] of [["master-data","Master Fasilitas, Tarif & Bed"],["referrals","Rujukan Internal & Eksternal"],["claims","Workbench Kesiapan Klaim"]]){
+    await page.goto(origin+"/#"+route,{waitUntil:"networkidle"});
+    await page.locator("#workspace h1").waitFor();
+    assert.ok((await page.locator("#workspace h1").innerText()).includes(heading),route+" heading");
+    const width=await page.evaluate(()=>({page:document.documentElement.scrollWidth,viewport:window.innerWidth}));
+    assert.ok(width.page<=width.viewport+2,size.name+": "+route+" overflow "+JSON.stringify(width));
+    assert.deepEqual(errors,[],size.name+": "+route+" JS exceptions");
+    await page.screenshot({path:path.join(dest,route+"-"+size.name+".png"),fullPage:true});
+   }
+   await page.goto(origin+"/#master-data",{waitUntil:"networkidle"});
+   await page.locator('form[data-form="dw-unit"] input[name="code"]').fill("POLI-UJI");
+   await page.locator('form[data-form="dw-unit"] input[name="name"]').fill("Poli Uji");
+   await page.locator('form[data-form="dw-unit"] button[type="submit"]').click();
+   assert.ok((await page.locator("#workspace").innerText()).includes("POLI-UJI"),"master unit create works in browser");
+   await page.goto(origin+"/#referrals",{waitUntil:"networkidle"});
+   await page.locator('form[data-form="dw-referral"] input[name="destination"]').fill("RS Tujuan Sintetis");
+   await page.locator('form[data-form="dw-referral"] input[name="reason"]').fill("Perlu evaluasi lanjut");
+   await page.locator('form[data-form="dw-referral"] button[type="submit"]').click();
+   assert.ok((await page.locator("#workspace").innerText()).includes("RS Tujuan Sintetis"),"referral create works in browser");
+   await page.goto(origin+"/#claims",{waitUntil:"networkidle"});
+   await page.locator('form[data-form="dw-claim"] button[type="submit"]').click();
+   assert.ok((await page.locator("#workspace").innerText()).includes("CLM-001"),"claim draft works in browser");
+   assert.deepEqual(errors,[],size.name+": design workflow browser errors");
+await context.close();
    process.stdout.write("PASS Chromium "+size.name+" ("+size.width+"x"+size.height+"), six roles, nursing, LIS, pharmacy, cashier, pathway, screenshots\n");
   }
   console.log("All browser responsive smoke tests passed.");
