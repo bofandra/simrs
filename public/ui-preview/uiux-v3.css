@@ -1,0 +1,197 @@
+/* SIMRS Baru • UI/UX Direction v3 / 08 Nov 2026
+ * Role-first clinical workspace. Visual tokens are PROVISIONAL, not official SATUSEHAT tokens.
+ * Layer only; preserve existing demo actions, role permissions and safety gates.
+ */
+:root{
+  --navy:#17313e;--navy2:#274653;--teal:#0a847c;--teal-soft:#e8f7f3;
+  --blue:#256ba4;--blue-soft:#eaf3fa;--bg:#f5f8f8;--surface:#ffffff;
+  --ink:#233840;--muted:#677d84;--border:#dce8e8;--border-soft:#edf2f2;
+  --shadow:0 3px 16px rgba(19,55,66,.035);--nav:254px;
+  --r-sm:8px;--r-md:12px;--r-lg:16px;
+}
+body{background:#f5f8f8;color:var(--ink);font-size:13px;line-height:1.5;letter-spacing:-.06px}
+button,input,select,textarea{font-family:inherit}
+::selection{background:#b9ebe2;color:#144d4a}
+/* Clinical navigation: high signal, low decoration */
+#app aside{width:var(--nav);background:#fff;color:#344e55;border-right:1px solid #dfe9e8;box-shadow:none}
+aside .brand{padding:25px 18px 19px;border-bottom:1px solid #eef2f1}
+aside .brand-mark{height:39px;width:39px;border-radius:12px;background:#0a847c;box-shadow:none;font-size:24px}
+aside .brand strong{color:#16343c;font-size:17px;letter-spacing:-.7px}
+aside .brand small{color:#7e999b;font-size:9px;letter-spacing:1px;font-weight:750}
+aside .side-caption{color:#97a6ab;font-size:10px;letter-spacing:1.05px;padding-top:20px}
+aside .navbtn, aside .ux-nav-link{color:#587078;font-weight:650;border-radius:9px;min-height:41px}
+aside .navbtn:hover,aside .ux-nav-link:hover{background:#f1f7f6;color:#075f59}
+aside .navbtn.active,aside .ux-nav-link.active{background:#e7f5f1;color:#086d64;box-shadow:inset 3px 0 0 #11998d;border-color:transparent}
+aside .navbtn .num{color:#789b96}
+aside .sidefoot{background:#f8fbfa;color:#5e7b79;border-color:#e4edeb}
+aside .sidefoot strong{color:#264850}
+#main{background:#f5f8f8}
+.topbar{height:68px;background:#fff;border-bottom:1px solid #e2eae9;box-shadow:none;padding:0 34px;gap:12px}
+.topbar .breadcrumbs{font-size:12px;color:#8b9da2}
+.topbar .breadcrumbs b{color:#24454b;font-weight:760}
+.topbar select{border-color:#dbe8e5;background:#fbfdfc;border-radius:9px;min-height:37px}
+.avatar{background:#e6f5f1;color:#0b7369;font-weight:850}
+.demo{background:#fff8e6;color:#926521;border:1px solid #f0e3bd;border-radius:7px}
+#demo-current-role{border:1px solid #d2e7df;background:#edf8f4;color:#0a7769;border-radius:9px}
+#demo-logout{border-color:#dce8e5;border-radius:9px}
+.content{max-width:1700px;margin:0 auto;padding:29px 34px 55px}
+.page-head{margin-bottom:21px;align-items:center}
+.page-head h1{font-weight:800;letter-spacing:-.9px;font-size:27px;color:#183942}
+.page-head p{font-size:12px;color:#6c8086}
+.eyebrow{font-size:10px;color:#0b8479;font-weight:850;letter-spacing:1.2px}
+.card{border:1px solid #e0ebea;border-radius:14px;box-shadow:var(--shadow);background:#fff}
+.card-h{padding:14px 18px;min-height:54px;border-bottom:1px solid #edf2f2}
+.card-h h2,.card-h h3{font-size:13px;color:#24434a}
+.card-body,.card-pad{padding:18px}
+.metric{padding:20px}
+.metric strong{color:#1e4650;font-size:27px;font-weight:780}
+.metric .overline{font-size:11px;color:#71858b}
+.btn{border-color:#dbe6e6;border-radius:9px;box-shadow:none;font-weight:730}
+.btn-primary,.btn-blue{background:#09877d;border-color:#09877d;color:#fff}
+.btn-primary:hover,.btn-blue:hover{background:#076b64;border-color:#076b64}
+.forminput{border-color:#d8e4e5;border-radius:9px;min-height:40px;font-size:12px}
+.forminput:focus{border-color:#0c8a80;box-shadow:0 0 0 3px #ccece5}
+.field label,.ux-field label{color:#3f6067;font-size:11px}
+th{background:#f8fbfa;border-bottom:1px solid #e6eeee;text-transform:none;font-weight:800}
+td{border-bottom-color:#edf2f2}
+tbody tr:hover{background:#f4faf8}
+.status{font-weight:760;border-radius:7px;letter-spacing:0}
+.ux-main-grid{gap:16px;grid-template-columns:minmax(220px,250px) minmax(0,1fr) minmax(220px,260px)}
+.ux-patient{border-color:#e0ebeb;border-radius:10px;box-shadow:none}
+.ux-patient:hover,.ux-patient.active{background:#edf8f5;border-color:#66b5a8}
+.ux-patient-banner{background:#edf8f4;border-color:#d2e8e0;padding:15px 18px}
+.ux-patient-banner strong{font-size:14px}
+.ux-tabs button{font-size:12px;min-height:45px}
+.ux-tabs button.active{font-weight:850}
+.ux-kpis>div{border-color:#e1eae9;border-radius:12px;box-shadow:var(--shadow)}
+.ux-kpis strong{color:#214950;font-weight:800}
+.ux-actionbar{padding-top:18px}
+.ux-notice{border-radius:10px}
+/* Login — visual hierarchy, quick persona access, safety banner */
+#demo-login{background:#f3f8f7;color:#25464c}
+.demo-login-wrap{
+  max-width:1660px;grid-template-columns:minmax(360px,.91fr) minmax(475px,1fr);
+  min-height:100vh;background:#fff;box-shadow:0 12px 48px rgba(10,55,57,.055)
+}
+.demo-login-intro{
+  position:relative;overflow:hidden;isolation:isolate;min-height:100vh;
+  background:radial-gradient(circle at 85% 15%,#2f9c9b52 0,transparent 35%),
+             linear-gradient(145deg,#0b3441 0%,#0d5259 57%,#087b73 100%);
+  padding:clamp(34px,5vw,70px) clamp(30px,4.5vw,74px);color:#f0f9f7
+}
+.demo-login-intro:before{
+  content:"";position:absolute;width:400px;height:400px;border-radius:50%;
+  right:-160px;bottom:12%;border:75px solid #ffffff08;z-index:-1
+}
+.demo-login-intro:after{
+  content:"";position:absolute;width:240px;height:240px;border-radius:50%;
+  left:-125px;top:32%;border:1px solid #ffffff17;z-index:-1
+}
+.demo-login-brand{margin-bottom:clamp(45px,9vh,108px);font-size:18px;letter-spacing:-.4px}
+.demo-login-brand span{background:#ffffff16;width:47px;height:47px;border-radius:13px;font-weight:850;font-size:27px}
+.demo-eyebrow{color:#8be3d4;font-size:10px;letter-spacing:1.3px}
+.demo-login-intro h1{max-width:540px;font-weight:800;letter-spacing:-1.8px;font-size:clamp(33px,3.4vw,56px);line-height:1.12;margin-top:19px;margin-bottom:20px}
+.demo-login-intro h1 em{color:#9ce7d8}
+.demo-login-intro>p{font-size:14px;max-width:455px;line-height:1.9;color:#d4e7e9}
+.demo-login-points{display:grid;gap:12px;margin-top:32px}
+.demo-login-points span{font-size:12px;color:#ecf8f7}
+.demo-login-points span:before{width:25px;height:25px;border-color:#70c5b6;color:#befff1;background:#ffffff0a}
+.demo-login-disclaimer{border-top:1px solid #ffffff24;padding-top:15px;margin-top:auto;color:#c4e0e0}
+.demo-login-panel{background:#f8fbfa;padding:clamp(25px,3.6vw,56px);gap:14px}
+.demo-login-header h2{font-size:26px;font-weight:800;letter-spacing:-.7px;color:#183e45}
+.demo-login-header p{color:#71888b;font-size:12px}
+.demo-online{background:#e3f6ef;border:1px solid #cde8db;color:#1e7d61;border-radius:99px;font-size:10px;padding:7px 12px}
+.demo-login-fields{padding:24px;gap:9px;border:1px solid #e0ebe8;border-radius:15px;box-shadow:0 10px 24px rgba(21,67,68,.04)}
+.demo-login-fields label{color:#3e6465;font-size:11px}
+.demo-login-fields input{border:1px solid #d8e5e3;border-radius:9px;height:44px;background:#fff}
+.demo-login-submit{border-radius:10px;min-height:44px;font-weight:800;background:#087e74}
+.demo-login-submit:hover{background:#07645e}
+.demo-pass-hint{color:#7b898a}
+.demo-account-title h3{font-size:14px;color:#234b52}
+#demo-account-filter{height:42px;border-radius:10px;border-color:#dbe8e4}
+.demo-account-scroll{background:#fff;border:1px solid #e2ece9;border-radius:13px;padding:10px 12px;max-height:330px;scrollbar-color:#bed9d2 transparent}
+.demo-account-group{padding:8px 0}
+.demo-account-group h3{color:#6a878a;font-size:10px;letter-spacing:.45px}
+.demo-account{border-radius:10px;border-color:#e3eae9;background:#fff;min-height:58px;padding:10px}
+.demo-account:hover{background:#f3faf8;border-color:#95ccc1}
+.demo-account.selected{border-color:#0d8b7c;background:#eaf8f3;box-shadow:inset 0 0 0 1px #0d8b7c30}
+.demo-account-symbol{background:#edf5f4;color:#39766f;border-radius:9px}
+.demo-account.selected .demo-account-symbol{background:#d1ede3;color:#087469}
+.demo-login-foot{color:#829698}
+.demo-quick-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:1px 0 -4px}
+.demo-quick-head strong{font-size:12px;color:#2c5659}
+.demo-quick-head span{font-size:10px;color:#839898}
+.demo-quick-roles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.demo-quick-role{
+  border:1px solid #dce9e6;background:#fff;border-radius:10px;padding:9px 10px;
+  display:flex;align-items:center;gap:8px;text-align:left;color:#2d5256;
+  font-size:11px;font-weight:770;min-height:43px
+}
+.demo-quick-role:hover{border-color:#71b9ae;background:#f2faf7}
+.demo-quick-role.selected{border-color:#0c8d80;background:#e8f7f2;color:#056e65}
+.demo-quick-dot{display:grid;place-items:center;width:24px;height:24px;border-radius:7px;background:#e6f3f1;color:#087e72;font-size:10px;font-weight:900;flex:none}
+/* Role-specific home is a work queue, not a generic module map */
+.role-home-hero{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:20px;
+  padding:24px 26px;border:1px solid #cce5de;border-radius:15px;
+  background:linear-gradient(110deg,#eaf9f4 0%,#f8fcfa 63%,#fff 100%);margin-bottom:18px
+}
+.role-home-hero .role-hero-overline{font-size:10px;letter-spacing:1.05px;font-weight:850;color:#0d8278;text-transform:uppercase}
+.role-home-hero h2{font-size:23px;letter-spacing:-.6px;color:#1a464a;margin:5px 0 7px}
+.role-home-hero p{font-size:12px;color:#5e7f80;max-width:670px;line-height:1.7;margin:0}
+.role-home-identity{text-align:right;display:grid;gap:5px;color:#567d76;font-size:11px}
+.role-home-identity strong{font-size:12px;color:#18695f}
+.role-home-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:17px}
+.role-home-stat{display:grid;gap:4px;padding:17px 18px;background:#fff;border:1px solid #e0ebe9;border-radius:13px}
+.role-home-stat span{font-size:11px;color:#71888d}
+.role-home-stat strong{font-size:25px;color:#224b52;line-height:1.2;letter-spacing:-.8px}
+.role-home-stat small{color:#648c85;font-size:10px}
+.role-home-layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(260px,.85fr);gap:16px;align-items:start}
+.role-home-worklist,.role-home-side{background:#fff;border:1px solid #e0eae9;border-radius:14px;overflow:hidden}
+.role-home-block-h{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:17px 19px;border-bottom:1px solid #edf2f2}
+.role-home-block-h h3{font-size:14px;color:#23434a;margin:0}
+.role-home-block-h span{font-size:10px;color:#72908c}
+.role-home-row{display:grid;grid-template-columns:54px minmax(0,1fr) auto;gap:13px;align-items:center;padding:15px 18px;border-bottom:1px solid #f0f3f2}
+.role-home-row:last-child{border-bottom:0}
+.role-home-row:hover{background:#fbfdfc}
+.role-home-number{border-radius:9px;background:#edf7f4;color:#0b8074;font-weight:850;font-size:11px;text-align:center;padding:11px 4px}
+.role-home-row h4{font-size:12px;color:#274b50;margin:0 0 4px}
+.role-home-row p{font-size:10px;line-height:1.5;color:#7d9293;margin:0}
+.role-home-row .btn{font-size:10px}
+.role-home-side .demo-task-card{min-height:0;border:0;border-bottom:1px solid #eef2f0;border-radius:0;padding:15px 18px;gap:5px}
+.role-home-side .demo-task-card:last-child{border:0}
+.role-home-side .demo-task-card h3{font-size:12px;margin:0}
+.role-home-side .demo-task-card p{font-size:10px;line-height:1.4}
+.role-home-side .demo-task-card .btn{margin-top:7px}
+.role-home-side .demo-task-index{height:27px;width:27px;border-radius:7px;font-size:10px}
+.role-home-safety{margin-top:16px;border:1px solid #f0dfb6;background:#fffaf0;border-radius:10px;color:#84652b;padding:12px 14px;font-size:10px}
+@media(max-width:1200px){.content{padding:23px 22px}.ux-main-grid{grid-template-columns:210px minmax(0,1fr)}}
+@media(max-width:1020px){.role-home-layout{grid-template-columns:1fr}.role-home-stats{gap:9px}}
+@media(max-width:840px){
+  #app aside{width:100%;border-right:0;border-bottom:1px solid #e6eeee}
+  .topbar{min-height:60px;padding:10px 17px}
+  .content{padding:19px 15px 44px}
+  .demo-login-wrap{grid-template-columns:1fr;box-shadow:none}
+  .demo-login-intro{min-height:0;padding:30px 27px}
+  .demo-login-intro h1{font-size:33px;max-width:700px}
+  .demo-login-brand{margin-bottom:26px}
+  .demo-login-disclaimer{margin-top:22px}
+  .demo-login-panel{padding:25px;max-width:760px;width:100%;margin:0 auto}
+  .demo-login-points{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .role-home-hero{padding:20px}
+}
+@media(max-width:600px){
+  .demo-quick-roles{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .demo-login-points{grid-template-columns:1fr}
+  .demo-login-panel{padding:18px}
+  .demo-login-fields{padding:17px}
+  .role-home-hero{grid-template-columns:1fr}
+  .role-home-identity{text-align:left}
+  .role-home-stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+  .role-home-stat{padding:11px}
+  .role-home-stat strong{font-size:21px}
+  .role-home-stat small{font-size:9px}
+  .role-home-row{grid-template-columns:42px minmax(0,1fr);gap:9px;padding:13px}
+  .role-home-row .btn{grid-column:2;justify-self:start}
+}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}

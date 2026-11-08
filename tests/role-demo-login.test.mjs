@@ -49,6 +49,7 @@ test("login first: page includes role login surface before app and demo artifact
  assert.ok(html.indexOf('id="demo-login"')<html.indexOf('id="app"'));
  assert.match(html,/\.\/role-demo-login\.css/);
  assert.match(html,/\.\/role-demo-login\.js/);
+ assert.match(html,/\.\/uiux-v3\.css/);
  assert.match(html,/id="demo-logout"/);
  assert.match(html,/rolehome/);
 });
@@ -90,7 +91,7 @@ test("support role opens own task home, not arbitrary clinical workspace",()=>{
  assert.equal(h.api.allowArea("clinical"),false);
  assert.equal(h.api.allowModule("OPS-04"),true);
  assert.equal(h.api.allowModule("RME-08"),false);
- assert.match(h.api.renderHome(),/Laundry & Linen/);
+ assert.match(h.api.renderHome(),/Laundry &amp; Linen/); // UI must HTML-escape the module label
  assert.doesNotMatch(h.api.renderHome(),/Katalog 68/);
 });
 
