@@ -1476,11 +1476,113 @@ function navHtml(role,section){
  });
  return out+'<div class="ux-nav-section ux-nav-section-foot">AKSES SESUAI UNIT & ROLE</div>';
 }
-function roleJobs(p,feature){
- var features=feature?[feature]:p.features.slice(0,4);
- return features.map(function(f,i){
-  return {id:"SIM-"+String((i+1)*7).padStart(3,"0"),title:f.task,detail:f.label,
-   status:statuses[i%statuses.length],feature:f};
+/* All rows in these previews are intentionally synthetic; names/IDs do not
+ * describe real patients, actual queue sizes, signed clinical results or money. */
+var fixtureKinds={
+ patient:["Pendaftaran","Dokter RJ","Dokter IGD","Terapis Rehabilitasi"],
+ ward:["DPJP Rawat Inap","Perawat","Perawat HD"],
+ diagnostic:["ATLM","Radiografer","Radiolog","Petugas MCU","Koordinator MCU","Petugas Bank Darah"],
+ pharmacy:["Farmasis"],
+ inventory:["Gudang","Pengadaan","Petugas CSSD","Petugas Laundry","Petugas Dapur","Ahli Gizi"],
+ operations:["Koordinator OK","Dokter Anestesi","Petugas Aset","Teknisi","Petugas Fasilitas","Koordinator Transport"],
+ billing:["Kasir"],
+ claims:["Casemix","Coder","Petugas BPJS"],
+ finance:["Akuntan","Budget Owner","Analis Biaya"],
+ executive:["Manajemen RS","Tim Mutu","Tim PPI"],
+ integration:["Integrasi"],
+ admin:["Admin Sistem","HR Admin","Payroll Admin","Rekruter"],
+ portal:["Pasien Demo"]
+};
+var fixtures={
+ patient:[
+  ["RJ-028","Budi Santoso · Poli Penyakit Dalam","RM 00045872 · 08.17","Menunggu"],
+  ["RJ-029","Siti Rahmawati · Poli Anak","RM 00067109 · 08.22","Dalam proses"],
+  ["RJ-030","Ahmad Fauzi · Poli Jantung","RM 00033218 · 08.30","Perlu ditinjau"],
+  ["RJ-031","Rina Wulandari · Poli Kandungan","RM 00077921 · 08.38","Menunggu"]
+ ],
+ ward:[
+  ["RI-A05","Budi Santoso · Melati A / A-05","Shift pagi · tanda vital diperiksa","Perlu ditinjau"],
+  ["RI-A01","Siti Rahmawati · Melati A / A-01","Shift pagi · intervensi berjalan","Dalam proses"],
+  ["RI-A02","Ahmad Fauzi · Melati A / A-02","Shift pagi · dokumen pending","Menunggu"],
+  ["RI-A03","Rina Wulandari · Melati A / A-03","Shift pagi · pemeriksaan terjadwal","Dalam proses"]
+ ],
+ diagnostic:[
+  ["ACC-0083","Darah lengkap · Budi Santoso","Order LAB-00083 · 08.09","Menunggu"],
+  ["ACC-0084","Glukosa · Siti Rahmawati","Order LAB-00084 · 08.16","Dalam proses"],
+  ["ACC-0085","Pemeriksaan terjadwal · Ahmad Fauzi","Order DEMO-00085 · 08.21","Perlu ditinjau"],
+  ["ACC-0086","Pemeriksaan terjadwal · Rina Wulandari","Order DEMO-00086 · 08.35","Menunggu"]
+ ],
+ pharmacy:[
+  ["RX-0027","Resep Budi Santoso · Poli Dalam","4 item · perlu telaah alergi","Perlu ditinjau"],
+  ["RX-0028","Resep Siti Rahmawati · Poli Anak","2 item · penyiapan","Dalam proses"],
+  ["RX-0029","Resep Ahmad Fauzi · IGD","3 item · cek restriksi","Menunggu"],
+  ["RX-0030","Resep Rina Wulandari · Poli Kandungan","5 item · validasi terakhir","Dalam proses"]
+ ],
+ inventory:[
+  ["REQ-011","Permintaan Unit Melati A","Bukti permintaan dan lokasi stok","Perlu ditinjau"],
+  ["REQ-012","Permintaan Instalasi IGD","Ketersediaan lot dan jadwal","Menunggu"],
+  ["REQ-013","Permintaan Kamar Operasi","Jumlah, batch dan dokumen","Dalam proses"],
+  ["REQ-014","Permintaan Unit Perawatan","Perlu rekonsiliasi jumlah","Perlu ditinjau"]
+ ],
+ operations:[
+  ["OP-015","Jadwal unit hari ini","Penugasan dan kesiapan layanan","Dalam proses"],
+  ["OP-016","Permintaan kerja prioritas","Perlu pemeriksaan dokumen","Perlu ditinjau"],
+  ["OP-017","Tugas yang dijadwalkan","Konfirmasi petugas dan sumber daya","Menunggu"],
+  ["OP-018","Serah terima unit","Review hasil dan bukti pekerjaan","Dalam proses"]
+ ],
+ billing:[
+  ["INV-0081","Tagihan Budi Santoso · Rawat Jalan","Rp 628.500 · Umum (simulasi)","Menunggu"],
+  ["INV-0082","Tagihan Siti Rahmawati · Rawat Inap","Rp 4.750.000 · perlu review","Perlu ditinjau"],
+  ["INV-0083","Tagihan Ahmad Fauzi · Rawat Jalan","Rp 1.320.000 · sebagian","Dalam proses"],
+  ["INV-0084","Tagihan Rina Wulandari · Rawat Jalan","Rp 345.000 · belum dialokasi","Menunggu"]
+ ],
+ claims:[
+  ["CLM-010","Episode RI · Berkas A","Discharge dan dokumen signed","Perlu ditinjau"],
+  ["CLM-011","Episode RJ · Berkas B","Kelengkapan kode prosedur","Menunggu"],
+  ["CLM-012","Episode RI · Berkas C","Hasil grouping perlu review","Dalam proses"],
+  ["CLM-013","Episode RJ · Berkas D","Klarifikasi dokumen penjamin","Menunggu"]
+ ],
+ finance:[
+  ["FIN-015","Rekonsiliasi periode berjalan","Posting dan review saldo","Perlu ditinjau"],
+  ["FIN-016","Pusat biaya layanan","Analisis biaya unit","Dalam proses"],
+  ["FIN-017","Dokumen transaksi terjadwal","Pengecualian perlu review","Menunggu"],
+  ["FIN-018","Laporan keuangan periode","Menunggu approval pemilik","Perlu ditinjau"]
+ ],
+ executive:[
+  ["KPI-001","Kunjungan dan utilisasi tempat tidur","Snapshot data operasional","Dalam proses"],
+  ["KPI-002","Indikator mutu layanan","Definisi dan sumber angka","Perlu ditinjau"],
+  ["KPI-003","Performa layanan per unit","Watermark dan periode data","Menunggu"],
+  ["KPI-004","Status tindak lanjut manajemen","Laporan dari pemilik unit","Dalam proses"]
+ ],
+ integration:[
+  ["INT-020","FHIR delivery ledger","Status eksternal perlu dicek","Perlu ditinjau"],
+  ["INT-021","Outbox pengiriman","Antrean diproses","Dalam proses"],
+  ["INT-022","ACK dari partner","Belum ada konfirmasi eksternal","Menunggu"],
+  ["INT-023","Job gagal kirim","Tinjau retry / DLQ","Perlu ditinjau"]
+ ],
+ admin:[
+  ["ADM-020","Permintaan administrasi baru","Scope unit dan pemohon","Perlu ditinjau"],
+  ["ADM-021","Revisi data pegawai/unit","Menunggu validasi","Menunggu"],
+  ["ADM-022","Konfigurasi periode aktif","Perlu pencocokan versi","Dalam proses"],
+  ["ADM-023","Permintaan perubahan role","Butuh otorisasi pemilik","Perlu ditinjau"]
+ ],
+ portal:[
+  ["SELF-01","Janji temu contoh","Jadwal kunjungan personal","Menunggu"],
+  ["SELF-02","Dokumen telah dilepas","Akses sesuai consent dan wali","Dalam proses"],
+  ["SELF-03","Pengingat kunjungan","Data latihan saja","Menunggu"],
+  ["SELF-04","Riwayat layanan contoh","Tidak ada akses staf RS","Dalam proses"]
+ ]
+};
+function fixtureKind(role){
+ return Object.keys(fixtureKinds).find(function(k){return fixtureKinds[k].includes(role);})||"operations";
+}
+function roleJobs(p,feature,role){
+ var features=feature?[feature]:p.features;
+ var rows=fixtures[fixtureKind(role)]||fixtures.operations;
+ return rows.map(function(row,i){
+  var f=features[i%features.length];
+  return {id:row[0],title:row[1],detail:row[2]+" · "+f.task,
+   status:row[3],feature:f};
  });
 }
 function featureCard(f){
@@ -1493,7 +1595,7 @@ function renderPage(ctx){
  if(!p)return '<section class="role-home-safety">Belum ada konfigurasi desain untuk role ini.</section>';
  var feature=getFeature(ctx.role,ctx.section);
  var isHome=!feature;
- var jobs=roleJobs(p,feature);
+ var jobs=roleJobs(p,feature,ctx.role);
  var title=isHome?"Beranda "+ctx.role:feature.label;
  var subtitle=isHome?p.focus:feature.task;
  var cta=function(f){
