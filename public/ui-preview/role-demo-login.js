@@ -189,14 +189,6 @@ function renderHome(){
 }
 function renderLogin(){
  if(!loginRoot)return;
- var quickRoleNames=["Pendaftaran","Dokter RJ","Dokter IGD","Perawat","Farmasis","Kasir"];
- var quick=quickRoleNames.map(function(role){
-  var a=lookup(ACCOUNT_PREFIX+slug(role));
-  if(!a)return "";
-  return '<button type="button" class="demo-quick-role'+(selected.username===a.username?' selected':'')+
-   '" data-demo-quick="'+esc(a.username)+'"><span class="demo-quick-dot">'+esc(role.slice(0,2).toUpperCase())+
-   '</span><span>'+esc(role)+'</span></button>';
- }).join("");
  var byDept=Object.keys(groups).map(function(g){
   var members=accounts.filter(function(a){return a.department===g;});
   if(!members.length)return "";
@@ -217,7 +209,7 @@ function renderLogin(){
  '<label for="demo-password">Kata sandi demo</label><input id="demo-password" type="password" autocomplete="off" value="'+PASSWORD+'"/>'+
  '<p class="demo-pass-hint">Semua akun menggunakan kata sandi latihan: <strong>demo123</strong></p><div id="demo-login-error" role="alert" aria-live="polite" hidden></div>'+
  '<button class="demo-login-submit" type="submit">Masuk ke workspace</button></div></form>'+
- '<div class="demo-quick-head"><strong>Masuk cepat sesuai profesi</strong><span>6 role populer</span></div>'+'<div class="demo-quick-roles">'+quick+'</div>'+'<div class="demo-account-title"><div><h3>Pilih akun berdasarkan role</h3><p>Daftar akun demo tersedia untuk semua pengguna.</p></div><span>'+roleList.length+' Role</span></div>'+
+ '<div class="demo-account-title"><div><h3>Pilih akun berdasarkan role</h3><p>Daftar akun demo tersedia untuk semua pengguna.</p></div><span>'+roleList.length+' Role</span></div>'+
  '<input id="demo-account-filter" aria-label="Cari akun demo" placeholder="Cari role atau username (mis. farmasi, dokter, kasir)"/>'+
  '<div id="demo-account-list" class="demo-account-scroll">'+byDept+
  '<div class="demo-account-group"><h3>Reviewer / QA <span>1</span></h3><div class="demo-accounts">'+
@@ -229,7 +221,7 @@ function choose(username){
  var a=lookup(username);if(!a)return;
  selected=a;
  var user=document.getElementById("demo-username");if(user)user.value=a.username;
- document.querySelectorAll("[data-demo-account],[data-demo-quick]").forEach(function(b){b.classList.toggle("selected",(b.dataset.demoAccount||b.dataset.demoQuick)===a.username);});
+ document.querySelectorAll("[data-demo-account]").forEach(function(b){b.classList.toggle("selected",b.dataset.demoAccount===a.username);});
 }
 function showLogin(){
  current=null;
@@ -303,8 +295,8 @@ function handleDemoCommand(command){
  }
 }
 document.addEventListener("click",function(e){
- var button=e.target.closest("[data-demo-account],[data-demo-quick]");
- if(button){choose(button.dataset.demoAccount||button.dataset.demoQuick);return;}
+ var button=e.target.closest("[data-demo-account]");
+ if(button){choose(button.dataset.demoAccount);return;}
  var act=e.target.closest("[data-demo-action]");
  if(act){e.preventDefault();e.stopImmediatePropagation();handleDemoCommand(act.getAttribute("data-demo-action"));return;}
  if(e.target.closest("#demo-logout")){e.preventDefault();e.stopImmediatePropagation();logout();}
