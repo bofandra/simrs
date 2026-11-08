@@ -171,7 +171,7 @@ function renderHome(){
    '<button class="btn" type="button" data-demo-action="'+esc(item[1])+'">Buka form / halaman</button></article>';
  }).join("");
  return '<div class="page-head"><div><div class="eyebrow">BERANDA SAYA · '+esc(dept(role))+'</div>'+
-   '<h1>Ruang kerja '+esc(role)+'</h1><p>Antrean dan akses yang relevan dengan pekerjaan Anda di RS Demo Nusantara.</p></div></div>'+
+   '<h1>'+esc(role)+'</h1><p>Antrean dan akses yang relevan dengan pekerjaan Anda di RS Demo Nusantara.</p></div></div>'+
    '<section class="role-home-hero"><div><span class="role-hero-overline">SIMRS BARU · WORKSPACE BERBASIS ROLE</span>'+
    '<h2>Mulai dari pekerjaan yang perlu ditangani</h2><p>'+esc(descriptions[role]||"Kelola kegiatan dan formulir sesuai kewenangan pengguna.")+
    '. Pilih contoh tugas di bawah untuk membuka halaman terkait.</p></div>'+
@@ -181,10 +181,10 @@ function renderHome(){
    '<div class="role-home-stat"><span>Status lingkungan</span><strong style="font-size:17px">DEMO</strong><small>Tidak terhubung RS asli</small></div></div>'+
    '<div class="role-home-layout"><section class="role-home-worklist"><div class="role-home-block-h">'+
    '<h3>Daftar kerja saya</h3><span>Simulasi antrean prioritas</span></div>'+queueRows+
-   '</section><aside class="role-home-side" style="width:auto;height:auto;position:static;display:block;overflow:visible;box-shadow:none;color:inherit">'+
+   '</section><div class="role-home-side">'+
    '<div class="role-home-block-h"><h3>Akses cepat</h3><span>'+activeCount+' pekerjaan</span></div>'+
    (cards||'<div class="card-body small muted">Belum ada akses contoh yang dipetakan.</div>')+
-   '</aside></div>'+
+   '</div></div>'+
    '<div class="role-home-safety"><strong>Data latihan:</strong> semua antrean, identitas dan aktivitas ini hanya contoh. Sign klinis, pembayaran, dispense, mutasi stok dan pengiriman ke sistem eksternal tidak aktif.</div>';
 }
 function renderLogin(){
@@ -194,7 +194,7 @@ function renderLogin(){
   var a=lookup(ACCOUNT_PREFIX+slug(role));
   if(!a)return "";
   return '<button type="button" class="demo-quick-role'+(selected.username===a.username?' selected':'')+
-   '" data-demo-account="'+esc(a.username)+'"><span class="demo-quick-dot">'+esc(role.slice(0,2).toUpperCase())+
+   '" data-demo-quick="'+esc(a.username)+'"><span class="demo-quick-dot">'+esc(role.slice(0,2).toUpperCase())+
    '</span><span>'+esc(role)+'</span></button>';
  }).join("");
  var byDept=Object.keys(groups).map(function(g){
@@ -229,7 +229,7 @@ function choose(username){
  var a=lookup(username);if(!a)return;
  selected=a;
  var user=document.getElementById("demo-username");if(user)user.value=a.username;
- document.querySelectorAll("[data-demo-account]").forEach(function(b){b.classList.toggle("selected",b.dataset.demoAccount===a.username);});
+ document.querySelectorAll("[data-demo-account],[data-demo-quick]").forEach(function(b){b.classList.toggle("selected",(b.dataset.demoAccount||b.dataset.demoQuick)===a.username);});
 }
 function showLogin(){
  current=null;
@@ -303,8 +303,8 @@ function handleDemoCommand(command){
  }
 }
 document.addEventListener("click",function(e){
- var button=e.target.closest("[data-demo-account]");
- if(button){choose(button.dataset.demoAccount);return;}
+ var button=e.target.closest("[data-demo-account],[data-demo-quick]");
+ if(button){choose(button.dataset.demoAccount||button.dataset.demoQuick);return;}
  var act=e.target.closest("[data-demo-action]");
  if(act){e.preventDefault();e.stopImmediatePropagation();handleDemoCommand(act.getAttribute("data-demo-action"));return;}
  if(e.target.closest("#demo-logout")){e.preventDefault();e.stopImmediatePropagation();logout();}
