@@ -71,6 +71,7 @@
     if(!patient || !patient.id || !patient.visit) throw new Error("Synthetic patient + encounter required");
     var prefix=tag || ("RJ-DEMO-"+patient.id+"-"+patient.visit);
     var stamp=now || "2026-11-08T08:00:00.000Z";
+    var visitSuffix=String(patient.visit).replace(/[^A-Za-z0-9]/g,"").toUpperCase();
     var byCode={}, result=[];
     steps.forEach(function(s,i){
       var code=s[0],values=Object.assign({},s[1]);
@@ -80,7 +81,7 @@
       if(code==="FIN-02")values.invoice_no="INV-DEMO-"+patient.id.toUpperCase();
       if(code==="MED-01")values.accession="ACC-DEMO-"+patient.id.toUpperCase();
       var r={
-        id:"SAMPLE-"+code+"-"+patient.id.toUpperCase(),
+        id:"SAMPLE-"+code+"-"+patient.id.toUpperCase()+"-"+visitSuffix,
         patient_id:patient.id,
         encounter_id:patient.visit,
         status:"Draft",
