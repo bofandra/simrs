@@ -79,10 +79,40 @@ function jobRows(role,section){
  var key=v4.getFeature(role,section),feature=key||p.features[0];
  var i=p.features.indexOf(feature),stage=spec.stages[i];
  if(!stage)return [];
- return spec.rows.map(function(row,j){return {
-  id:row[0],title:row[1],scope:row[2],status:(j===0?"Perlu ditinjau":j===1?"Menunggu":j===2?"Dalam proses":"Menunggu"),
-  reason:stage[1][j],checks:stage[2],feature:feature,queue:stage[0]
- };});
+ var shell=window.__SIMRS_PREVIEW__,patients=shell&&Array.isArray(shell.patients)?shell.patients:[];
+ return spec.rows.map(function(row,j){
+  var patient=role==="Bed Manager"?null:patients[j];
+  var patientId=role==="Bed Manager"?null:(patient?patient.id:"p"+(j+1));
+  var title=(patient&&["Pendaftaran","Dokter RJ","Perawat","Dokter IGD"].indexOf(role)>=0)?patient.name:row[1];
+  var scope=patient&&role==="Dokter RJ"?patient.unit+" · "+row[0]:row[2];
+  if(patient&&role==="Pendaftaran"){
+    scope=j===2?"IGD · walk-in":j===3?"Rawat Inap · rencana admisi":"Rawat Jalan · "+patient.unit;
+  }
+  if(patient&&(role==="Farmasis"||role==="Kasir"))scope+=" · "+patient.name;
+  var encounterId=patient?(role==="Dokter IGD"?"ENC-IGD-DEMO-"+String(j+1).padStart(2,"0"):
+    role==="Perawat"?"ENC-RI-DEMO-"+String(j+1).padStart(2,"0"):
+    role==="Pendaftaran"&&j===2?"ENC-IGD-DEMO-03":
+    role==="Pendaftaran"&&j===3?"ENC-RI-DEMO-04":patient.visit):null;
+  return {
+   id:row[0],title:title,scope:scope,patientId:patientId,encounterId:encounterId,
+   kind:role==="Bed Manager"?"bed":"patient",
+   status:(j===0?"Perlu ditinjau":j===1?"Menunggu":j===2?"Dalam proses":"Menunggu"),
+   reason:stage[1][j],checks:stage[2],feature:feature,queue:stage[0]
+  };
+ });
+}
+/* Bind a work item only to a known synthetic patient and encounter.
+ * This is not MPI matching or a real association of clinical resources. */
+function selectionContext(role,section,index,patients){
+ var rows=jobRows(role,section),position=Number(index);
+ if(!Number.isInteger(position)||position<0||position>=rows.length)return null;
+ var item=rows[position],workItem={id:item.id,title:item.title,scope:item.scope,kind:item.kind};
+ if(item.kind==="bed")return {role:role,kind:"bed",workItem:workItem,patient:null};
+ var patient=Array.isArray(patients)&&patients.find(function(p){return p.id===item.patientId;});
+ if(!patient||!patient.id||!patient.visit)return null;
+ var visit=item.encounterId||patient.visit;
+ if(!visit)return null;
+ return {role:role,kind:"patient",workItem:workItem,patient:Object.assign({},patient,{visit:visit})};
 }
 function renderPage(ctx){
  var spec=specs[ctx.role];if(!spec)return v4.renderPage(ctx);
@@ -91,8 +121,10 @@ function renderPage(ctx){
  var jobs=jobRows(ctx.role,ctx.section),index=Number(ctx.selectedJob);
  if(!Number.isInteger(index)||index<0||index>=jobs.length)index=0;
  var selected=jobs[index],canOpen=!!(ctx.canOpen&&ctx.canOpen(active.code));
+ var shell=window.__SIMRS_PREVIEW__;
+ var selectedContext=selectionContext(ctx.role,ctx.section,index,shell&&shell.patients);
  var moduleAction=canOpen?
-   '<button type="button" class="btn btn-primary" data-demo-action="module:'+esc(active.code)+'">Buka form '+esc(active.code)+'</button>':
+   '<button type="button" class="btn btn-primary" data-demo-action="module:'+esc(active.code)+'">Buka '+esc(active.label)+'</button>':
    '<span class="uxv4-disabled" role="note">Form belum tersedia untuk akun demo ini</span>';
  var cards=isHome?'<section class="uxv4-panel"><div class="uxv4-panel-head"><div><h2>Area kerja saya</h2><p>Pilih pekerjaan sesuai kewenangan; tidak ada katalog modul global.</p></div></div><div class="uxv4-features">'+
   p.features.map(function(f){return '<button type="button" class="uxv4-feature" data-demo-action="section:'+esc(f.key)+'"><span class="uxv4-feature-code">'+esc(f.code)+'</span><strong>'+esc(f.label)+'</strong><small>'+esc(f.task)+'</small><span class="uxv4-feature-arrow">Lihat daftar kerja →</span></button>';}).join("")+'</div></section>':"";
@@ -106,9 +138,14 @@ function renderPage(ctx){
   cards+'<section class="uxv4-panel"><div class="uxv4-panel-head"><div><h2>'+esc(isHome?"Pekerjaan prioritas":active.label)+'</h2><p>Pilih baris untuk melihat konteks dan pemeriksaan sebelum membuka formulir.</p></div><label class="uxv5-search-label">Cari pekerjaan<input id="uxv5-search" type="search" autocomplete="off" placeholder="Cari nomor, pasien atau status" aria-label="Cari daftar pekerjaan"/></label></div>'+
   '<div class="uxv5-layout"><div class="uxv4-table-scroller"><table class="uxv4-table"><thead><tr><th>Nomor</th><th>Pasien / objek kerja</th><th>Perhatian</th><th>Status demo</th><th>Detail</th></tr></thead><tbody>'+rows+'</tbody></table><p id="uxv5-empty" class="uxv5-empty" hidden>Tidak ada pekerjaan yang cocok dengan pencarian.</p></div>'+
   '<aside class="uxv5-detail" aria-label="Detail pekerjaan yang dipilih"><div class="uxv5-detail-header"><span>RINCIAN PEKERJAAN · DEMO</span><strong>'+esc(selected.id)+'</strong><h3>'+esc(selected.title)+'</h3><p>'+esc(selected.scope)+'</p></div>'+
-  '<dl><div><dt>Status</dt><dd>'+esc(selected.status)+'</dd></div><div><dt>Perlu diperiksa</dt><dd>'+esc(selected.reason)+'</dd></div><div><dt>Form / modul</dt><dd>'+esc(active.code)+' · '+esc(active.fr)+'</dd></div></dl>'+
+  '<dl><div><dt>Status</dt><dd>'+esc(selected.status)+'</dd></div><div><dt>Perlu diperiksa</dt><dd>'+esc(selected.reason)+'</dd></div>'+
+  (selectedContext&&selectedContext.patient?'<div><dt>Konteks pasien</dt><dd>'+esc(selectedContext.patient.mrn)+' · '+esc(selectedContext.patient.visit)+'</dd></div>':'')+
+  '<div><dt>Form / modul</dt><dd>'+esc(active.code)+' · '+esc(active.fr)+'</dd></div></dl>'+
   '<h4>Checklist sebelum melanjutkan</h4><ul>'+checks+'</ul><div class="uxv5-detail-actions">'+moduleAction+'</div>'+
-  '<p class="uxv5-context-note">Form dibuka sesuai role, tetapi data baris ini belum terhubung otomatis ke form. Pastikan konteks dipilih ulang dalam mockup.</p></aside></div>'+trace+'</section>'+
+  '<p class="uxv5-context-note">'+(selectedContext&&selectedContext.patient?
+   'Konteks pasien dan encounter sintetis dari pekerjaan '+esc(selected.id)+' akan diteruskan ke form. Verifikasi sebelum menyimpan draft.':
+   selected.kind==="bed"?'Objek kerja adalah tempat tidur, bukan pasien. Tidak ada pasien yang ditautkan otomatis.':
+   'Konteks belum tersedia. Pastikan pasien demo dan encounter valid sebelum menyimpan draft.')+'</p></aside></div>'+trace+'</section>'+
   '<p class="uxv4-safety"><strong>Data latihan saja:</strong> seluruh identitas, antrean, status dan angka adalah contoh. Tidak ada keputusan klinis, pengeluaran obat, pemindahan bed, pembayaran, posting atau pengiriman data sungguhan.</p></div>';
 }
 document.addEventListener("input",function(event){
@@ -122,5 +159,5 @@ document.addEventListener("input",function(event){
  });
  if(empty)empty.hidden=count!==0;
 });
-window.SIMRSRoleUXV5={specs:specs,jobRows:jobRows,renderPage:renderPage};
+window.SIMRSRoleUXV5={specs:specs,jobRows:jobRows,selectionContext:selectionContext,renderPage:renderPage};
 })();

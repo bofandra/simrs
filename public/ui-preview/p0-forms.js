@@ -10,6 +10,7 @@
   var state = { code:"CORE-09", priority:"P0", flow:"RJ", recordId:null, search:"", prefill:null, linkSource:null };
   var demo = readDemo();
   var lastContext = null;
+  var activeWorkItem = null; // transient worklist selection; never persisted as patient data
   var riskyActions = "Tanda tangan, release hasil, dispensing, mutasi stok, pembayaran, posting jurnal, pengajuan klaim, pengiriman API dan publikasi laporan hanya contoh desain: NONAKTIF sampai SOP/UAT dan otorisasi.";
 
   function readDemo() {
@@ -31,6 +32,25 @@
   function currentModule() { return catalog.find(function (m) {return m.code === state.code;}) || catalog.find(function(m){return m.priority === "P0";});}
   function context() {return lastContext || { role:"Pendaftaran", patient:{id:"p1",name:"Pasien Demo",mrn:"RM-DEMO",visit:"ENC-DEMO"} };}
   function canEdit(m) {return !!(m && m.fields && m.fields.length && m.roles.indexOf(context().role) >= 0);}
+  function prefillFromWorkItem(module,selected) {
+    if(!selected||!selected.patient)return null;
+    var p=selected.patient,values={};
+    var unit=(p.unit||"").replace(/^Poli\s+/,"");
+    if(["Poli Umum","Penyakit Dalam","Jantung","IGD"].indexOf(unit)<0)unit="";
+    var fieldKeys=module.fields.map(function(f){return f.key;});
+    if(module.code==="CORE-08")values.patient_name=p.name;
+    if(module.code==="CORE-09"){
+      var scope=selected.workItem.scope||"";
+      values.visit_type=/IGD/i.test(scope)?"IGD":/Rawat Inap/i.test(scope)?"Rawat Inap":"Rawat Jalan";
+      if(unit&&values.visit_type==="Rawat Jalan")values.unit=unit;
+      if(values.visit_type==="IGD")values.unit="IGD";
+      values.payer=p.payer==="BPJS"?"BPJS (demo)":p.payer==="Asuransi"?"Asuransi (demo)":"Umum";
+    }
+    if(module.code==="RME-01"&&unit)values.unit=unit;
+    if(module.code==="FIN-03"&&/^INV-D\d+$/.test(selected.workItem.id))values.invoice_ref=selected.workItem.id;
+    Object.keys(values).forEach(function(key){if(fieldKeys.indexOf(key)<0)delete values[key];});
+    return values;
+  }
   function recordsFor(m) {
     var all = Array.isArray(demo.records[m.code]) ? demo.records[m.code] : [];
     if (m.patient_context) return all.filter(function(r){return r.patient_id === context().patient.id && r.encounter_id === context().patient.visit;});
@@ -230,17 +250,22 @@
     var values=(r && r.values)||state.prefill||{};
     var id = r?r.id:"Baru (belum tersimpan)";
     var ctx=context();
+    var chosenItem=activeWorkItem&&activeWorkItem.role===ctx.role?activeWorkItem.workItem:null;
     var roleUser=!!(window.SIMRSRoleDemo&&window.SIMRSRoleDemo.isAuthenticated()&&!window.SIMRSRoleDemo.isReviewer());
     var profile=roleUser&&window.SIMRSRoleUXV4&&window.SIMRSRoleUXV4.getProfile(context().role);
     var section=roleUser&&window.SIMRSRoleDemo.getCurrentSection&&window.SIMRSRoleDemo.getCurrentSection();
     var task=profile&&(profile.features.find(function(f){return f.key===section&&f.code===m.code;})||profile.features.find(function(f){return f.code===m.code;}));
     var formTitle=roleUser?(task?task.label:m.name):"Form "+m.code;
     return '<section class="card p0-editor"><div class="card-h"><h2>'+esc(formTitle)+'</h2>'+pill(r?r.status:"Belum disimpan",r&&r.status==="Reviewed (Demo)"?"good":"")+'</div>'+
-      (m.patient_context?'<div class="p0-patient-banner"><strong>Pasien demo: '+esc(ctx.patient.name)+'</strong><span>MRN '+esc(ctx.patient.mrn)+' · Encounter '+esc(ctx.patient.visit)+'</span><span>Identitas dan encounter merupakan konteks read-only.</span></div>':'<div class="p0-patient-banner"><strong>Data administrasi / master</strong><span>RS Demo Nusantara · Tenant demonstrasi</span></div>')+
+      (m.patient_context?'<div class="p0-patient-banner"><strong>Pasien demo: '+esc(ctx.patient.name)+'</strong><span>MRN '+esc(ctx.patient.mrn)+' · Encounter '+esc(ctx.patient.visit)+'</span>'+
+       (chosenItem?'<span>Dipilih dari pekerjaan '+esc(chosenItem.id)+' · '+esc(chosenItem.title)+'</span>':'<span>Konteks pasien demo dari workspace; belum berasal dari baris worklist.</span>')+
+       '<span>Identitas dan encounter read-only; pastikan keduanya benar.</span></div>':
+       '<div class="p0-patient-banner"><strong>Data administrasi / master</strong><span>RS Demo Nusantara · Tenant demonstrasi</span>'+
+       (chosenItem?'<span>Objek kerja: '+esc(chosenItem.id)+' · '+esc(chosenItem.title)+'</span>':'')+'</div>')+
       (!allowed?'<div class="p0-warning" role="status">Peran <strong>'+esc(ctx.role)+'</strong> hanya dapat melihat. Peran untuk mengisi: '+esc((m.roles||[]).join(", ")||"Belum ditetapkan")+'. Ubah peran demo di bagian kanan atas.</div>':'')+
       (r&&r.status!=="Draft"?'<div class="p0-warning">Catatan telah ditinjau dan terkunci pada mode demonstrasi. Perubahan memerlukan alur koreksi/addendum terpisah yang belum dibuat.</div>':'')+
       ((r&&r.linked_source)||state.linkSource?'<div class="p0-provenance"><strong>Referensi catatan demo:</strong> '+esc(((r&&r.linked_source)||state.linkSource).module)+' / '+esc(((r&&r.linked_source)||state.linkSource).record_id)+' — hanya salin rujukan ke draft, tanpa membuat transaksi klinis/keuangan.</div>':'')+
-      '<form id="p0-editor" data-form-module="'+esc(m.code)+'" novalidate><div class="p0-form-head"><div><span class="muted">Nomor catatan</span><strong>'+esc(id)+'</strong></div><div><span class="muted">Peran penginput</span><strong>'+esc(ctx.role)+'</strong></div></div>'+
+      '<form id="p0-editor" data-form-module="'+esc(m.code)+'" data-work-item="'+esc(chosenItem?chosenItem.id:"")+'" novalidate><div class="p0-form-head"><div><span class="muted">Nomor catatan</span><strong>'+esc(id)+'</strong></div><div><span class="muted">Peran penginput</span><strong>'+esc(ctx.role)+'</strong></div></div>'+
       '<div class="p0-fields">'+m.fields.filter(function(f){return (!window.SIMRSLineItems || window.SIMRSLineItems.skipFields(m.code).indexOf(f.key)<0) && (!window.SIMRSFinanceLines || window.SIMRSFinanceLines.skipFields(m.code).indexOf(f.key)<0);}).map(function(f){return renderField(f,values,editable);}).join("")+'</div>'+ (window.SIMRSLineItems ? window.SIMRSLineItems.render(m.code,values,editable) : "")+
       (window.SIMRSFinanceLines ? window.SIMRSFinanceLines.render(m.code,values,editable,demo.records,ctx) : "")+
       '<div id="p0-validation-summary" class="p0-validation-summary" role="alert" hidden></div>'+
@@ -253,8 +278,10 @@
       '</section>';
   }
   function render(ctx) {
-    lastContext=ctx || context();
     var roleView=!!(window.SIMRSRoleDemo&&window.SIMRSRoleDemo.isAuthenticated()&&!window.SIMRSRoleDemo.isReviewer());
+    var validSelection=roleView&&activeWorkItem&&ctx&&activeWorkItem.role===ctx.role&&activeWorkItem.workItem;
+    lastContext=validSelection&&activeWorkItem.patient?
+      {role:ctx.role,patient:activeWorkItem.patient}:ctx || context();
     if(roleView){
       var available=catalog.filter(function(x){return (x.roles||[]).includes(context().role);});
       if(available.length&&!available.some(function(x){return x.code===state.code;})){state.code=available[0].code;state.recordId=null;}
@@ -371,7 +398,7 @@
     if(!Array.isArray(demo.records[m.code]))demo.records[m.code]=[];
     if(!old){
       demo.seq+=1;
-      old={id:"DEMO-"+m.code+"-"+String(demo.seq).padStart(4,"0"),status:"Draft",patient_id:m.patient_context?context().patient.id:null,encounter_id:m.patient_context?context().patient.visit:null,created_at:at,linked_source:state.linkSource?{module:state.linkSource.module,record_id:state.linkSource.record_id}:null,history:[]};
+      old={id:"DEMO-"+m.code+"-"+String(demo.seq).padStart(4,"0"),status:"Draft",patient_id:m.patient_context?context().patient.id:null,encounter_id:m.patient_context?context().patient.visit:null,work_item_id:activeWorkItem&&activeWorkItem.role===context().role?activeWorkItem.workItem.id:null,created_at:at,linked_source:state.linkSource?{module:state.linkSource.module,record_id:state.linkSource.record_id}:null,history:[]};
       demo.records[m.code].unshift(old);
     }
     old.values=vals;old.updated_at=at;old.history.push({at:at,event:"Draft disimpan di browser",actor:actor});
@@ -487,15 +514,31 @@
     }
   }
   function resetDemo() {
+    activeWorkItem=null;
     demo={version:1,seq:0,records:{}};
     state.recordId=null;state.code="CORE-09";state.priority="P0";state.flow="RJ";state.search="";state.prefill=null;state.linkSource=null;
     try{localStorage.removeItem(key);}catch(e){}
   }
-  function openForRole(code,role){
+  function openForRole(code,role,selected){
     var module=catalog.find(function(item){return item.code===code;});
     if(!module||!Array.isArray(module.roles)||!module.roles.includes(role)||!module.fields||!module.fields.length)return false;
-    state.code=code;state.recordId=null;state.priority="all";state.search="";state.prefill=null;state.linkSource=null;
+    var shell=window.__SIMRS_PREVIEW__;
+    var selectionValid=!!(selected&&selected.role===role&&selected.workItem&&selected.workItem.id&&
+      (selected.kind==="bed"||(selected.kind==="patient"&&selected.patient&&shell&&Array.isArray(shell.patients)&&
+       shell.patients.some(function(p){return p.id===selected.patient.id;}))));
+    if(selected&&!selectionValid)return false;
+    if(selected&&module.patient_context&&!selected.patient)return false;
+    activeWorkItem=selectionValid?{
+      role:role,kind:selected.kind,
+      patient:selected.patient?Object.assign({},selected.patient):null,
+      workItem:Object.assign({},selected.workItem)
+    }:null;
+    state.code=code;state.recordId=null;state.priority="all";state.search="";
+    state.prefill=prefillFromWorkItem(module,activeWorkItem);state.linkSource=null;
     return true;
   }
-  window.SIMRSFormEngine={render:render,openForRole:openForRole,validate:validate,collect:collect,resetDemo:resetDemo,getCatalog:function(){return catalog;},getRecords:function(){return demo.records;}};
+  function clearWorkItemContext(){activeWorkItem=null;state.prefill=null;state.recordId=null;}
+  window.SIMRSFormEngine={render:render,openForRole:openForRole,clearWorkItemContext:clearWorkItemContext,
+    validate:validate,collect:collect,resetDemo:resetDemo,getCatalog:function(){return catalog;},
+    getRecords:function(){return demo.records;}};
 })();

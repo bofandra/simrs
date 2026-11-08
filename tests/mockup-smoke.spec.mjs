@@ -569,3 +569,54 @@ test('tablet-size role workspace uses collapsed nav, and reviewer still has cata
  await expect(page.getByText('Katalog Form & Workflow SIMRS')).toBeVisible();
  expect(errors).toEqual([]);
 });
+
+test('V7 registration work item opens the matching synthetic patient encounter and isolates drafts',async ({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('/index.html');
+ await page.locator('[data-demo-account="akun.pendaftaran"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ await page.locator('#role-nav [data-demo-action="section:m1"]').click();
+ await page.locator('.uxv5 [data-demo-action="job:1"]').click();
+ await expect(page.locator('.uxv5-detail')).toContainText('Bima Rahman');
+ await expect(page.locator('.uxv5-detail')).toContainText('ENC-DEMO-248');
+ await page.locator('.uxv5-detail [data-demo-action="module:CORE-09"]').click();
+ await expect(page.locator('#p0-editor')).toHaveAttribute('data-work-item','REG-D002');
+ await expect(page.locator('.p0-patient-banner')).toContainText('Bima Rahman');
+ await expect(page.locator('.p0-patient-banner')).toContainText('ENC-DEMO-248');
+ await expect(page.locator('#p0-editor [name="unit"]')).toHaveValue('Jantung');
+ await expect(page.locator('#p0-editor [name="payer"]')).toHaveValue('Umum');
+ await expect(page.locator('#p0-editor [name="visit_type"]')).toHaveValue('Rawat Jalan');
+ await page.locator('#p0-editor [name="visit_date"]').fill('2026-11-09');
+ await page.locator('#p0-editor [name="checkin_state"]').selectOption('Terdaftar');
+ await page.locator('[data-p0-action="save"]').click();
+ const records=await page.evaluate(()=>window.SIMRSFormEngine.getRecords()['CORE-09']||[]);
+ expect(records.some(r=>r.patient_id==='p2'&&r.encounter_id==='ENC-DEMO-248'&&r.work_item_id==='REG-D002')).toBeTruthy();
+ await page.locator('.p0-operational [data-demo-action="section:m1"]').click();
+ await page.locator('.uxv5 [data-demo-action="job:0"]').click();
+ await page.locator('.uxv5-detail [data-demo-action="module:CORE-09"]').click();
+ await expect(page.locator('#p0-editor')).toHaveAttribute('data-work-item','REG-D001');
+ await expect(page.locator('.p0-patient-banner')).toContainText('Sari Amelia');
+ await expect(page.locator('.p0-patient-banner')).toContainText('ENC-DEMO-247');
+ await expect(page.locator('#p0-editor [name="visit_date"]')).toHaveValue('');
+ expect(errors).toEqual([]);
+});
+
+test('V7 preserves patient episode boundaries for emergency and avoids false bed-patient linking',async ({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('/index.html');
+ await page.locator('[data-demo-account="akun.dokter-igd"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ await page.locator('#role-nav [data-demo-action="section:m0"]').click();
+ await page.locator('.uxv5 [data-demo-action="job:2"]').click();
+ await page.locator('.uxv5-detail [data-demo-action="module:RME-02"]').click();
+ await expect(page.locator('#p0-editor')).toHaveAttribute('data-work-item','IGD-D03');
+ await expect(page.locator('.p0-patient-banner')).toContainText('Nadia Laras');
+ await expect(page.locator('.p0-patient-banner')).toContainText('ENC-IGD-DEMO-03');
+ await page.locator('#demo-logout').click();
+ await page.locator('[data-demo-account="akun.bed-manager"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ await page.locator('#role-nav [data-demo-action="section:m1"]').click();
+ await expect(page.locator('.uxv5-detail')).toContainText('Objek kerja adalah tempat tidur');
+ await expect(page.locator('.uxv5-detail [data-demo-action="module:OPS-10"]')).toHaveCount(0);
+ expect(errors).toEqual([]);
+});
