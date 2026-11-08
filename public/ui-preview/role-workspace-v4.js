@@ -199,6 +199,14 @@ var profiles={
     "fr": "FR-013",
     "wf": "WF-04",
     "task": "Tinjau dokumen pulang dan tanda tangan"
+   },
+   {
+    "key": "m6",
+    "label": "Clinical pathway",
+    "code": "ENT-04",
+    "fr": "FR-015",
+    "wf": "WF-12",
+    "task": "Tinjau pathway dan deviasi sesuai pasien dirawat"
    }
   ]
  },
@@ -1006,6 +1014,14 @@ var profiles={
     "fr": "FR-027",
     "wf": "WF-08",
     "task": "Tinjau kegagalan integrasi dan rekonsiliasi"
+   },
+   {
+    "key": "m3",
+    "label": "Coverage dan eligibility",
+    "code": "FIN-04",
+    "fr": "FR-027",
+    "wf": "WF-08",
+    "task": "Cek coverage dan status eligibility eksternal secara terpisah"
    }
   ]
  },
@@ -1294,6 +1310,22 @@ var profiles={
     "fr": "FR-008",
     "wf": "WF-01",
     "task": "Review scope consent dan akses"
+   },
+   {
+    "key": "m6",
+    "label": "Tenant dan organisasi",
+    "code": "CORE-01",
+    "fr": "FR-001",
+    "wf": "WF-01",
+    "task": "Tinjau pengaturan cakupan multi-RS"
+   },
+   {
+    "key": "m7",
+    "label": "Master lokasi dan bed",
+    "code": "CORE-05",
+    "fr": "FR lintas domain",
+    "wf": "WF-04",
+    "task": "Kelola master lokasi tanpa melakukan alokasi operasional"
    }
   ]
  },
@@ -1443,6 +1475,68 @@ var profiles={
     "task": "Tinjau hanya dokumen yang sudah dilepas"
    }
   ]
+ },
+ "Petugas Billing": {
+  "unit": "Unit billing / charge capture",
+  "focus": "Tagihan tindakan sah sebelum penerbitan invoice",
+  "workflow": "WF-08",
+  "features": [
+   {
+    "key": "m0",
+    "label": "Tindakan siap ditagihkan",
+    "code": "FIN-01",
+    "fr": "FR-025",
+    "wf": "WF-08",
+    "task": "Tinjau evidence tindakan dengan sumber unik"
+   },
+   {
+    "key": "m1",
+    "label": "Charge capture",
+    "code": "FIN-01",
+    "fr": "FR-025",
+    "wf": "WF-08",
+    "task": "Review charge yang belum tersusun"
+   },
+   {
+    "key": "m2",
+    "label": "Invoice draft",
+    "code": "FIN-02",
+    "fr": "FR-026",
+    "wf": "WF-08",
+    "task": "Tinjau hasil penggabungan charge ke invoice"
+   }
+  ]
+ },
+ "Bed Manager": {
+  "unit": "Manajemen tempat tidur",
+  "focus": "Kapasitas, alokasi bed, transfer dan pelepasan",
+  "workflow": "WF-04",
+  "features": [
+   {
+    "key": "m0",
+    "label": "Ketersediaan bed",
+    "code": "OPS-10",
+    "fr": "FR-011",
+    "wf": "WF-04",
+    "task": "Pantau bed tersedia dan okupansi per ruang"
+   },
+   {
+    "key": "m1",
+    "label": "Permintaan alokasi",
+    "code": "OPS-10",
+    "fr": "FR-011",
+    "wf": "WF-04",
+    "task": "Tinjau admission pending dan konflik okupansi"
+   },
+   {
+    "key": "m2",
+    "label": "Transfer dan pelepasan",
+    "code": "OPS-10",
+    "fr": "FR-011",
+    "wf": "WF-04",
+    "task": "Review mutasi bed dan kesiapan ruang"
+   }
+  ]
  }
 };
 var statuses=["Perlu ditinjau","Dalam proses","Menunggu tindak lanjut"];
@@ -1481,11 +1575,12 @@ function navHtml(role,section){
 var fixtureKinds={
  patient:["Pendaftaran","Dokter RJ","Dokter IGD","Terapis Rehabilitasi"],
  ward:["DPJP Rawat Inap","Perawat","Perawat HD"],
+ beds:["Bed Manager"],
  diagnostic:["ATLM","Radiografer","Radiolog","Petugas MCU","Koordinator MCU","Petugas Bank Darah"],
  pharmacy:["Farmasis"],
  inventory:["Gudang","Pengadaan","Petugas CSSD","Petugas Laundry","Petugas Dapur","Ahli Gizi"],
  operations:["Koordinator OK","Dokter Anestesi","Petugas Aset","Teknisi","Petugas Fasilitas","Koordinator Transport"],
- billing:["Kasir"],
+ billing:["Kasir","Petugas Billing"],
  claims:["Casemix","Coder","Petugas BPJS"],
  finance:["Akuntan","Budget Owner","Analis Biaya"],
  executive:["Manajemen RS","Tim Mutu","Tim PPI"],
@@ -1511,6 +1606,12 @@ var fixtures={
   ["ACC-0084","Glukosa · Siti Rahmawati","Order LAB-00084 · 08.16","Dalam proses"],
   ["ACC-0085","Pemeriksaan terjadwal · Ahmad Fauzi","Order DEMO-00085 · 08.21","Perlu ditinjau"],
   ["ACC-0086","Pemeriksaan terjadwal · Rina Wulandari","Order DEMO-00086 · 08.35","Menunggu"]
+ ],
+ beds:[
+  ["BED-A05","Melati A · A-05","Bed tersedia · perlu konfirmasi","Menunggu"],
+  ["BED-A07","Melati A · A-07","Permintaan dari IGD · admission pending","Perlu ditinjau"],
+  ["BED-B01","Melati B · B-01","Transfer pasien direncanakan","Dalam proses"],
+  ["BED-C03","Mawar C · C-03","Pembersihan selesai · cek kesiapan","Menunggu"]
  ],
  pharmacy:[
   ["RX-0027","Resep Budi Santoso · Poli Dalam","4 item · perlu telaah alergi","Perlu ditinjau"],
