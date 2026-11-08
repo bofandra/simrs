@@ -1,0 +1,88 @@
+{
+  "meta": {
+    "name": "SIMRS Baru UI Design System",
+    "version": "1.0.0",
+    "baseline_prd": "2026-11-08",
+    "type": "design guidance only"
+  },
+  "color": {
+    "navy": "#152947",
+    "navy_alt": "#243B5A",
+    "primary_action": "#078D88",
+    "information": "#3368C4",
+    "success": "#16845E",
+    "warning": "#A26300",
+    "danger": "#B53C47",
+    "canvas": "#F4F7FB",
+    "surface": "#FFFFFF",
+    "text": "#243247",
+    "text_muted": "#637389",
+    "border": "#DFE7EF"
+  },
+  "font": {
+    "family": "Inter, ui-sans-serif, system-ui, Segoe UI, Roboto, Arial, sans-serif",
+    "base_px": 13,
+    "label_px": 11,
+    "table_px": 11,
+    "metadata_px": 10,
+    "title_px": 28,
+    "panel_title_px": 14
+  },
+  "spacing_px": [
+    4,
+    8,
+    12,
+    16,
+    24,
+    32
+  ],
+  "radius_px": {
+    "sm": 7,
+    "md": 11,
+    "lg": 15
+  },
+  "elevation": {
+    "card": "0 8px 28px rgba(33,52,82,.045)"
+  },
+  "layout": {
+    "desktop_sidebar_px": 252,
+    "desktop_topbar_px": 62,
+    "content_max_width_px": 1640,
+    "breakpoints_px": {
+      "tablet": 840,
+      "mobile": 530
+    }
+  },
+  "semantic_statuses": {
+    "draft": "warning",
+    "verified": "success",
+    "error": "danger",
+    "external_pending": "warning"
+  },
+  "required_states": [
+    "default",
+    "empty",
+    "loading",
+    "validation_error",
+    "forbidden",
+    "conflict_409",
+    "saving",
+    "success_demo",
+    "signed_read_only",
+    "external_pending"
+  ],
+  "component_patterns": [
+    "patient_context_header",
+    "role_switcher",
+    "worklist",
+    "details_panel",
+    "form_grid",
+    "clinical_note",
+    "medication_review",
+    "specimen_state",
+    "bed_board",
+    "payment_summary",
+    "KPI_snapshot",
+    "FR_US_AC_trace"
+  ]
+}
