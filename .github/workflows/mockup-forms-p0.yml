@@ -28,6 +28,7 @@ jobs:
           node --check public/ui-preview/p2-p3-form-definitions.js
           node --check public/ui-preview/contract-audit.js
           node --check public/ui-preview/demo-workflow-links.js
+          node --check public/ui-preview/complex-form-rows.js
           node --check public/ui-preview/p0-forms.js
       - name: All form and demo workflow contract tests
         run: node --test tests/*.test.mjs

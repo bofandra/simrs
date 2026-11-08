@@ -112,3 +112,11 @@ File: `public/ui-preview/synthetic-journey.js`. Pemeriksaan: `tests/synthetic-jo
 3. **Desain UX khusus klinis:** repeatable order item, medication prescription item, spesimen, daftar charge, dan allocation pembayaran; jangan memaksakan satu form generik.
 4. **Pengujian:** UAT negatif lintas role/org/pasien, mobile accessibility, validasi draft vs signed, audit immutability, konflik 409, idempotency.
 5. **Rilis:** PR tetap draft sampai reviewer 7 PIC dan pemilik RS menyetujui; jangan merge atau menggantikan GitHub Pages main tanpa persetujuan.
+
+## Penambahan: komposer item CPOE dan e-Resep (8 November 2026)
+
+Form `RME-08` dan `MED-04` sekarang menyediakan item berulang (maksimal 12 baris) agar alur input lebih mendekati kebutuhan order dan resep item-level. Pengguna demo dapat menambah/menghapus baris sebelum penyimpanan, menyimpan draft, lalu meninjau kelengkapan. Untuk CPOE, validasi menyelaraskan kategori (laboratorium, radiologi, tindakan) dengan katalog sintetis, memeriksa kuantitas dan mencegah item duplikat. E-Resep memvalidasi pilihan obat, dosis, rute, frekuensi, jumlah, duplikasi, serta tetap mewajibkan review alergi.
+
+Item disimpan sebagai `values.items[]` **hanya di localStorage**. Nilai item pertama dicerminkan ke kolom form lama untuk menjaga kompatibilitas alur draft dan tautan antarform. Perpindahan form terkait dari CPOE masih memakai item pertama, belum mengonversi semua baris menjadi ServiceRequest/MedicationRequest individual. Komposer ini **bukan implementasi DTO OpenAPI**: identitas item, catalog UUID, provenance, penandatanganan, otorisasi, outbox, dan versioning masih harus diselesaikan bersama PIC 4/5.
+
+Pengujian baru mencakup field item wajib, duplikasi, ketidakcocokan jenis order, jumlah tidak valid, escaper konten, dan browser smoke dua item CPOE. Semua tindakan klinis nyata tetap nonaktif. Perubahan ada pada PR #7 dan tidak boleh merge/deploy sebelum review.

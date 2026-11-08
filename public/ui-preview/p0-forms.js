@@ -184,7 +184,7 @@
       (r&&r.status!=="Draft"?'<div class="p0-warning">Catatan telah ditinjau dan terkunci pada mode demonstrasi. Perubahan memerlukan alur koreksi/addendum terpisah yang belum dibuat.</div>':'')+
       ((r&&r.linked_source)||state.linkSource?'<div class="p0-provenance"><strong>Referensi catatan demo:</strong> '+esc(((r&&r.linked_source)||state.linkSource).module)+' / '+esc(((r&&r.linked_source)||state.linkSource).record_id)+' — hanya salin rujukan ke draft, tanpa membuat transaksi klinis/keuangan.</div>':'')+
       '<form id="p0-editor" novalidate><div class="p0-form-head"><div><span class="muted">Nomor catatan</span><strong>'+esc(id)+'</strong></div><div><span class="muted">Peran penginput</span><strong>'+esc(ctx.role)+'</strong></div></div>'+
-      '<div class="p0-fields">'+m.fields.map(function(f){return renderField(f,values,editable);}).join("")+'</div>'+
+      '<div class="p0-fields">'+m.fields.filter(function(f){return !window.SIMRSLineItems || window.SIMRSLineItems.skipFields(m.code).indexOf(f.key)<0;}).map(function(f){return renderField(f,values,editable);}).join("")+'</div>'+ (window.SIMRSLineItems ? window.SIMRSLineItems.render(m.code,values,editable) : "")+
       '<div id="p0-validation-summary" class="p0-validation-summary" role="alert" hidden></div>'+
       '<div class="p0-form-actions">'+button("Simpan draft (demo)","save","btn-primary","",!editable)+
       button("Tinjau kelengkapan","review","","",!editable)+
@@ -235,7 +235,9 @@
   function collect() {
     var form=document.getElementById("p0-editor");var values={};
     if(!form)return values;
-    form.querySelectorAll("[name]").forEach(function(el){values[el.name]=String(el.value||"").trim();});
+    form.querySelectorAll(".p0-fields [name]").forEach(function(el){values[el.name]=String(el.value||"").trim();});
+    var lineData=window.SIMRSLineItems && window.SIMRSLineItems.collect(currentModule().code,form);
+    if(lineData){values.items=lineData.items;Object.assign(values,lineData.scalar);}
     return values;
   }
   function validate(m,values,review) {
@@ -272,6 +274,7 @@
     if (review && m.code==="ENT-02" && Number(values.deduction)>Number(values.gross_pay)) errors.push({key:"deduction",label:"Potongan payroll",message:"Potongan simulasi tidak boleh melebihi bruto."});
     if (review && m.code==="FIN-11" && Number(values.volume)<=0) errors.push({key:"volume",label:"Volume driver",message:"Volume driver harus lebih dari nol."});
     if (review && m.code==="MED-05" && values.expiry_date && values.expiry_date<"2026-11-08") errors.push({key:"expiry_date",label:"Kedaluwarsa",message:"Lot sudah kedaluwarsa pada tanggal contoh."});
+    if (window.SIMRSLineItems) errors.push.apply(errors,window.SIMRSLineItems.validate(m.code,values,review));
     return errors;
   }
   function saveDraft() {

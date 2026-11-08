@@ -102,3 +102,33 @@ test('one-click outpatient scenario produces ten drafts without transactions',as
   expect(after).toBe(10);
   await page.screenshot({path:out+'/sample-outpatient.png',fullPage:true});
 });
+
+test('item-level CPOE composer saves two draft services and reviews without API requests',async ({page}) => {
+  const errors=[],apiRequests=[];
+  page.on('pageerror',e=>errors.push(e.message));
+  page.on('request',r=>{if (/\\/api\\/v1\\//.test(r.url()))apiRequests.push(r.url());});
+  await start(page);await forms(page);await selectModule(page,'RME-08');
+  await page.locator('#role').selectOption('Dokter RJ');
+  await page.locator('[data-p0-action="new"]').click();
+  await page.locator('#p0-editor [name="order_type"]').selectOption('Laboratorium');
+  await page.locator('#p0-editor [name="priority"]').selectOption('Rutin');
+  await page.locator('#p0-editor [name="ordered_at"]').fill('2026-11-08T09:15');
+  await page.locator('#p0-editor [name="indication"]').fill('Demonstrasi indikasi pemeriksaan sintetis');
+  await page.locator('#p0-editor [name="orderer"]').fill('Dokter Demo');
+  await page.locator('#p0-editor [name="line-0-service_code"]').selectOption('CBC — Darah lengkap');
+  await page.locator('#p0-editor [name="line-0-quantity"]').fill('1');
+  await page.locator('[data-line-action="add"]').click();
+  await page.locator('#p0-editor [name="line-1-service_code"]').selectOption('GLU — Glukosa');
+  await page.locator('#p0-editor [name="line-1-quantity"]').fill('2');
+  await page.locator('[data-p0-action="save"]').click();
+  const record=await page.evaluate(()=>window.SIMRSFormEngine.getRecords()['RME-08'][0]);
+  expect(record.values.items).toHaveLength(2);
+  expect(record.values.service_code).toBe('CBC — Darah lengkap');
+  expect(record.values.items[1].quantity).toBe('2');
+  await page.locator('[data-p0-action="review"]').click();
+  await expect(page.locator('.p0-editor .card-h')).toContainText('Reviewed (Demo)');
+  await expect(page.locator('[data-line-action="add"]')).toHaveCount(0);
+  await expect(page.locator('#p0-editor [name="line-0-quantity"]')).toBeDisabled();
+  expect(apiRequests).toEqual([]);
+  expect(errors).toEqual([]);
+});

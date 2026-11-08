@@ -91,3 +91,17 @@
 .p0-contract-gaps ul{padding-left:20px;margin:8px 0 0}
 .p0-contract-gaps li{margin-bottom:5px}
 .p0-contract-details .hint{color:var(--muted)}
+
+/* Item-level CPOE and e-Resep composer, never a production order entry. */
+.p0-line-editor{margin:18px 0 3px;padding:16px;border:1px solid #cbdedc;border-radius:12px;background:#f8fcfb}
+.p0-line-head{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;margin-bottom:13px}
+.p0-line-head h3{font-size:14px;margin:0 0 5px;color:var(--navy)}
+.p0-line-head p{font-size:11px;margin:0;line-height:1.5;color:var(--muted);max-width:760px}
+.p0-line-row{background:#fff;border:1px solid var(--border);border-radius:9px;padding:13px;margin:0 0 12px;min-width:0}
+.p0-line-row legend{font-size:11px;font-weight:800;color:var(--navy);padding:0 6px}
+.p0-line-fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;align-items:start;margin-bottom:11px}
+.p0-line-row .btn{margin-top:3px}
+.p0-line-editor>.btn{margin-top:1px}
+.p0-line-editor>.hint{display:block;margin-top:9px}
+@media(max-width:1024px){.p0-line-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:530px){.p0-line-editor{padding:12px}.p0-line-head{flex-direction:column}.p0-line-fields{grid-template-columns:minmax(0,1fr)}.p0-line-row .btn,.p0-line-editor>.btn{width:100%}}
