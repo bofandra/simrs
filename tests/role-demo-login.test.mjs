@@ -68,7 +68,7 @@ test("every one of 44 roles has a unique demo account, plus isolated QA reviewer
  }
  assert.ok(h.api.accounts.some(a=>a.username==="reviewer.demo"&&a.reviewer));
  assert.match(h.node.innerHTML,/Masuk ke SIMRS Baru/);
- assert.match(h.node.innerHTML,/Pilih akun berdasarkan role/);
+ assert.match(h.node.innerHTML,/Akun demo untuk pengujian/);
  assert.doesNotMatch(h.node.innerHTML,/Masuk cepat sesuai profesi|data-demo-quick|demo-quick-roles/);
  assert.equal((h.node.innerHTML.match(/data-demo-account=/g)||[]).length,45);
 });
