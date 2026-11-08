@@ -2,6 +2,7 @@
  * Static UI only; preserve existing role-gating and disabled transactions.
  */
 #demo-mobile-nav-toggle,#demo-mobile-nav-backdrop{display:none}
+body.demo-authenticated:not(.demo-reviewer) .screen-footer{display:none!important}
 .p0-operational{width:100%;max-width:1000px;margin:0 auto}
 .p0-operational-head{align-items:center}
 .p0-operational-head .actions{flex:none}
