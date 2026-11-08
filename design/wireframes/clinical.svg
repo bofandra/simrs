@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="970" viewBox="0 0 1600 970">
+<style>text{font-family:Inter,Arial,Helvetica,sans-serif}</style>
+<rect x="0" y="0" width="253" height="970" rx="0" fill="#152947" stroke="none"/>
+<rect x="18" y="22" width="39" height="39" rx="10" fill="#19A4A2" stroke="none"/>
+<text x="29" y="51" font-size="27" fill="#FFFFFF" font-weight="800">+</text>
+<text x="67" y="41" font-size="22" fill="#FFFFFF" font-weight="800">SIMRS Baru</text>
+<text x="67" y="59" font-size="10" fill="#B9CBDD" font-weight="700">UI BLUEPRINT</text>
+<text x="20" y="108" font-size="11" fill="#8DAAC9" font-weight="700">WORKSPACE PENGGUNA</text>
+<text x="20" y="154" font-size="14" fill="#CAD8E8" font-weight="400">Front Office</text>
+<rect x="8" y="182" width="238" height="43" rx="9" fill="#354A68" stroke="none"/>
+<rect x="8" y="182" width="4" height="43" rx="3" fill="#34C8C0" stroke="none"/>
+<text x="20" y="210" font-size="14" fill="#FFFFFF" font-weight="700">Dokter &amp; Perawat</text>
+<text x="20" y="266" font-size="14" fill="#CAD8E8" font-weight="400">IGD &amp; Rawat Inap</text>
+<text x="20" y="322" font-size="14" fill="#CAD8E8" font-weight="400">Laboratorium &amp; MCU</text>
+<text x="20" y="378" font-size="14" fill="#CAD8E8" font-weight="400">Farmasi &amp; Logistik</text>
+<text x="20" y="434" font-size="14" fill="#CAD8E8" font-weight="400">Keuangan &amp; Klaim</text>
+<text x="20" y="490" font-size="14" fill="#CAD8E8" font-weight="400">Manajemen &amp; Mutu</text>
+<text x="19" y="587" font-size="10" fill="#8DAAC9" font-weight="700">STANDAR ANTARMUKA</text>
+<text x="20" y="630" font-size="14" fill="#CAD8E8" font-weight="400">Design System</text>
+<rect x="15" y="828" width="225" height="110" rx="10" fill="#203957" stroke="none"/>
+<text x="28" y="856" font-size="12" fill="#FFFFFF" font-weight="700">STATIC WIREFRAME</text>
+<text x="28" y="881" font-size="12" fill="#B9CAD9" font-weight="400">Data sepenuhnya simulasi</text>
+<text x="28" y="902" font-size="12" fill="#B9CAD9" font-weight="400">Tidak terhubung backend</text>
+<rect x="253" y="0" width="1347" height="970" rx="0" fill="#F4F7FB" stroke="none"/>
+<rect x="253" y="0" width="1347" height="63" rx="0" fill="#FFFFFF" stroke="none"/>
+<rect x="253" y="63" width="1347" height="1" rx="0" fill="#DCE5EF" stroke="none"/>
+<text x="285" y="40" font-size="13" fill="#6A7B91" font-weight="400">SIMRS Baru  /  Dokter &amp; Perawat</text>
+<rect x="1240" y="17" width="84" height="25" rx="7" fill="#FFF3D9" stroke="none"/>
+<text x="1250" y="34" font-size="12" fill="#A16C10" font-weight="700">DATA DEMO</text>
+<rect x="1430" y="16" width="149" height="30" rx="7" fill="#F6F9FC" stroke="#DCE5EF"/>
+<text x="1443" y="36" font-size="12" fill="#25374D" font-weight="400">RS Demo Nusantara</text>
+<text x="285" y="102" font-size="11" fill="#078D88" font-weight="800">02  ·  WORKSPACE</text>
+<text x="285" y="143" font-size="29" fill="#152947" font-weight="800">Pemeriksaan &amp; rekam medis</text>
+<text x="285" y="169" font-size="13" fill="#6A7B91" font-weight="400">UI Wireframe · 8 November 2026 · Kesesuaian PRD dan role-based workflow</text>
+<rect x="284" y="189" width="1294" height="37" rx="7" fill="#EAF2FD" stroke="#D6E6F6"/>
+<text x="297" y="213" font-size="12" fill="#31526F" font-weight="800">TRACE</text>
+<rect x="360" y="195" width="63" height="25" rx="7" fill="#FFFFFF" stroke="none"/>
+<text x="370" y="212" font-size="12" fill="#406280" font-weight="700">RME-01</text>
+<rect x="431" y="195" width="63" height="25" rx="7" fill="#FFFFFF" stroke="none"/>
+<text x="441" y="212" font-size="12" fill="#406280" font-weight="700">RME-04</text>
+<rect x="502" y="195" width="63" height="25" rx="7" fill="#FFFFFF" stroke="none"/>
+<text x="512" y="212" font-size="12" fill="#406280" font-weight="700">RME-05</text>
+<rect x="573" y="195" width="63" height="25" rx="7" fill="#FFFFFF" stroke="none"/>
+<text x="583" y="212" font-size="12" fill="#406280" font-weight="700">FR-009</text>
+<rect x="644" y="195" width="63" height="25" rx="7" fill="#FFFFFF" stroke="none"/>
+<text x="654" y="212" font-size="12" fill="#406280" font-weight="700">FR-016</text>
+<rect x="715" y="195" width="62" height="25" rx="7" fill="#FFFFFF" stroke="none"/>
+<text x="725" y="212" font-size="12" fill="#406280" font-weight="700">WF-02</text>
+<rect x="285" y="245" width="310" height="114" rx="12" fill="#FFFFFF" stroke="#DCE5EF"/>
+<text x="303" y="280" font-size="13" fill="#6A7B91" font-weight="700">Pasien aktif</text>
+<text x="303" y="331" font-size="32" fill="#152947" font-weight="800">04</text>
+<rect x="530" y="269" width="46" height="46" rx="13" fill="#EAF2FF" stroke="none"/>
+<rect x="611" y="245" width="310" height="114" rx="12" fill="#FFFFFF" stroke="#DCE5EF"/>
+<text x="629" y="280" font-size="13" fill="#6A7B91" font-weight="700">Draft CPPT</text>
+<text x="629" y="331" font-size="32" fill="#152947" font-weight="800">01</text>
+<rect x="856" y="269" width="46" height="46" rx="13" fill="#E9F8F2" stroke="none"/>
+<rect x="937" y="245" width="310" height="114" rx="12" fill="#FFFFFF" stroke="#DCE5EF"/>
+<text x="955" y="280" font-size="13" fill="#6A7B91" font-weight="700">Order aktif</text>
+<text x="955" y="331" font-size="32" fill="#152947" font-weight="800">02</text>
+<rect x="1182" y="269" width="46" height="46" rx="13" fill="#FFF4E0" stroke="none"/>
+<rect x="1263" y="245" width="310" height="114" rx="12" fill="#FFFFFF" stroke="#DCE5EF"/>
+<text x="1281" y="280" font-size="13" fill="#6A7B91" font-weight="700">Alert klinis</text>
+<text x="1281" y="331" font-size="32" fill="#152947" font-weight="800">00</text>
+<rect x="1508" y="269" width="46" height="46" rx="13" fill="#ECF2FF" stroke="none"/>
+<rect x="284" y="378" width="232" height="489" rx="13" fill="#FFFFFF" stroke="#DCE5EF"/>
+<text x="302" y="408" font-size="17" fill="#152947" font-weight="750">Daftar Pasien</text>
+<rect x="284" y="428" width="232" height="1" rx="0" fill="#DCE5EF" stroke="none"/>
+<text x="492" y="408" font-size="11" fill="#6A7B91" font-weight="400"></text>
+<text x="302" y="438" font-size="12" fill="#4E6078" font-weight="700">Cari pasien</text>
+<rect x="302" y="446" width="192" height="36" rx="7" fill="#FFFFFF" stroke="#CAD7E3"/>
+<text x="312" y="470" font-size="12" fill="#65778E" font-weight="400">Sari / RM-...</text>
+<rect x="297" y="527" width="208" height="73" rx="8" fill="#E8F7F4" stroke="none"/>
+<text x="309" y="555" font-size="13" fill="#152947" font-weight="700">Sari Amelia</text>
+<text x="309" y="578" font-size="11" fill="#6A7B91" font-weight="400">RM-0083 · RJ</text>
+<rect x="297" y="615" width="208" height="73" rx="8" fill="#F9FAFC" stroke="none"/>
+<text x="309" y="643" font-size="13" fill="#152947" font-weight="700">Bima Rahman</text>
+<text x="309" y="666" font-size="11" fill="#6A7B91" font-weight="400">RM-0094 · RJ</text>
+<rect x="297" y="703" width="208" height="73" rx="8" fill="#F9FAFC" stroke="none"/>
+<text x="309" y="731" font-size="13" fill="#152947" font-weight="700">Nadia Laras</text>
+<text x="309" y="754" font-size="11" fill="#6A7B91" font-weight="400">RM-0117 · RJ</text>
+<rect x="532" y="378" width="702" height="489" rx="13" fill="#FFFFFF" stroke="#DCE5EF"/>
+<text x="550" y="408" font-size="17" fill="#152947" font-weight="750">Clinical Documentation</text>
+<rect x="532" y="428" width="702" height="1" rx="0" fill="#DCE5EF" stroke="none"/>
+<text x="1210" y="408" font-size="11" fill="#6A7B91" font-weight="400">RME-04 / FR-009</text>
+<rect x="551" y="440" width="662" height="57" rx="8" fill="#F5F9FC" stroke="none"/>
+<text x="567" y="465" font-size="14" fill="#152947" font-weight="800">Sari Amelia  ·  RM-DEMO-0083</text>
+<text x="567" y="484" font-size="12" fill="#6A7B91" font-weight="400">42 th · Poli Penyakit Dalam · Encounter 247</text>
+<rect x="551" y="511" width="98" height="25" rx="7" fill="#EAF7F3" stroke="none"/>
+<text x="561" y="528" font-size="12" fill="#078D88" font-weight="700">SOAP / CPPT</text>
+<rect x="674" y="511" width="84" height="25" rx="7" fill="#F4F7FB" stroke="none"/>
+<text x="684" y="528" font-size="12" fill="#657C92" font-weight="700">Diagnosis</text>
+<rect x="797" y="511" width="105" height="25" rx="7" fill="#F4F7FB" stroke="none"/>
+<text x="807" y="528" font-size="12" fill="#657C92" font-weight="700">CPOE / Order</text>
+<text x="551" y="562" font-size="12" fill="#4E6078" font-weight="700">Subjective</text>
+<rect x="551" y="570" width="316" height="66" rx="7" fill="#FFFFFF" stroke="#CAD7E3"/>
+<text x="561" y="594" font-size="12" fill="#65778E" font-weight="400">Pusing sejak 3 hari</text>
+<text x="886" y="562" font-size="12" fill="#4E6078" font-weight="700">Objective</text>
+<rect x="886" y="570" width="316" height="66" rx="7" fill="#FFFFFF" stroke="#CAD7E3"/>
+<text x="896" y="594" font-size="12" fill="#65778E" font-weight="400">TD 138/88; Nadi 82</text>
+<text x="551" y="673" font-size="12" fill="#4E6078" font-weight="700">Assessment</text>
+<rect x="551" y="681" width="316" height="66" rx="7" fill="#FFFFFF" stroke="#CAD7E3"/>
+<text x="561" y="705" font-size="12" fill="#65778E" font-weight="400">I10 Hipertensi</text>
+<text x="886" y="673" font-size="12" fill="#4E6078" font-weight="700">Plan</text>
+<rect x="886" y="681" width="316" height="66" rx="7" fill="#FFFFFF" stroke="#CAD7E3"/>
+<text x="896" y="705" font-size="12" fill="#65778E" font-weight="400">Edukasi dan lab</text>
+<rect x="1007" y="783" width="205" height="40" rx="7" fill="#078D88" stroke="none"/>
+<text x="1034" y="810" font-size="14" fill="#FFFFFF" font-weight="700">Review &amp; Sign</text>
+<rect x="1250" y="378" width="328" height="489" rx="13" fill="#FFFFFF" stroke="#DCE5EF"/>
+<text x="1268" y="408" font-size="17" fill="#152947" font-weight="750">Ringkasan &amp; Histori</text>
+<rect x="1250" y="428" width="328" height="1" rx="0" fill="#DCE5EF" stroke="none"/>
+<text x="1554" y="408" font-size="11" fill="#6A7B91" font-weight="400">Patient Context</text>
+<text x="1270" y="457" font-size="12" fill="#6A7B91" font-weight="400">Alergi</text>
+<text x="1440" y="457" font-size="12" fill="#152947" font-weight="700">Penisilin</text>
+<text x="1270" y="513" font-size="12" fill="#6A7B91" font-weight="400">Obat aktif</text>
+<text x="1440" y="513" font-size="12" fill="#152947" font-weight="700">Amlodipin</text>
+<text x="1270" y="569" font-size="12" fill="#6A7B91" font-weight="400">Problem</text>
+<text x="1440" y="569" font-size="12" fill="#152947" font-weight="700">Hipertensi</text>
+<text x="1270" y="625" font-size="12" fill="#6A7B91" font-weight="400">Latest TTV</text>
+<text x="1440" y="625" font-size="12" fill="#152947" font-weight="700">138/88 mmHg</text>
+<rect x="1269" y="708" width="285" height="77" rx="9" fill="#FFF4DF" stroke="none"/>
+<text x="1281" y="735" font-size="12" fill="#996800" font-weight="750">Review sebelum sign</text>
+<text x="1281" y="756" font-size="11" fill="#996800" font-weight="400">Alergi &amp; riwayat wajib dicek</text>
+<text x="285" y="947" font-size="12" fill="#6A7B91" font-weight="600">SCREEN CONCEPT · USE SOURCE FR / US / AC · NOT A FUNCTIONING PRODUCTION SYSTEM</text>
+<text x="1422" y="947" font-size="13" fill="#078D88" font-weight="800">2/7</text>
+</svg>
