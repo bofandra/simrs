@@ -328,12 +328,12 @@ test('Dokter RJ v2 stores reviewed SOAP per patient and creates an addendum draf
 
 
 
-test('login-first entry exposes 42 demo roles and opens Front Office for Pendaftaran',async ({page})=>{
+test('login-first entry exposes 44 demo roles and opens Front Office for Pendaftaran',async ({page})=>{
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto('/index.html');
   await expect(page.locator('#demo-login-form')).toBeVisible();
   await expect(page.locator('#app')).toBeHidden();
-  await expect(page.locator('[data-demo-account]')).toHaveCount(43);
+  await expect(page.locator('[data-demo-account]')).toHaveCount(45);
   await expect(page.locator('[data-demo-quick], .demo-quick-head, .demo-quick-roles')).toHaveCount(0);
   await expect(page.locator('.demo-account-title')).toContainText('Pilih akun berdasarkan role');
   await page.locator('[data-demo-account="akun.pendaftaran"]').click();
@@ -447,5 +447,22 @@ test('pharmacist starts in prescription queue without warehouse management contr
  await expect(page.locator('.uxv4-table tbody tr')).toHaveCount(4);
  await expect(page.locator('.uxv4-table')).toContainText('RX-0027');
  await page.screenshot({path:out+'/role-farmasi-worklist-v4.png',fullPage:true});
+ expect(errors).toEqual([]);
+});
+
+test('bed manager and billing user get distinct specialized menus',async ({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('/index.html');
+ await page.locator('[data-demo-account="akun.bed-manager"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ await expect(page.locator('.uxv4 h1')).toHaveText('Beranda Bed Manager');
+ await expect(page.locator('#role-nav')).toContainText('Permintaan alokasi');
+ await expect(page.locator('#role-nav')).not.toContainText('Resep elektronik');
+ await page.locator('#demo-logout').click();
+ await page.locator('[data-demo-account="akun.petugas-billing"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ await expect(page.locator('.uxv4 h1')).toHaveText('Beranda Petugas Billing');
+ await expect(page.locator('#role-nav')).toContainText('Charge capture');
+ await expect(page.locator('#role-nav')).not.toContainText('Terima pembayaran');
  expect(errors).toEqual([]);
 });
