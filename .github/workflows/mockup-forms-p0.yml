@@ -26,7 +26,31 @@ jobs:
           node --check public/ui-preview/p0-form-catalog.js
           node --check public/ui-preview/p1-form-definitions.js
           node --check public/ui-preview/p2-p3-form-definitions.js
+          node --check public/ui-preview/contract-audit.js
           node --check public/ui-preview/demo-workflow-links.js
           node --check public/ui-preview/p0-forms.js
       - name: All form and demo workflow contract tests
         run: node --test tests/*.test.mjs
+
+  browser-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Playwright test runner
+        run: npm install --no-save @playwright/test@1.56.1
+      - name: Install Chromium browser
+        run: npx playwright install --with-deps chromium
+      - name: Run responsive and workflow smoke tests
+        run: npx playwright test --config=tests/playwright.config.mjs
+      - name: Save UI screenshots and traces
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: simrs-ui-smoke-artifacts
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 7
