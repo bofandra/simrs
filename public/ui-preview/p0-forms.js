@@ -203,7 +203,7 @@
     }
     return '<div class="page-head"><div><div class="eyebrow">DESAIN FORM • SEMUA PRIORITAS P0–P3</div>'+
       '<h1>Katalog Form & Workflow SIMRS</h1><p>Form sesuai domain PRD, dapat diisi dan ditinjau menggunakan data sintetis. Perubahan hanya tersimpan di browser ini.</p></div>'+
-      '<div class="actions">'+pill("68/68 modul memiliki form demo","good")+pill("DEMO – NO BACKEND")+'</div></div>'+
+      '<div class="actions">'+pill("68/68 modul memiliki form demo","good")+pill("DEMO – NO BACKEND")+button("Muat 10 draft rawat jalan","seedScenario","btn-primary")+'</div></div>'+
       '<div class="p0-warning" role="note"><strong>Bukan sistem operasional.</strong> Jangan masukkan data pasien asli, NIK sebenarnya, nomor transaksi, atau informasi sensitif. Tidak ada sinkronisasi ke API/FHIR atau database RS.</div>'+
       '<div class="p0-layout">'+renderCatalog()+'<div class="p0-detail">'+
       '<section class="card"><div class="card-body">'+renderInfo(m)+'</div></section>'+
@@ -322,6 +322,7 @@
       update();notice("Draft "+dest.code+" terhubung ke "+source.id+". Data belum tersimpan.");
       return;
     }
+    if (action==="seedScenario"){seedScenario();return;}
     if (action==="blocked"){notice("NONAKTIF: menunggu SOP, UAT, dan otorisasi.");return;}
   }
   function handleInput(e) {
@@ -342,6 +343,34 @@
   document.addEventListener("submit",function(e){
     if(e.target.id==="p0-editor"){e.preventDefault();e.stopPropagation();saveDraft();}
   });
+  function seedScenario() {
+    var patient=context().patient;
+    if(!patient || !patient.id || !patient.visit || !window.SIMRSSyntheticJourney) {
+      notice("Skenario pasien sintetis belum tersedia.");return;
+    }
+    var scenarioId="RJ-DEMO-"+patient.id+"-"+patient.visit;
+    var existing=Object.keys(demo.records).some(function(code){
+      return (demo.records[code]||[]).some(function(x){return x.scenario_tag===scenarioId;});
+    });
+    if(existing){
+      state.code="CORE-09";state.priority="P0";state.search="";state.recordId=null;
+      state.prefill=null;state.linkSource=null;
+      var row=(demo.records["CORE-09"]||[]).find(function(r){return r.scenario_tag===scenarioId;});
+      if(row)state.recordId=row.id;
+      update();notice("Skenario untuk pasien dan encounter ini sudah dimuat. Draft lama tidak ditimpa.");
+      return;
+    }
+    var rows=window.SIMRSSyntheticJourney.make(patient,new Date().toISOString(),scenarioId);
+    rows.forEach(function(x){
+      if(!demo.records[x.code])demo.records[x.code]=[];
+      demo.records[x.code].unshift(x.record);
+    });
+    state.code="CORE-09";state.priority="P0";state.search="";state.recordId=rows.find(function(x){return x.code==="CORE-09";}).record.id;
+    state.prefill=null;state.linkSource=null;
+    if(persist()) {
+      update();notice("10 draft sintetis dibuat. Seluruhnya berstatus Draft; tidak ada persetujuan, dispensing, pembayaran, atau pengiriman API.");
+    }
+  }
   function resetDemo() {
     demo={version:1,seq:0,records:{}};
     state.recordId=null;state.code="CORE-09";state.priority="P0";state.search="";state.prefill=null;state.linkSource=null;
