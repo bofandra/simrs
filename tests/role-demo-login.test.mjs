@@ -50,6 +50,8 @@ test("login first: page includes role login surface before app and demo artifact
  assert.match(html,/\.\/role-demo-login\.css/);
  assert.match(html,/\.\/role-demo-login\.js/);
  assert.match(html,/\.\/uiux-v3\.css/);
+ assert.match(html,/\.\/role-workspace-v4\.css/);
+ assert.ok(html.indexOf("role-workspace-v4.js")<html.indexOf("role-demo-login.js"));
  assert.match(html,/id="demo-logout"/);
  assert.match(html,/rolehome/);
 });
