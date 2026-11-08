@@ -322,7 +322,7 @@ test('Dokter RJ v2 stores reviewed SOAP per patient and creates an addendum draf
   await expect(page.locator('#ux-soap-s')).toBeEnabled();
   await expect(page.locator('.ux-subhead')).toContainText('versi 2');
   await page.locator('[data-ux-action="tab:order"]').click();
-  await expect(page.locator('[data-ux-action="module:RME-08"]')).toBeVisible();
+  await expect(page.locator('.ux-module-panel [data-ux-action="module:RME-08"]')).toBeVisible();
   expect(errors).toEqual([]);
 });
 
