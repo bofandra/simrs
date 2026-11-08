@@ -1,26 +1,29 @@
 {
   "meta": {
     "name": "SIMRS Baru UI Design System",
-    "version": "1.0.0",
+    "version": "1.1.0-provisional",
     "baseline_prd": "2026-11-08",
-    "type": "design guidance only"
+    "type": "design guidance only",
+    "theme_reference_url": "https://satusehat-stg.dto.kemkes.go.id/design-system",
+    "theme_verification": "Pending: staging reference was not accessible on 2026-11-08; values are provisional, not official SATUSEHAT tokens",
+    "css_theme_path": "public/ui-preview/satusehat-theme.css"
   },
   "color": {
-    "navy": "#152947",
-    "navy_alt": "#243B5A",
-    "primary_action": "#078D88",
-    "information": "#3368C4",
-    "success": "#16845E",
-    "warning": "#A26300",
+    "navy": "#114C4D",
+    "navy_alt": "#1C6565",
+    "primary_action": "#087E79",
+    "information": "#177C8D",
+    "success": "#217A5B",
+    "warning": "#926200",
     "danger": "#B53C47",
-    "canvas": "#F4F7FB",
+    "canvas": "#F5FAF9",
     "surface": "#FFFFFF",
-    "text": "#243247",
-    "text_muted": "#637389",
-    "border": "#DFE7EF"
+    "text": "#273B40",
+    "text_muted": "#61767B",
+    "border": "#DCE9E7"
   },
   "font": {
-    "family": "Inter, ui-sans-serif, system-ui, Segoe UI, Roboto, Arial, sans-serif",
+    "family": "Segoe UI, Inter, ui-sans-serif, system-ui, Roboto, Arial, sans-serif",
     "base_px": 13,
     "label_px": 11,
     "table_px": 11,
@@ -37,12 +40,12 @@
     32
   ],
   "radius_px": {
-    "sm": 7,
-    "md": 11,
-    "lg": 15
+    "sm": 8,
+    "md": 12,
+    "lg": 16
   },
   "elevation": {
-    "card": "0 8px 28px rgba(33,52,82,.045)"
+    "card": "0 3px 14px rgba(22,83,78,.055)"
   },
   "layout": {
     "desktop_sidebar_px": 252,
