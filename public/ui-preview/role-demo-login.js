@@ -8,10 +8,13 @@ var KEY="simrs-demo-login-session-v1";
 var roleList=(window.__SIMRS_PREVIEW__&&window.__SIMRS_PREVIEW__.roles)||[];
 var ACCOUNT_PREFIX="akun.";
 var reviewer={username:"reviewer.demo",role:"Reviewer UI/QA",label:"Reviewer UI/QA",department:"Pengujian Mockup",reviewer:true};
+/* Dedicated legacy screens are retained only where they are already role-scoped.
+ * Generic finance/pharmacy/acute/management pages mix duties, so those accounts
+ * now enter their PRD-specific operational worklist instead.
+ */
 var areaByRole={
- "Pendaftaran":"front","Dokter RJ":"clinical","Perawat":"clinical","Dokter IGD":"acute",
- "ATLM":"lab","Petugas MCU":"lab","Farmasis":"pharmacy","Kasir":"finance",
- "Manajemen RS":"management"
+ "Pendaftaran":"front","Dokter RJ":"clinical","Perawat":"clinical",
+ "ATLM":"lab","Petugas MCU":"lab"
 };
 var descriptions={
  "Pendaftaran":"Pencarian pasien, identitas, registrasi, janji temu, dan antrean",
@@ -23,6 +26,8 @@ var descriptions={
  "Petugas MCU":"Paket peserta, pemeriksaan, kelengkapan dan buku hasil MCU",
  "Farmasis":"Antrean resep, telaah obat, lot, dan penyiapan obat",
  "Kasir":"Tagihan, alokasi pembayaran, dan kuitansi",
+ "Petugas Billing":"Charge capture dan invoice dari tindakan yang sah",
+ "Bed Manager":"Permintaan bed, alokasi, transfer dan discharge",
  "Casemix":"Kelengkapan berkas, grouping dan rekonsiliasi klaim",
  "Manajemen RS":"Kinerja pelayanan, indikator, kepatuhan dan tren rumah sakit",
  "Admin Sistem":"Akun, organisasi, master data, terminologi dan integrasi",
@@ -34,10 +39,10 @@ var descriptions={
  "Rekruter":"Kandidat, seleksi, tahapan dan rekrutmen"
 };
 var groups={
- "Pelayanan & RME":["Pendaftaran","Dokter RJ","Dokter IGD","DPJP Rawat Inap","Perawat","Perawat HD","Terapis Rehabilitasi"],
+ "Pelayanan & RME":["Pendaftaran","Dokter RJ","Dokter IGD","DPJP Rawat Inap","Bed Manager","Perawat","Perawat HD","Terapis Rehabilitasi"],
  "Penunjang Medis":["ATLM","Petugas MCU","Radiografer","Radiolog","Farmasis","Koordinator MCU","Petugas Bank Darah","Dokter Anestesi","Koordinator OK","Ahli Gizi"],
  "Operasional & Logistik":["Gudang","Petugas CSSD","Petugas Dapur","Petugas Laundry","Pengadaan","Petugas Aset","Teknisi","Petugas Fasilitas","Koordinator Transport"],
- "Keuangan & Klaim":["Kasir","Casemix","Petugas BPJS","Coder","Akuntan","Budget Owner","Analis Biaya"],
+ "Keuangan & Klaim":["Kasir","Petugas Billing","Casemix","Petugas BPJS","Coder","Akuntan","Budget Owner","Analis Biaya"],
  "Manajemen & Enterprise":["Manajemen RS","Tim Mutu","Integrasi","Admin Sistem","HR Admin","Payroll Admin","Rekruter","Tim PPI","Pasien Demo"]
 };
 function dept(role){return Object.keys(groups).find(function(n){return groups[n].includes(role);})||"Unit Rumah Sakit";}
@@ -45,6 +50,7 @@ function slug(s){return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f
 var accounts=roleList.map(function(role){return {username:ACCOUNT_PREFIX+slug(role),role:role,label:role,department:dept(role),reviewer:false};});
 accounts.push(reviewer);
 var current=null;
+var currentSection="home";
 var selected=accounts[0];
 var loginRoot=document.getElementById("demo-login");
 function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,function(x){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[x];});}
@@ -101,6 +107,7 @@ function paintRoleNav(){
  var holder=document.getElementById("role-nav");
  if(!holder)return;
  var shell=window.__SIMRS_PREVIEW__;
+ if(window.SIMRSRoleUXV4){holder.innerHTML=window.SIMRSRoleUXV4.navHtml(current.role,currentSection);return;}
  holder.innerHTML='<button class="ux-nav-link'+(shell.state.active==="rolehome"?" active":"")+'" data-demo-action="home" type="button">Beranda saya</button>'+
   tasks(current.role).map(function(x){
    return '<button type="button" class="ux-nav-link" data-demo-action="'+esc(x[1])+'">'+esc(x[0])+'</button>';
@@ -108,6 +115,7 @@ function paintRoleNav(){
 }
 function renderHome(){
  if(!current)return "";
+ if(window.SIMRSRoleUXV4)return window.SIMRSRoleUXV4.renderPage({role:current.role,section:currentSection,username:current.username,canOpen:allowModule});
  var role=current.role,list=tasks(role);
  var examples={
   "Pendaftaran":["Verifikasi identitas dan kemungkinan data ganda","Periksa janji temu dan check-in","Teruskan pasien ke antrean unit"],
@@ -202,7 +210,7 @@ function renderLogin(){
  '<span class="demo-eyebrow">MOCKUP UI/UX RUMAH SAKIT</span>'+
  '<h1>Masuk sesuai <em>peran Anda.</em></h1>'+
  '<p>Setiap peran memiliki akun demo dan akan melihat tugas, menu, serta formulir sesuai pekerjaan sehari-hari di rumah sakit.</p>'+
- '<div class="demo-login-points"><span>42 akun role operasional</span><span>Workspace personal per peran</span><span>Semua data sintetis</span></div>'+
+ '<div class="demo-login-points"><span>'+roleList.length+' akun role operasional</span><span>Workspace personal per peran</span><span>Semua data sintetis</span></div>'+
  '<div class="demo-login-disclaimer"><strong>Hanya prototipe.</strong> Akun dan kata sandi demo bersifat publik. Tidak ada autentikasi server, RBAC nyata, atau data pasien asli.</div></section>'+
  '<section class="demo-login-panel"><div class="demo-login-header"><div><h2>Login Demo SIMRS</h2><p>Pilih akun atau masukkan username demo.</p></div><span class="demo-online">Mode Demo</span></div>'+
  '<form id="demo-login-form" novalidate><div class="demo-login-fields"><label for="demo-username">Username demo</label><input id="demo-username" autocomplete="username" spellcheck="false" value="'+esc(selected.username)+'"/>'+
@@ -233,6 +241,7 @@ function showLogin(){
 }
 function showApp(){
  if(!current)return;
+ currentSection="home";
  document.body.classList.remove("demo-login-active");
  document.body.classList.add("demo-authenticated");
  document.body.classList.toggle("demo-reviewer",!!current.reviewer);
@@ -268,7 +277,17 @@ function logout(){
 function handleDemoCommand(command){
  var shell=window.__SIMRS_PREVIEW__;
  if(!shell||!current)return;
- if(command==="home"){shell.state.active="rolehome";location.hash="#/rolehome";shell.render();return;}
+ if(command==="home"){currentSection="home";shell.state.active="rolehome";location.hash="#/rolehome";shell.render();return;}
+ if(command.startsWith("section:")){
+  var section=command.slice(8);
+  if(!window.SIMRSRoleUXV4||!window.SIMRSRoleUXV4.getFeature(current.role,section)){
+   shell.toast("Area kerja tidak tersedia untuk akun demo ini.");return;
+  }
+  currentSection=section;
+  shell.state.active="rolehome";
+  location.hash="#/rolehome/"+section;
+  shell.render();return;
+ }
  if(command==="logout"){logout();return;}
  if(command==="forms"){
   if(isReviewer()){shell.state.active="forms";shell.render();return;}

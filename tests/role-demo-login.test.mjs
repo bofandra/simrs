@@ -50,15 +50,17 @@ test("login first: page includes role login surface before app and demo artifact
  assert.match(html,/\.\/role-demo-login\.css/);
  assert.match(html,/\.\/role-demo-login\.js/);
  assert.match(html,/\.\/uiux-v3\.css/);
+ assert.match(html,/\.\/role-workspace-v4\.css/);
+ assert.ok(html.indexOf("role-workspace-v4.js")<html.indexOf("role-demo-login.js"));
  assert.match(html,/id="demo-logout"/);
  assert.match(html,/rolehome/);
 });
 
-test("every one of 42 roles has a unique demo account, plus isolated QA reviewer",()=>{
+test("every one of 44 roles has a unique demo account, plus isolated QA reviewer",()=>{
  const h=harness();
- assert.equal(h.roles.length,42);
- assert.equal(h.api.accounts.length,43);
- assert.equal(new Set(h.api.accounts.map(a=>a.username)).size,43);
+ assert.equal(h.roles.length,44);
+ assert.equal(h.api.accounts.length,45);
+ assert.equal(new Set(h.api.accounts.map(a=>a.username)).size,45);
  for(const role of h.roles){
   const account=h.api.accounts.find(a=>a.role===role);
   assert.ok(account,role);
@@ -68,7 +70,7 @@ test("every one of 42 roles has a unique demo account, plus isolated QA reviewer
  assert.match(h.node.innerHTML,/Login Demo SIMRS/);
  assert.match(h.node.innerHTML,/Pilih akun berdasarkan role/);
  assert.doesNotMatch(h.node.innerHTML,/Masuk cepat sesuai profesi|data-demo-quick|demo-quick-roles/);
- assert.equal((h.node.innerHTML.match(/data-demo-account=/g)||[]).length,43);
+ assert.equal((h.node.innerHTML.match(/data-demo-account=/g)||[]).length,45);
 });
 
 test("bad password denied; login assigns correct role and default workspace",()=>{
@@ -84,6 +86,12 @@ test("bad password denied; login assigns correct role and default workspace",()=
  assert.equal(h.api.allowModule("CORE-09"),false);
  assert.equal(h.api.allowModule("RME-08"),true);
  assert.equal(h.body.dataset.demoRole,"dokter-rj");
+ assert.equal(h.api.login("akun.kasir","demo123"),true);
+ assert.equal(h.state.active,"rolehome");
+ assert.equal(h.api.login("akun.farmasis","demo123"),true);
+ assert.equal(h.state.active,"rolehome");
+ assert.equal(h.api.login("akun.dokter-igd","demo123"),true);
+ assert.equal(h.state.active,"rolehome");
 });
 
 test("support role opens own task home, not arbitrary clinical workspace",()=>{
