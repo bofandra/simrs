@@ -445,7 +445,7 @@
     });
     state.flow=flow;
     if(existing) {
-      goGuide(journey.flows[flow].steps[0]);
+      goGuide(flow==="RJ"?"CORE-09":journey.flows[flow].steps[0]);
       notice("Skenario "+journey.flows[flow].label+" sudah ada; draft lama tidak ditimpa.");
       return;
     }
@@ -455,7 +455,7 @@
       demo.records[x.code].unshift(x.record);
     });
     if(persist()) {
-      goGuide(journey.flows[flow].steps[0]);
+      goGuide(flow==="RJ"?"CORE-09":journey.flows[flow].steps[0]);
       notice(rows.length+" draft "+journey.flows[flow].label+" sintetis dibuat. Tidak ada transaksi klinis/finansial.");
     }
   }
