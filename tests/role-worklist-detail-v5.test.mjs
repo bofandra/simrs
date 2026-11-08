@@ -48,7 +48,7 @@ test("different role and task stages show distinct, relevant worklists",()=>{
  const r1=api.renderPage({role:"Farmasis",section:"m1",username:"akun.farmasis",selectedJob:2,canOpen:()=>true});
  assert.match(r1,/Telaah kefarmasian/);
  assert.match(r1,/Riwayat alergi perlu ditelaah/);
- assert.match(r1,/RX-D029/);
+ assert.match(r1,/RX-0029/);
  assert.match(r1,/MED-04/);
  assert.doesNotMatch(r1,/data-demo-action="module:OPS-01"/);
  const r2=api.renderPage({role:"Kasir",section:"m1",username:"akun.kasir",selectedJob:3,canOpen:()=>true});
@@ -68,7 +68,7 @@ test("V5 has deny-by-default form navigation and escapes account content",()=>{
  assert.match(html,/&lt;script&gt;/);
  assert.match(html,/data-demo-action="job:0"/);
  assert.match(html,/aria-pressed="true"/);
- assert.match(html,/tidak terhubung otomatis ke form/);
+ assert.match(html,/belum terhubung otomatis ke form/);
 });
 
 test("worklist search hides unrelated rows and shows empty state",()=>{
