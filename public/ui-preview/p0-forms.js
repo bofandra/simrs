@@ -98,6 +98,29 @@
        '<div class="p0-trace">'+labels.map(function(x){return pill(x);}).join("")+'</div>'+
        '<div class="p0-entity">Entitas utama di PRD: <code>'+esc(m.entity||"—")+'</code> · Workspace: <strong>'+esc(m.workspace)+'</strong></div>';
   }
+  function renderContract(m) {
+    var d=window.SIMRS_CONTRACT_AUDIT && window.SIMRS_CONTRACT_AUDIT[m.code];
+    var source='<a target="_blank" rel="noopener noreferrer" href="https://drive.google.com/file/d/1RMo7tZ9rdoLjEVYRf-tycxTLzrDgzd08/view">OpenAPI 3.1</a> · '+
+      '<a target="_blank" rel="noopener noreferrer" href="https://drive.google.com/file/d/16UTtaKH-wDhXWMtVaf5Z68Osom2ZWfx1/view">model.json</a>';
+    if(!d)return '<section class="card p0-contract"><div class="card-h"><h2>Kontrak API & database</h2>'+pill("Belum diaudit")+'</div>'+
+      '<div class="card-body"><p class="muted">Form untuk modul '+esc(m.code)+' belum mempunyai crosswalk field ke request schema OpenAPI. Tidak boleh dianggap payload API siap dipakai.</p>'+
+      '<p class="hint">Sumber acuan: '+source+'</p></div></section>';
+    var rows=Object.keys(d.fields||{}).map(function(k){
+      var info=d.fields[k],isRequired=d.required.indexOf(k)>=0;
+      var missing=String(info[0]).indexOf("belum tersedia")>=0||String(info[0]).indexOf("nonaktif")>=0;
+      return '<tr><td><code>'+esc(k)+'</code> '+(isRequired?pill("Wajib","primary"):"")+'</td>'+
+        '<td>'+esc(info[0])+'</td><td>'+esc(info[1])+'</td><td>'+pill(missing?"Gap":"Review mapping",missing?"warn":"")+'</td></tr>';
+    }).join("");
+    return '<section class="card p0-contract"><div class="card-h"><h2>Kontrak API & database</h2>'+pill("Audit awal 12 modul","primary")+'</div>'+
+      '<details class="p0-contract-details"><summary>Periksa mapping form terhadap OpenAPI dan kolom database — '+esc(m.code)+'</summary>'+
+      '<div class="card-body"><p><strong>POST '+esc(d.path)+'</strong> · operationId <code>'+esc(d.op)+'</code> · schema <code>'+esc(d.schema)+'</code></p>'+
+      '<p class="muted">Kolom pada '+esc(m.entity)+': '+esc((d.columns||[]).join(", "))+'</p>'+
+      '<p class="hint">Mapping ini merupakan audit awal dan **bukan** bukti request telah sesuai atau backend tersedia. Semua ID di mockup adalah sintetis.</p>'+
+      '<div class="table-wrap"><table class="p0-contract-table"><thead><tr><th>Properti API</th><th>Padanan UI</th><th>Catatan</th><th>Status</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
+      '<div class="p0-contract-gaps"><strong>Gap yang wajib diselesaikan</strong><ul>'+
+         d.gaps.map(function(g){return '<li>'+esc(g)+'</li>';}).join("")+'</ul></div>'+
+      '<p class="hint">Sumber: '+source+' (baseline 8 November 2026). Integrasi API tetap nonaktif.</p></div></details></section>';
+  }
   var demoJourneys = {
     "WF-01":["CORE-08","CORE-10","CORE-09"],
     "WF-02":["CORE-09","RME-01","RME-05","RME-04","RME-06","RME-08"],
@@ -184,7 +207,7 @@
       '<div class="p0-warning" role="note"><strong>Bukan sistem operasional.</strong> Jangan masukkan data pasien asli, NIK sebenarnya, nomor transaksi, atau informasi sensitif. Tidak ada sinkronisasi ke API/FHIR atau database RS.</div>'+
       '<div class="p0-layout">'+renderCatalog()+'<div class="p0-detail">'+
       '<section class="card"><div class="card-body">'+renderInfo(m)+'</div></section>'+
-      renderJourney(m)+renderRecordList(m)+renderLinks(m)+renderEditor(m)+
+      renderJourney(m)+renderRecordList(m)+renderLinks(m)+renderEditor(m)+renderContract(m)+
       '<section class="card p0-acceptance"><div class="card-h"><h2>Traceability & kriteria penerimaan PRD</h2></div><div class="card-body"><p>Referensi: '+esc(m.us)+' · '+esc(m.fr.join(", "))+' · '+esc((m.wf||[]).join(", ")||"Alur lintas modul")+'.</p>'+
       '<div class="p0-trace">'+m.ac_ids.map(function(x){return pill(x);}).join("")+'</div>'+
       '<p class="muted">Enam AC adalah ID kontrak PRD. Form ini hanya memprototipe input, validasi dan review; pengujian kontrak OpenAPI, DB constraint, RBAC/IDOR, konkurensi, audit/outbox serta UAT masih diperlukan.</p>'+
