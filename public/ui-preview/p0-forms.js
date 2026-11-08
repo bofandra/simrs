@@ -98,6 +98,26 @@
        '<div class="p0-trace">'+labels.map(function(x){return pill(x);}).join("")+'</div>'+
        '<div class="p0-entity">Entitas utama di PRD: <code>'+esc(m.entity||"—")+'</code> · Workspace: <strong>'+esc(m.workspace)+'</strong></div>';
   }
+  var demoJourneys = {
+    "WF-01":["CORE-08","CORE-10","CORE-09"],
+    "WF-02":["CORE-09","RME-01","RME-05","RME-04","RME-06","RME-08"],
+    "WF-03":["CORE-09","RME-02","RME-03"],
+    "WF-04":["CORE-05","OPS-10","RME-03"],
+    "WF-05":["RME-08","MED-01"],
+    "WF-07":["RME-08","MED-04","MED-05"],
+    "WF-08":["FIN-01","FIN-02","FIN-03"],
+    "WF-14":["RME-08","MED-01"],
+    "WF-15":["MED-01","OPS-01"]
+  };
+  function renderJourney(m) {
+    var wf=(m.wf||[]).find(function(w){return demoJourneys[w] && demoJourneys[w].indexOf(m.code)>=0;});
+    if(!wf)return "";
+    return '<section class="card p0-journey"><div class="card-h"><h2>Alur contoh '+esc(wf)+'</h2>'+pill("Navigasi demo")+'</div>'+
+      '<div class="card-body"><div class="p0-journey-steps">'+demoJourneys[wf].map(function(code,i){
+        var x=catalog.find(function(a){return a.code===code;});
+        return '<button class="p0-journey-step'+(code===m.code?' active':'')+'" type="button" data-p0-action="choose" data-code="'+esc(code)+'" aria-current="'+(code===m.code?'step':'false')+'"><span>'+esc(i+1)+'</span><strong>'+esc(code)+'</strong><small>'+esc(x?x.name:"")+'</small></button>';
+      }).join("")+'</div><p class="hint">Konteks pasien/encounter tetap mengikuti pasien demo yang dipilih. Perpindahan ini belum membuat order, hasil, charge, atau transaksi lintas modul secara otomatis.</p></div></section>';
+  }
   function renderRecordList(m) {
     var rs = recordsFor(m);
     return '<section class="card"><div class="card-h"><h2>Daftar & detail form</h2>'+pill(rs.length+" data demo")+'</div>'+
@@ -142,7 +162,7 @@
       '<div class="p0-warning" role="note"><strong>Bukan sistem operasional.</strong> Jangan masukkan data pasien asli, NIK sebenarnya, nomor transaksi, atau informasi sensitif. Tidak ada sinkronisasi ke API/FHIR atau database RS.</div>'+
       '<div class="p0-layout">'+renderCatalog()+'<div class="p0-detail">'+
       '<section class="card"><div class="card-body">'+renderInfo(m)+'</div></section>'+
-      renderRecordList(m)+renderEditor(m)+
+      renderJourney(m)+renderRecordList(m)+renderEditor(m)+
       '<section class="card p0-acceptance"><div class="card-h"><h2>Traceability & kriteria penerimaan PRD</h2></div><div class="card-body"><p>Referensi: '+esc(m.us)+' · '+esc(m.fr.join(", "))+' · '+esc((m.wf||[]).join(", ")||"Alur lintas modul")+'.</p>'+
       '<div class="p0-trace">'+m.ac_ids.map(function(x){return pill(x);}).join("")+'</div>'+
       '<p class="muted">Enam AC adalah ID kontrak PRD. Form ini hanya memprototipe input, validasi dan review; pengujian kontrak OpenAPI, DB constraint, RBAC/IDOR, konkurensi, audit/outbox serta UAT masih diperlukan.</p>'+
