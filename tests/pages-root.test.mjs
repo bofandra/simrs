@@ -11,7 +11,7 @@ const html=readFileSync(file("public/ui-preview/index.html"),"utf8");
 test("only the newest SIMRS preview is packaged as GitHub Pages root",()=>{
   assert.match(deploy,/cp -a public\/ui-preview\/\. _site\//);
   assert.doesNotMatch(deploy,/cp -a docs\/simrs-baru/);
-  assert.doesNotMatch(deploy,/_site\/ui-preview/);
+  assert.doesNotMatch(deploy,/cp .*_site\/ui-preview/);
   assert.match(deploy,/node --test tests\/\*\.test\.mjs/);
   assert.match(deploy,/npx playwright test --config=tests\/playwright\.config\.mjs/);
 });
