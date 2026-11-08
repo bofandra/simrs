@@ -24,6 +24,7 @@
 <link rel="stylesheet" href="./workspaces-v2.css" />
 <link rel="stylesheet" href="./role-demo-login.css" />
 <link rel="stylesheet" href="./uiux-v3.css" />
+<link rel="stylesheet" href="./role-workspace-v4.css" />
 </head>
 <body>
 <div id="demo-login" aria-label="Login SIMRS Demo"></div>
@@ -124,7 +125,7 @@ function forms(){return window.SIMRSFormEngine.render({role:state.role,patient:p
 const screens={front,clinical,acute,lab,pharmacy,finance,management,system,forms,rolehome:()=>window.SIMRSRoleDemo?window.SIMRSRoleDemo.renderHome():''};
 if(window.SIMRSWorkspacesV2){screens.front=()=>window.SIMRSWorkspacesV2.front({state,patients});screens.clinical=()=>window.SIMRSWorkspacesV2.clinical({state,patients});}
 const titles={front:'Front Office',clinical:'Dokter & Perawat',acute:'IGD & Rawat Inap',lab:'Laboratorium & MCU',pharmacy:'Farmasi & Logistik',finance:'Keuangan & Klaim',management:'Manajemen & Mutu',system:'Design System',forms:'Katalog 68 Form',rolehome:'Beranda Saya'};
-function render(){if(window.SIMRSRoleDemo)window.SIMRSRoleDemo.beforeRender(state);document.getElementById('navlist').innerHTML=navs.map((n,i)=>`<button class="navbtn ${state.active===n.id?'active':''}" data-nav="${n.id}" aria-current="${state.active===n.id?'page':'false'}">${icon(n.icon)} ${n.label}<span class="num">0${i+1}</span></button>`).join('');document.querySelectorAll('button[data-nav="system"]').forEach(x=>x.classList.toggle('active',state.active==='system'));document.querySelectorAll('button[data-nav="forms"]').forEach(x=>{x.classList.toggle('active',state.active==='forms');x.setAttribute('aria-current',state.active==='forms'?'page':'false');});document.getElementById('crumb').textContent=titles[state.active];document.getElementById('role').innerHTML=roles.map(x=>`<option ${state.role===x?'selected':''}>${x}</option>`).join('');document.getElementById('main-content').innerHTML=(screens[state.active]||front)()+`<div class="screen-footer"><span>SIMRS BARU · UI DESIGN SYSTEM V1.0 · 08 NOV 2026 · STATIC DEMO</span><span>Kontrak: PRD Final 2026-11-08 · Tidak terhubung ke backend</span></div>`;if(window.SIMRSWorkspacesV2)window.SIMRSWorkspacesV2.decorate({state,patients});if(window.SIMRSRoleDemo)window.SIMRSRoleDemo.paintRoleNav();save();}
+function render(){if(window.SIMRSRoleDemo)window.SIMRSRoleDemo.beforeRender(state);document.getElementById('navlist').innerHTML=navs.map((n,i)=>`<button class="navbtn ${state.active===n.id?'active':''}" data-nav="${n.id}" aria-current="${state.active===n.id?'page':'false'}">${icon(n.icon)} ${n.label}<span class="num">0${i+1}</span></button>`).join('');document.querySelectorAll('button[data-nav="system"]').forEach(x=>x.classList.toggle('active',state.active==='system'));document.querySelectorAll('button[data-nav="forms"]').forEach(x=>{x.classList.toggle('active',state.active==='forms');x.setAttribute('aria-current',state.active==='forms'?'page':'false');});document.getElementById('crumb').textContent=titles[state.active];document.getElementById('role').innerHTML=roles.map(x=>`<option ${state.role===x?'selected':''}>${x}</option>`).join('');document.getElementById('main-content').innerHTML=(screens[state.active]||front)()+`<div class="screen-footer"><span>SIMRS BARU · UI DESIGN SYSTEM V1.0 · 08 NOV 2026 · STATIC DEMO</span><span>Acuan: PRD final 2026-11-06 · Tidak terhubung ke backend</span></div>`;if(window.SIMRSWorkspacesV2)window.SIMRSWorkspacesV2.decorate({state,patients});if(window.SIMRSRoleDemo)window.SIMRSRoleDemo.paintRoleNav();save();}
 function toast(txt){let t=document.getElementById('toast');t.textContent=txt;t.classList.add('show');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.classList.remove('show'),3800);}
 function modal(title,body,actions){document.getElementById('modal-root').innerHTML=`<div class="modal-backdrop"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-head"><h2 id="modalTitle">${title}</h2><button class="btn btn-sm" data-action="closeModal" aria-label="Tutup dialog">×</button></div><div class="modal-body">${body}</div><div class="modal-actions">${actions||btn('Tutup','closeModal')}</div></div></div>`;const x=document.querySelector('#modal-root .forminput');(x||document.querySelector('#modal-root button'))?.focus()}
 function closeModal(){document.getElementById('modal-root').innerHTML=''}
@@ -172,6 +173,7 @@ document.addEventListener('input',e=>{if(e.target.id==='patientFilter'){let q=e.
 if(window.SIMRSWorkspacesV2)window.SIMRSWorkspacesV2.routeFromHash(state);render();window.__SIMRS_PREVIEW__={state,navs,roles,render,patients,toast};
 })();
 </script>
+<script src="./role-workspace-v4.js"></script>
 <script src="./role-demo-login.js"></script>
 </body>
 </html>
