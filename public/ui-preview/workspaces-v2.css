@@ -1,0 +1,66 @@
+/* Role-first workspaces, built on existing SATUSEHAT-inspired provisional tokens. */
+.ux-role-caption{margin-top:10px}
+#role-nav{display:grid;gap:3px;padding:5px 9px 13px}
+.ux-nav-link{display:block;width:100%;text-align:left;background:transparent;border:1px solid transparent;border-radius:9px;color:var(--ink);padding:10px 12px;font-size:12px;font-weight:600;min-height:40px}
+.ux-nav-link:hover,.ux-nav-link.active{background:var(--teal-soft);color:var(--teal);border-color:#c5e8df}
+.ux-main-grid{display:grid;grid-template-columns:minmax(210px,245px) minmax(0,1fr) minmax(215px,255px);gap:15px;align-items:start;margin-top:16px}
+.ux-main-grid .card{min-width:0;overflow:hidden}
+.ux-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:13px 0}
+.ux-kpis>div{border:1px solid var(--border);background:#fff;border-radius:var(--r-md);padding:14px 17px;display:grid;gap:7px}
+.ux-kpis span{font-size:11px;color:var(--muted)}
+.ux-kpis strong{font-size:24px;color:var(--navy);line-height:1.2}
+.ux-flow{display:flex;gap:6px;overflow-x:auto;padding:6px 0;scrollbar-width:thin}
+.ux-flow>span{flex:1;min-width:132px;padding:10px;border:1px solid var(--border);border-radius:9px;background:white;color:var(--muted);font-size:11px;font-weight:650}
+.ux-flow>span.done{background:var(--teal-soft);color:var(--teal);border-color:#b9e1d7}
+.ux-worklist .card-body{padding:12px}
+.ux-worklist label{display:block;margin-bottom:5px;font-size:11px;font-weight:700}
+.ux-patient-list{margin-top:12px;display:grid;gap:7px;max-height:570px;overflow:auto}
+.ux-patient{display:grid;width:100%;text-align:left;background:white;border:1px solid var(--border);border-radius:9px;padding:12px 10px;gap:5px;min-height:76px;color:var(--ink)}
+.ux-patient:hover,.ux-patient.active{border-color:#86c8bd;background:var(--teal-soft)}
+.ux-patient>span{font-size:10px;color:var(--muted)}
+.ux-patient .ux-patient-head{display:flex;align-items:flex-start;justify-content:space-between;gap:5px}
+.ux-patient .ux-patient-head strong{font-size:12px;color:var(--navy)}
+.ux-patient .status{font-size:9px;padding:2px 5px}
+.ux-patient[hidden]{display:none}
+.ux-patient-banner{padding:13px 16px;background:#eaf6f3;border-bottom:1px solid #cce7de;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.ux-patient-banner>div:first-child{display:grid;gap:3px}
+.ux-patient-banner strong{font-size:13px;color:var(--navy)}
+.ux-patient-banner span{font-size:10px;color:var(--muted)}
+.ux-subhead{display:flex;justify-content:space-between;gap:12px;align-items:start;margin-bottom:15px}
+.ux-subhead h2{font-size:16px;color:var(--navy);margin:0 0 5px}
+.ux-subhead p{font-size:11px;color:var(--muted);margin:0}
+.ux-notice,.ux-positive,.ux-error{font-size:11px;line-height:1.55;padding:11px 12px;border-radius:9px;margin:10px 0 16px}
+.ux-notice{background:#fffaec;border:1px solid #ecdcae;color:#745710}
+.ux-positive{background:var(--green-soft);border:1px solid #bce1d0;color:#146947}
+.ux-error,.ux-error-visible{background:var(--red-soft);border:1px solid #f1bdc5;color:#a73247}
+.ux-error[hidden]{display:none}
+.ux-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.ux-field{min-width:0}
+.ux-field label{display:block;margin-bottom:7px;font-weight:700;color:#446260;font-size:11px}
+.ux-field .forminput{width:100%;min-height:40px}
+.ux-field textarea{resize:vertical;min-height:100px}
+.ux-field:has(textarea){grid-column:span 2}
+.ux-actionbar{border-top:1px solid var(--border);margin-top:20px;padding-top:15px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.ux-actionbar .spacer{flex:1}
+.ux-hide{display:none!important}
+.ux-aside .card-body{display:grid;gap:10px}
+.ux-aside .statline{display:flex;justify-content:space-between;gap:10px;align-items:start}
+.ux-aside .statline strong{text-align:right;overflow-wrap:anywhere}
+.ux-aside .ux-notice{margin:5px 0}
+.ux-links{display:flex;gap:8px;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border);padding-top:14px;margin-top:16px}
+.ux-links strong{color:var(--muted);font-size:11px}
+.ux-links .btn{min-height:36px}
+.ux-tabs{display:flex;gap:0;overflow-x:auto;border-bottom:1px solid var(--border);scrollbar-width:thin}
+.ux-tabs button{flex:none;border:0;border-bottom:3px solid transparent;background:transparent;padding:13px 12px;color:var(--muted);font-size:11px;font-weight:750;min-height:44px}
+.ux-tabs button.active,.ux-tabs button[aria-selected="true"]{border-bottom-color:var(--teal);color:var(--teal)}
+.ux-clinical .ux-work-area .card-body{min-height:420px}
+.ux-module-panel{padding:18px;background:#f6fbfa;border:1px solid var(--border);border-radius:11px}
+.ux-module-panel h3{font-size:15px;color:var(--navy);margin:0 0 8px}
+.ux-module-panel p{font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:18px}
+.ux-check{display:flex;align-items:flex-start;gap:9px;margin-top:17px;padding:12px;background:#f7faf9;border:1px solid var(--border);border-radius:9px;font-size:11px;line-height:1.5}
+.ux-check input{width:17px;height:17px;accent-color:var(--teal)}
+.ux-muted{font-size:10px;color:var(--muted);margin-top:17px;line-height:1.6}
+@media(max-width:1400px){.ux-main-grid{grid-template-columns:minmax(180px,230px) minmax(0,1fr)}.ux-main-grid>.ux-aside{grid-column:2}}
+@media(max-width:900px){.ux-main-grid{grid-template-columns:1fr}.ux-main-grid>.ux-aside{grid-column:auto}.ux-worklist .ux-patient-list{display:flex;overflow-x:auto;max-height:none}.ux-patient{min-width:185px;max-width:240px}.ux-form-grid{grid-template-columns:1fr}.ux-field:has(textarea){grid-column:span 1}}
+@media(max-width:840px){#role-nav{display:flex;overflow-x:auto;gap:7px;padding:8px 12px}#role-nav .ux-nav-link{width:auto;white-space:nowrap;flex:none;border-color:var(--border);min-height:44px}.ux-role-caption{padding-left:12px}}
+@media(max-width:530px){.ux-kpis{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.ux-kpis>div{padding:10px}.ux-kpis strong{font-size:19px}.ux-kpis span{font-size:10px}.ux-actionbar>.btn{flex:1}.ux-subhead{display:block}.ux-subhead .btn{margin-top:10px}}
