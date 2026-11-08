@@ -86,6 +86,12 @@ test("bad password denied; login assigns correct role and default workspace",()=
  assert.equal(h.api.allowModule("CORE-09"),false);
  assert.equal(h.api.allowModule("RME-08"),true);
  assert.equal(h.body.dataset.demoRole,"dokter-rj");
+ assert.equal(h.api.login("akun.kasir","demo123"),true);
+ assert.equal(h.state.active,"rolehome");
+ assert.equal(h.api.login("akun.farmasis","demo123"),true);
+ assert.equal(h.state.active,"rolehome");
+ assert.equal(h.api.login("akun.dokter-igd","demo123"),true);
+ assert.equal(h.state.active,"rolehome");
 });
 
 test("support role opens own task home, not arbitrary clinical workspace",()=>{
