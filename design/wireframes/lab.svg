@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="970" viewBox="0 0 1600 970">
+<style>text{font-family:Inter,Arial,Helvetica,sans-serif}</style>
+<rect x="0" y="0" width="253" height="970" rx="0" fill="#152947" stroke="none"/>
+<rect x="18" y="22" width="39" height="39" rx="10" fill="#19A4A2" stroke="none"/>
+<text x="29" y="51" font-size="27" fill="#FFFFFF" font-weight="800">+</text>
+<text x="67" y="41" font-size="22" fill="#FFFFFF" font-weight="800">SIMRS Baru</text>
+<text x="67" y="59" font-size="10" fill="#B9CBDD" font-weight="700">UI BLUEPRINT</text>
+<text x="20" y="108" font-size="11" fill="#8DAAC9" font-weight="700">WORKSPACE PENGGUNA</text>
+<text x="20" y="154" font-size="14" fill="#CAD8E8" font-weight="400">Front Office</text>
+<text x="20" y="210" font-size="14" fill="#CAD8E8" font-weight="400">Dokter &amp; Perawat</text>
+<text x="20" y="266" font-size="14" fill="#CAD8E8" font-weight="400">IGD &amp; Rawat Inap</text>
+<rect x="8" y="294" width="238" height="43" rx="9" fill="#354A68" stroke="none"/>
+<rect x="8" y="294" width="4" height="43" rx="3" fill="#34C8C0" stroke="none"/>
+<text x="20" y="322" font-size="14" fill="#FFFFFF" font-weight="700">Laboratorium &amp; MCU</text>
+<text x="20" y="378" font-size="14" fill="#CAD8E8" font-weight="400">Farmasi &amp; Logistik</text>
+<text x="20" y="434" font-size="14" fill="#CAD8E8" font-weight="400">Keuangan &amp; Klaim</text>
+<text x="20" y="490" font-size="14" fill="#CAD8E8" font-weight="400">Manajemen &amp; Mutu</text>
+<text x="19" y="587" font-size="10" fill="#8DAAC9" font-weight="700">STANDAR ANTARMUKA</text>
+<text x="20" y="630" font-size="14" fill="#CAD8E8" font-weight="400">Design System</text>
+<rect x="15" y="828" width="225" height="110" rx="10" fill="#203957" stroke="none"/>
+<text x="28" y="856" font-size="12" fill="#FFFFFF" font-weight="700">STATIC WIREFRAME</text>
+<text x="28" y="881" font-size="12" fill="#B9CAD9" font-weight="400">Data sepenuhnya simulasi</text>
+<text x="28" y="902" font-size="12" fill="#B9CAD9" font-weight="400">Tidak terhubung backend</text>
+<rect x="253" y="0" width="1347" height="970" rx="0" fill="#F4F7FB" stroke="none"/>
+<rect x="253" y="0" width="1347" height="63" rx="0" fill="#FFFFFF" stroke="none"/>
+<rect x="253" y="63" width="1347" height="1" rx="0" fill="#DCE5EF" stroke="none"/>
+<text x="285" y="40" font-size="13" fill="#6A7B91" font-weight="400">SIMRS Baru  /  Laboratorium &amp; MCU</text>
+<rect x="1240" y="17" width="84" height="25" rx="7" fill="#FFF3D9" stroke="none"/>
+<text x="1250" y="34" font-size="12" fill="#A16C10" font-weight="700">DATA DEMO</text>
+<rect x="1430" y="16" width="149" height="30" rx="7" fill="#F6F9FC" stroke="#DCE5EF"/>
+<text x="1443" y="36" font-size="12" fill="#25374D" font-weight="400">RS Demo Nusantara</text>
+<text x="285" y="102" font-size="11" fill="#078D88" font-weight="800">04  ·  WORKSPACE</text>
+<text x="285" y="143" font-size="29" fill="#152947" font-weight="800">Laboratorium, hasil &amp; MCU perusahaan</text>
+<text x="285" y="169" font-size="13" fill="#6A7B91" font-weight="400">UI Wireframe · 8 November 2026 · Kesesuaian PRD dan role-based workflow</text>
+<rect x="284" y="189" width="1294" height="37" rx="7" fill="#EAF2FD" stroke="#D6E6F6"/>
+<text x="297" y="213" font-size="12" fill="#31526F" font-weight="800">TRACE</text>
+<rect x="360" y="195" width="63" height="25" rx="7" fill="#FFFFFF" stroke="none"/>
+<text x="370" y="212" font-size="12" fill="#406280" font-weight="700">RME-08</text>
+<rect x="431" y="195" width="63" height="25" rx="7" fill="#FFFFFF" stroke="none"/>
+<text x="441" y="212" font-size="12" fill="#406280" font-weight="700">MED-01</text>
+<rect x="502" y="195" width="63" height="25" rx="7" fill="#FFFFFF" stroke="none"/>
+<text x="512" y="212" font-size="12" fill="#406280" font-weight="700">MED-10</text>
+<rect x="573" y="195" width="63" height="25" rx="7" fill="#FFFFFF" stroke="none"/>
+<text x="583" y="212" font-size="12" fill="#406280" font-weight="700">FR-017</text>
+<rect x="644" y="195" width="63" height="25" rx="7" fill="#FFFFFF" stroke="none"/>
+<text x="654" y="212" font-size="12" fill="#406280" font-weight="700">FR-019</text>
+<rect x="715" y="195" width="62" height="25" rx="7" fill="#FFFFFF" stroke="none"/>
+<text x="725" y="212" font-size="12" fill="#406280" font-weight="700">WF-13</text>
+<rect x="285" y="245" width="310" height="114" rx="12" fill="#FFFFFF" stroke="#DCE5EF"/>
+<text x="303" y="280" font-size="13" fill="#6A7B91" font-weight="700">Order baru</text>
+<text x="303" y="331" font-size="32" fill="#152947" font-weight="800">31</text>
+<rect x="530" y="269" width="46" height="46" rx="13" fill="#EAF2FF" stroke="none"/>
+<rect x="611" y="245" width="310" height="114" rx="12" fill="#FFFFFF" stroke="#DCE5EF"/>
+<text x="629" y="280" font-size="13" fill="#6A7B91" font-weight="700">Spesimen</text>
+<text x="629" y="331" font-size="32" fill="#152947" font-weight="800">42</text>
+<rect x="856" y="269" width="46" height="46" rx="13" fill="#E9F8F2" stroke="none"/>
+<rect x="937" y="245" width="310" height="114" rx="12" fill="#FFFFFF" stroke="#DCE5EF"/>
+<text x="955" y="280" font-size="13" fill="#6A7B91" font-weight="700">Belum verified</text>
+<text x="955" y="331" font-size="32" fill="#152947" font-weight="800">09</text>
+<rect x="1182" y="269" width="46" height="46" rx="13" fill="#FFF4E0" stroke="none"/>
+<rect x="1263" y="245" width="310" height="114" rx="12" fill="#FFFFFF" stroke="#DCE5EF"/>
+<text x="1281" y="280" font-size="13" fill="#6A7B91" font-weight="700">Hasil kritis</text>
+<text x="1281" y="331" font-size="32" fill="#152947" font-weight="800">01</text>
+<rect x="1508" y="269" width="46" height="46" rx="13" fill="#ECF2FF" stroke="none"/>
+<rect x="285" y="378" width="715" height="488" rx="13" fill="#FFFFFF" stroke="#DCE5EF"/>
+<text x="303" y="408" font-size="17" fill="#152947" font-weight="750">Worklist LIS</text>
+<rect x="285" y="428" width="715" height="1" rx="0" fill="#DCE5EF" stroke="none"/>
+<text x="976" y="408" font-size="11" fill="#6A7B91" font-weight="400">WF-05 / WF-14</text>
+<rect x="303" y="462" width="681" height="37" rx="0" fill="#F6F9FC" stroke="none"/>
+<text x="315" y="486" font-size="12" fill="#647992" font-weight="700">Accession</text>
+<text x="475" y="486" font-size="12" fill="#647992" font-weight="700">Tes</text>
+<text x="659" y="486" font-size="12" fill="#647992" font-weight="700">Specimen</text>
+<text x="839" y="486" font-size="12" fill="#647992" font-weight="700">Status</text>
+<rect x="303" y="499" width="681" height="1" rx="0" fill="#DCE5EF" stroke="none"/>
+<text x="315" y="528" font-size="12" fill="#25374D" font-weight="650">ACC-1701</text>
+<text x="475" y="528" font-size="12" fill="#25374D" font-weight="400">Hematologi</text>
+<text x="659" y="528" font-size="12" fill="#25374D" font-weight="400">EDTA-0083</text>
+<text x="839" y="528" font-size="12" fill="#25374D" font-weight="400">Pending</text>
+<rect x="303" y="544" width="681" height="1" rx="0" fill="#DCE5EF" stroke="none"/>
+<text x="315" y="573" font-size="12" fill="#25374D" font-weight="650">ACC-1702</text>
+<text x="475" y="573" font-size="12" fill="#25374D" font-weight="400">Glukosa</text>
+<text x="659" y="573" font-size="12" fill="#25374D" font-weight="400">S-1702</text>
+<text x="839" y="573" font-size="12" fill="#25374D" font-weight="400">Diproses</text>
+<rect x="303" y="589" width="681" height="1" rx="0" fill="#DCE5EF" stroke="none"/>
+<text x="315" y="618" font-size="12" fill="#25374D" font-weight="650">ACC-1703</text>
+<text x="475" y="618" font-size="12" fill="#25374D" font-weight="400">Elektrolit</text>
+<text x="659" y="618" font-size="12" fill="#25374D" font-weight="400">S-1703</text>
+<text x="839" y="618" font-size="12" fill="#25374D" font-weight="400">Baru</text>
+<text x="310" y="702" font-size="14" fill="#078D88" font-weight="700">Order → Barcode → Analyzer → Verifikasi</text>
+<rect x="315" y="761" width="216" height="43" rx="7" fill="#078D88" stroke="none"/>
+<text x="338" y="788" font-size="14" fill="#FFFFFF" font-weight="700">Scan Spesimen</text>
+<rect x="1019" y="378" width="559" height="488" rx="13" fill="#FFFFFF" stroke="#DCE5EF"/>
+<text x="1037" y="408" font-size="17" fill="#152947" font-weight="750">Program MCU Perusahaan</text>
+<rect x="1019" y="428" width="559" height="1" rx="0" fill="#DCE5EF" stroke="none"/>
+<text x="1554" y="408" font-size="11" fill="#6A7B91" font-weight="400">WF-13</text>
+<text x="1040" y="459" font-size="14" fill="#152947" font-weight="750">PT Contoh Sejahtera · MCU Annual 2026</text>
+<rect x="1040" y="492" width="510" height="36" rx="6" fill="#F7FAFC" stroke="#DCE5EF"/>
+<rect x="1052" y="502" width="16" height="16" rx="3" fill="#EAF7F3" stroke="#078D88"/>
+<text x="1081" y="515" font-size="12" fill="#25374D" font-weight="400">Registrasi &amp; identitas</text>
+<rect x="1040" y="539" width="510" height="36" rx="6" fill="#F7FAFC" stroke="#DCE5EF"/>
+<rect x="1052" y="549" width="16" height="16" rx="3" fill="#EAF7F3" stroke="#078D88"/>
+<text x="1081" y="562" font-size="12" fill="#25374D" font-weight="400">Pemeriksaan fisik</text>
+<rect x="1040" y="586" width="510" height="36" rx="6" fill="#F7FAFC" stroke="#DCE5EF"/>
+<rect x="1052" y="596" width="16" height="16" rx="3" fill="#EAF7F3" stroke="#078D88"/>
+<text x="1081" y="609" font-size="12" fill="#25374D" font-weight="400">Laboratorium</text>
+<rect x="1040" y="633" width="510" height="36" rx="6" fill="#F7FAFC" stroke="#DCE5EF"/>
+<rect x="1052" y="643" width="16" height="16" rx="3" fill="#FFFFFF" stroke="#078D88"/>
+<text x="1081" y="656" font-size="12" fill="#25374D" font-weight="400">EKG</text>
+<rect x="1040" y="680" width="510" height="36" rx="6" fill="#F7FAFC" stroke="#DCE5EF"/>
+<rect x="1052" y="690" width="16" height="16" rx="3" fill="#FFFFFF" stroke="#078D88"/>
+<text x="1081" y="703" font-size="12" fill="#25374D" font-weight="400">Radiologi</text>
+<rect x="1040" y="727" width="510" height="36" rx="6" fill="#F7FAFC" stroke="#DCE5EF"/>
+<rect x="1052" y="737" width="16" height="16" rx="3" fill="#FFFFFF" stroke="#078D88"/>
+<text x="1081" y="750" font-size="12" fill="#25374D" font-weight="400">Resume / Buku MCU</text>
+<rect x="1334" y="787" width="215" height="40" rx="7" fill="#078D88" stroke="none"/>
+<text x="1346" y="813" font-size="13" fill="#FFFFFF" font-weight="700">Preview Buku MCU</text>
+<text x="285" y="947" font-size="12" fill="#6A7B91" font-weight="600">SCREEN CONCEPT · USE SOURCE FR / US / AC · NOT A FUNCTIONING PRODUCTION SYSTEM</text>
+<text x="1422" y="947" font-size="13" fill="#078D88" font-weight="800">4/7</text>
+</svg>
