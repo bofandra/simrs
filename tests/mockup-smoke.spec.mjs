@@ -282,3 +282,43 @@ test('mobile IGD/RI tabs, forward/back navigation and synthetic patient context'
   await page.screenshot({path:out+'/mobile-acute-guide.png',fullPage:true});
   expect(errors).toEqual([]);
 });
+
+
+test('Front Office v2 prevents premature check-in and opens P1 antrean from role shortcuts',async ({page})=>{
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await start(page);
+  await expect(page.locator('#ux-registration')).toBeVisible();
+  await expect(page.locator('#role-nav [data-ux-action="route:front:registration"]')).toBeVisible();
+  await page.locator('[data-ux-action="checkin-front"]').click();
+  await expect(page.locator('#ux-reg-error')).toContainText('MPI');
+  await page.locator('[data-ux-action="mpi"]').click();
+  await page.locator('[data-ux-action="save-front"]').click();
+  await page.locator('[data-ux-action="checkin-front"]').click();
+  await expect(page.locator('.ux-patient-banner')).toContainText('Check-in (Demo)');
+  await page.locator('#role-nav [data-ux-action="module:CORE-11"]').click();
+  await expect(page.locator('.p0-editor .card-h h2')).toHaveText('Form CORE-11');
+  expect(errors).toEqual([]);
+});
+
+test('Dokter RJ v2 stores reviewed SOAP per patient and creates an addendum draft',async ({page})=>{
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await start(page);
+  await page.locator('#role').selectOption('Dokter RJ');
+  await expect(page.locator('#ux-soap-s')).toBeVisible();
+  await page.locator('#ux-soap-s').fill('Keluhan demo sejak kemarin');
+  await page.locator('#ux-soap-o').fill('TTV contoh normal');
+  await page.locator('#ux-soap-a').fill('Asesmen contoh');
+  await page.locator('#ux-soap-p').fill('Rencana observasi demo');
+  await page.locator('[data-ux-action="doctor-review"]').click();
+  await expect(page.locator('#ux-soap-error')).toContainText('alergi');
+  await page.locator('#ux-allergy').check();
+  await page.locator('[data-ux-action="doctor-review"]').click();
+  await expect(page.locator('.ux-positive')).toBeVisible();
+  await expect(page.locator('#ux-soap-s')).toBeDisabled();
+  await page.locator('[data-ux-action="doctor-addendum"]').click();
+  await expect(page.locator('#ux-soap-s')).toBeEnabled();
+  await expect(page.locator('.ux-subhead')).toContainText('versi 2');
+  await page.locator('[data-ux-action="tab:order"]').click();
+  await expect(page.locator('[data-ux-action="module:RME-08"]')).toBeVisible();
+  expect(errors).toEqual([]);
+});
