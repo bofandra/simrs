@@ -84,9 +84,15 @@ function jobRows(role,section){
   var patient=role==="Bed Manager"?null:patients[j];
   var patientId=role==="Bed Manager"?null:(patient?patient.id:"p"+(j+1));
   var title=(patient&&["Pendaftaran","Dokter RJ","Perawat","Dokter IGD"].indexOf(role)>=0)?patient.name:row[1];
-  var scope=patient&&(role==="Pendaftaran"||role==="Dokter RJ")?patient.unit+" · "+row[0]:row[2];
+  var scope=patient&&role==="Dokter RJ"?patient.unit+" · "+row[0]:row[2];
+  if(patient&&role==="Pendaftaran"){
+    scope=j===2?"IGD · walk-in":j===3?"Rawat Inap · rencana admisi":"Rawat Jalan · "+patient.unit;
+  }
   if(patient&&(role==="Farmasis"||role==="Kasir"))scope+=" · "+patient.name;
-  var encounterId=patient?(role==="Dokter IGD"?"ENC-IGD-DEMO-"+String(j+1).padStart(2,"0"):role==="Perawat"?"ENC-RI-DEMO-"+String(j+1).padStart(2,"0"):patient.visit):null;
+  var encounterId=patient?(role==="Dokter IGD"?"ENC-IGD-DEMO-"+String(j+1).padStart(2,"0"):
+    role==="Perawat"?"ENC-RI-DEMO-"+String(j+1).padStart(2,"0"):
+    role==="Pendaftaran"&&j===2?"ENC-IGD-DEMO-03":
+    role==="Pendaftaran"&&j===3?"ENC-RI-DEMO-04":patient.visit):null;
   return {
    id:row[0],title:title,scope:scope,patientId:patientId,encounterId:encounterId,
    kind:role==="Bed Manager"?"bed":"patient",
