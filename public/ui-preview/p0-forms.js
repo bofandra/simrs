@@ -90,12 +90,14 @@
       '<span class="p0-error" data-error-for="'+esc(f.key)+'" aria-live="polite"></span></div>';
   }
   function renderCatalog() {
-    return '<section class="card p0-catalog" aria-label="Katalog modul SIMRS"><div class="card-h"><h2>Katalog 68 Modul</h2>'+pill("68 form demo")+'</div>'+
+    var restricted=!!(window.SIMRSRoleDemo && window.SIMRSRoleDemo.isAuthenticated() && !window.SIMRSRoleDemo.isReviewer());
+    var visible=restricted?catalog.filter(function(m){return (m.roles||[]).includes(context().role);}):catalog;
+    return '<section class="card p0-catalog" aria-label="Katalog modul SIMRS"><div class="card-h"><h2>'+(restricted?"Form pekerjaan saya":"Katalog 68 Modul")+'</h2>'+pill(restricted?visible.length+" form sesuai peran":"68 form demo")+'</div>'+
       '<div class="p0-catalog-tools"><label for="p0-search">Cari kode / nama modul</label><input id="p0-search" class="forminput" placeholder="Mis. RME-04 / farmasi" value="'+esc(state.search)+'" />'+
       '<label for="p0-priority">Prioritas</label><select id="p0-priority" class="forminput"><option value="P0"'+(state.priority==="P0"?" selected":"")+'>P0 (30 form)</option>'+
       '<option value="all"'+(state.priority==="all"?" selected":"")+'>Semua prioritas</option>'+
       ['P1','P2','P3'].map(function(p){return '<option value="'+p+'"'+(state.priority===p?' selected':'')+'>'+p+' ('+(p==='P1'?17:p==='P2'?14:7)+' form demo)</option>';}).join("")+'</select></div>'+
-      '<div id="p0-catalog-list" class="p0-module-list">'+catalog.filter(function(m){return state.priority==="all" || state.priority===m.priority;}).map(function(m){
+      '<div id="p0-catalog-list" class="p0-module-list">'+visible.filter(function(m){return state.priority==="all" || state.priority===m.priority;}).map(function(m){
         var ready=m.fields && m.fields.length;var active=m.code===state.code;
         return '<button class="p0-module-item'+(active?' active':'')+'" type="button" data-p0-action="choose" data-code="'+esc(m.code)+'" data-search="'+esc((m.code+" "+m.name).toLowerCase())+'" aria-current="'+(active?'true':'false')+'"><span><strong>'+esc(m.code)+'</strong><small>'+esc(m.name)+'</small></span><span class="p0-module-meta">'+esc(m.priority)+'<small>'+(ready?'Form':'Roadmap')+'</small></span></button>';
       }).join("")+'</div><p id="p0-no-match" class="p0-empty" hidden>Tidak ada modul sesuai pencarian.</p></section>';
@@ -228,7 +230,7 @@
     var values=(r && r.values)||state.prefill||{};
     var id = r?r.id:"Baru (belum tersimpan)";
     var ctx=context();
-    return '<section class="card p0-editor"><div class="card-h"><h2>Form '+esc(m.code)+'</h2>'+pill(r?r.status:"Belum disimpan",r&&r.status==="Reviewed (Demo)"?"good":"")+'</div>'+
+    return '<section class="card p0-editor"><div class="card-h"><h2>Form '+esc(window.SIMRSRoleDemo&&window.SIMRSRoleDemo.isAuthenticated()&&!window.SIMRSRoleDemo.isReviewer()?m.name:m.code)+'</h2>'+pill(r?r.status:"Belum disimpan",r&&r.status==="Reviewed (Demo)"?"good":"")+'</div>'+
       (m.patient_context?'<div class="p0-patient-banner"><strong>Pasien demo: '+esc(ctx.patient.name)+'</strong><span>MRN '+esc(ctx.patient.mrn)+' · Encounter '+esc(ctx.patient.visit)+'</span><span>Identitas dan encounter merupakan konteks read-only.</span></div>':'<div class="p0-patient-banner"><strong>Data administrasi / master</strong><span>RS Demo Nusantara · Tenant demonstrasi</span></div>')+
       (!allowed?'<div class="p0-warning" role="status">Peran <strong>'+esc(ctx.role)+'</strong> hanya dapat melihat. Peran untuk mengisi: '+esc((m.roles||[]).join(", ")||"Belum ditetapkan")+'. Ubah peran demo di bagian kanan atas.</div>':'')+
       (r&&r.status!=="Draft"?'<div class="p0-warning">Catatan telah ditinjau dan terkunci pada mode demonstrasi. Perubahan memerlukan alur koreksi/addendum terpisah yang belum dibuat.</div>':'')+
@@ -247,11 +249,20 @@
   }
   function render(ctx) {
     lastContext=ctx || context();
+    var roleView=!!(window.SIMRSRoleDemo&&window.SIMRSRoleDemo.isAuthenticated()&&!window.SIMRSRoleDemo.isReviewer());
+    if(roleView){
+      var available=catalog.filter(function(x){return (x.roles||[]).includes(context().role);});
+      if(available.length&&!available.some(function(x){return x.code===state.code;})){state.code=available[0].code;state.recordId=null;}
+      state.priority="all";
+    }
     var m=currentModule();
     if (state.priority!=="all" && state.priority!==m.priority && !state.search) {
       state.code=(catalog.find(function(x){return x.priority===state.priority;})||m).code;
       m=currentModule();state.recordId=null;
     }
+    if(roleView){return '<div class="page-head"><div><div class="eyebrow">PEKERJAAN SAYA · '+esc(context().role)+'</div><h1>Form Pelayanan</h1><p>Isi dan tinjau formulir sesuai peran, dengan data sintetis dan konteks pasien demo.</p></div></div>'+
+      '<div class="p0-warning">Ini adalah formulir simulasi, tanpa tanda tangan, pembayaran, distribusi, pengiriman data, atau otorisasi nyata.</div>'+
+      '<div class="p0-layout">'+renderCatalog()+'<div class="p0-detail">'+renderRecordList(m)+renderLinks(m)+renderEditor(m)+'</div></div>';}
     return '<div class="page-head"><div><div class="eyebrow">DESAIN FORM • SEMUA PRIORITAS P0–P3</div>'+
       '<h1>Katalog Form & Workflow SIMRS</h1><p>Form sesuai domain PRD, dapat diisi dan ditinjau menggunakan data sintetis. Perubahan hanya tersimpan di browser ini.</p></div>'+
       '<div class="actions">'+pill("68/68 modul memiliki form demo","good")+pill("DEMO – NO BACKEND")+

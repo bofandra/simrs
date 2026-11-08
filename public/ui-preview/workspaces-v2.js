@@ -60,12 +60,14 @@ function front(params){
  field("Alasan kunjungan","ux-reg-reason",r.reason,"textarea",null,r.checkedIn)+
  '</div><div id="ux-reg-error" class="ux-error" role="alert" hidden></div><div class="ux-actionbar">'+chip(r.draftSaved?"Draft tersimpan":"Belum disimpan",r.draftSaved?"good":"wait")+'<span class="spacer"></span>'+
  button("Simpan draft","save-front",r.checkedIn||!allowed?"ux-hide":"")+' '+button("Check-in demo","checkin-front","btn-primary"+(r.checkedIn||!allowed?" ux-hide":""))+'</div></form>'+
- '<div class="ux-links"><strong>Lanjutkan ke:</strong>'+button("Appointment","module:CORE-10")+' '+button("Antrean","module:CORE-11")+' '+button("Workspace dokter","route:clinical:soap")+'</div></div></section>'+
+ '<div class="ux-links"><strong>Lanjutkan ke:</strong>'+button("Appointment","module:CORE-10")+' '+button("Antrean","module:CORE-11")+' '+(window.SIMRSRoleDemo&&window.SIMRSRoleDemo.isAuthenticated()&&!window.SIMRSRoleDemo.isReviewer()?"":button("Workspace dokter","route:clinical:soap"))+'</div></div></section>'+
  '<section class="card ux-aside"><div class="card-h"><h2>Ringkasan episode</h2></div><div class="card-body"><div class="statline"><span>Nomor RM</span><strong>'+esc(selected.mrn)+'</strong></div><div class="statline"><span>Encounter</span><strong>'+esc(selected.visit)+'</strong></div><div class="statline"><span>Unit</span><strong>'+esc(r.unit)+'</strong></div><div class="statline"><span>Penjamin</span><strong>'+esc(r.payer)+'</strong></div><div class="statline"><span>Status</span>'+chip(r.checkedIn?"Check-in (Demo)":"Belum check-in",r.checkedIn?"good":"wait")+'</div><p class="ux-notice">Check-in ini hanya mengubah status lokal di browser; tidak membuat Encounter atau nomor antrean nyata.</p></div></section></div>';
 }
 function clinical(params){
  var p=current(params),r=doctorRecord(p),tab=params.state.clinicalTab||"soap";
- var tabs=[["soap","SOAP / CPPT"],["vitals","Asesmen & TTV"],["diagnosis","Diagnosis"],["order","CPOE"],["medication","E-Resep"],["history","Riwayat"]];
+ var tabs=params.state.role==="Perawat"&&window.SIMRSRoleDemo?.isAuthenticated()&&!window.SIMRSRoleDemo.isReviewer()?
+ [["soap","CPPT Keperawatan"],["vitals","Asesmen & TTV"],["history","Riwayat"]]:
+ [["soap","SOAP / CPPT"],["vitals","Asesmen & TTV"],["diagnosis","Diagnosis"],["order","CPOE"],["medication","E-Resep"],["history","Riwayat"]];
  var locked=r.status==="Reviewed (Demo)";
  var authorized=params.state.role==="Dokter RJ"||params.state.role==="Perawat"||params.state.role==="DPJP Rawat Inap";
  var readOnly=locked||!authorized;
@@ -92,7 +94,7 @@ function clinical(params){
    (r.versions||[]).map(function(v){return '<div class="timeline-item"><b>Review versi '+esc(v.version)+'</b><span>'+esc(v.at)+'</span></div>';}).join('')+
    '<div class="timeline-item"><b>Catatan saat ini</b><span>'+esc(r.status)+'</span></div></div></div>';
  }
- return '<div class="page-head"><div><div class="eyebrow">RME-01 / RME-04 / FR-009 · WF-02</div><h1>Workspace Dokter Rawat Jalan</h1><p>Daftar pasien, dokumentasi klinis dan riwayat dalam satu konteks encounter.</p></div><div class="actions">'+button("Lihat riwayat","tab:history")+' '+button("Buka order","tab:order","btn-primary")+'</div></div>'+
+ return '<div class="page-head"><div><div class="eyebrow">RME-01 / RME-04 / FR-009 · WF-02</div><h1>'+esc(params.state.role==="Perawat"?"Workspace Keperawatan":"Workspace Dokter Rawat Jalan")+'</h1><p>Daftar pasien, dokumentasi klinis dan riwayat dalam satu konteks encounter.</p></div><div class="actions">'+button("Lihat riwayat","tab:history")+(params.state.role==="Perawat"&&window.SIMRSRoleDemo?.isAuthenticated()&&!window.SIMRSRoleDemo.isReviewer()?"":' '+button("Buka order","tab:order","btn-primary"))+'</div></div>'+
  '<div class="ux-main-grid ux-clinical"><section class="card ux-worklist"><div class="card-h"><h2>Daftar pasien klinis</h2>'+chip(params.patients.length+" pasien demo")+'</div><div class="card-body"><label for="ux-patient-search">Cari pasien / No. RM</label><input id="ux-patient-search" class="forminput" placeholder="Nama / nomor RM"/><div class="ux-patient-list" id="ux-patients">'+
  params.patients.map(function(item){var d=doctorRecord(item);return patientCard(item,d.status==="Reviewed (Demo)"?"Ditinjau":"Menunggu",item.id===p.id);}).join('')+'</div></div></section>'+
  '<section class="card ux-work-area"><div class="ux-patient-banner"><div><strong>'+esc(p.name)+'</strong><span>'+esc(p.mrn)+' · '+esc(p.age)+' · '+esc(p.visit)+' · '+esc(p.unit)+'</span></div>'+chip("Encounter aktif (Demo)","good")+'</div>'+
@@ -177,6 +179,7 @@ function value(id){var el=document.getElementById(id);return el?String(el.value|
 function selectedPatient(){var shell=window.__SIMRS_PREVIEW__;return shell?.state&&shell?.patients?.find(function(p){return p.id===shell.state.patient;});}
 function navigate(area,tab){
  var shell=window.__SIMRS_PREVIEW__;if(!shell)return;
+ if(window.SIMRSRoleDemo&&!window.SIMRSRoleDemo.allowArea(area)){shell.toast("Workspace tidak tersedia untuk akun demo ini.");return;}
  var st=shell.state;st.active=area;
  if(area==="clinical"){
   st.clinicalTab=tab||"soap";
@@ -190,6 +193,7 @@ function navigate(area,tab){
 function openModule(code){
  var shell=window.__SIMRS_PREVIEW__;
  if(!shell||!window.SIMRSFormEngine)return;
+ if(window.SIMRSRoleDemo&&!window.SIMRSRoleDemo.allowModule(code)){shell.toast("Form tidak tersedia untuk akun demo ini.");return;}
  shell.state.active="forms";
  shell.render();
  var control=document.querySelector('#p0-catalog-list [data-code="'+code+'"]');

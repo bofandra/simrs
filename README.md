@@ -2,6 +2,8 @@
 
 **Situs resmi mockup saat ini:** https://bofandra.github.io/simrs/
 
+**LOGIN DEMO (42 ROLE):** Pengguna pertama kali masuk melalui layar login, memilih akun demo per role (contoh `akun.pendaftaran`, `akun.dokter-rj`, `akun.farmasis`) dengan password demo `demo123`. Setelah login, layar awal dan menu hanya menampilkan pekerjaan sesuai role. `reviewer.demo` adalah akun khusus QA/peninjau untuk menjelajahi seluruh workspace dan katalog, bukan akun pengguna RS. Semua akun ini hanya simulasi front-end dan **bukan autentikasi keamanan**.
+
 Repositori ini menyimpan prototype UI SIMRS Baru dengan **7 workspace, 68 modul/form demo** dan tiga alur terpandu:
 
 **Workspace v2 (8 November 2026):** Front Office serta Dokter RJ kini memakai daftar kerja, form, banner pasien/encounter, validasi, dan navigasi tugas berbasis peran. Kode: `public/ui-preview/workspaces-v2.js` dan `.css`; dokumentasi: `design/WORKSPACE_V2_FRONT_CLINICAL_2026-11-08.md`. Semua tindakan tetap demonstrasi.

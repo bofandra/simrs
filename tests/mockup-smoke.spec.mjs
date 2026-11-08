@@ -5,6 +5,9 @@ const out = 'test-results/snapshots';
 mkdirSync(out,{recursive:true});
 const start = async (page) => {
   await page.goto('/index.html');
+  await expect(page.locator('#demo-login-form')).toBeVisible();
+  await page.locator('[data-demo-account="reviewer.demo"]').click();
+  await page.locator('#demo-login-form button[type="submit"]').click();
   await expect(page.locator('#main-content')).not.toBeEmpty();
 };
 const forms = async (page) => {
@@ -321,4 +324,60 @@ test('Dokter RJ v2 stores reviewed SOAP per patient and creates an addendum draf
   await page.locator('[data-ux-action="tab:order"]').click();
   await expect(page.locator('[data-ux-action="module:RME-08"]')).toBeVisible();
   expect(errors).toEqual([]);
+});
+
+
+
+test('login-first entry exposes 42 demo roles and opens Front Office for Pendaftaran',async ({page})=>{
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.goto('/index.html');
+  await expect(page.locator('#demo-login-form')).toBeVisible();
+  await expect(page.locator('#app')).toBeHidden();
+  await expect(page.locator('[data-demo-account]')).toHaveCount(43);
+  await page.locator('[data-demo-account="akun.pendaftaran"]').click();
+  await expect(page.locator('#demo-username')).toHaveValue('akun.pendaftaran');
+  await page.locator('#demo-login-form button[type="submit"]').click();
+  await expect(page.locator('#ux-registration')).toBeVisible();
+  await expect(page.locator('#demo-current-role')).toHaveText('Pendaftaran');
+  await expect(page.locator('#navlist')).toBeHidden();
+  await expect(page.locator('#role')).toBeHidden();
+  await page.locator('#demo-logout').click();
+  await expect(page.locator('#demo-login-form')).toBeVisible();
+  await expect(page.locator('#app')).toBeHidden();
+  expect(errors).toEqual([]);
+});
+
+test('specialist role login opens only their work area with role task navigation',async ({page})=>{
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.goto('/index.html');
+  await page.locator('[data-demo-account="akun.petugas-laundry"]').click();
+  await page.locator('#demo-login-form button[type="submit"]').click();
+  await expect(page.locator('#main-content h1')).toHaveText('Petugas Laundry');
+  await expect(page.locator('#role-nav [data-demo-action="module:OPS-04"]')).toBeVisible();
+  await expect(page.locator('[data-nav="clinical"]')).toBeHidden();
+  await page.locator('#role-nav [data-demo-action="module:OPS-04"]').click();
+  await expect(page.locator('.p0-editor .card-h h2')).toContainText('Laundry');
+  await expect(page.locator('.p0-catalog')).not.toContainText('Katalog 68 Modul');
+  await expect(page.locator('#p0-catalog-list [data-code="RME-08"]')).toHaveCount(0);
+  expect(errors).toEqual([]);
+});
+
+test('Nurse role login shows nursing tabs, not doctor prescribing worklist',async ({page})=>{
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.goto('/index.html');
+  await page.locator('[data-demo-account="akun.perawat"]').click();
+  await page.locator('#demo-login-form button[type="submit"]').click();
+  await expect(page.locator('#main-content h1')).toHaveText('Workspace Keperawatan');
+  await expect(page.getByRole('tab',{name:'CPPT Keperawatan'})).toBeVisible();
+  await expect(page.getByRole('tab',{name:'E-Resep'})).toHaveCount(0);
+  await expect(page.getByRole('tab',{name:'CPOE'})).toHaveCount(0);
+  expect(errors).toEqual([]);
+});
+
+test('Reviewer account retains previous 7-workspace test catalog for QA',async ({page})=>{
+  await start(page);
+  await expect(page.locator('[data-nav="clinical"]')).toBeVisible();
+  await forms(page);
+  await expect(page.getByText('68/68 modul memiliki form demo')).toBeVisible();
+  await expect(page.locator('#role')).toBeVisible();
 });
