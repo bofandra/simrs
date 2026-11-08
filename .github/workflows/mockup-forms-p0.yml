@@ -47,6 +47,14 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Run responsive and workflow smoke tests
         run: npx playwright test --config=tests/playwright.config.mjs
+      - name: Save reviewable static mockup package
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: simrs-static-mockup-preview
+          path: public/ui-preview/
+          if-no-files-found: error
+          retention-days: 7
       - name: Save UI screenshots and traces
         if: always()
         uses: actions/upload-artifact@v4
