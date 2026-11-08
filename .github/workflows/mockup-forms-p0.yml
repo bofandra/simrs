@@ -1,0 +1,70 @@
+name: Mockup Forms P0-P3 Checks
+on:
+  pull_request:
+    paths:
+      - 'public/ui-preview/**'
+      - 'tests/**'
+      - '.github/workflows/mockup-forms-p0.yml'
+  push:
+    paths:
+      - 'public/ui-preview/**'
+      - 'tests/**'
+      - '.github/workflows/mockup-forms-p0.yml'
+permissions:
+  contents: read
+jobs:
+  form-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: JavaScript syntax checks
+        run: |
+          node --check public/ui-preview/p0-form-catalog.js
+          node --check public/ui-preview/p1-form-definitions.js
+          node --check public/ui-preview/p2-p3-form-definitions.js
+          node --check public/ui-preview/contract-audit.js
+          node --check public/ui-preview/demo-workflow-links.js
+          node --check public/ui-preview/master-lookups.js
+          node --check public/ui-preview/complex-form-rows.js
+          node --check public/ui-preview/finance-form-rows.js
+          node --check public/ui-preview/p0-forms.js
+          node --check tests/mockup-smoke.spec.mjs
+          node --check tests/acute-flow.test.mjs
+      - name: All form and demo workflow contract tests
+        run: node --test tests/*.test.mjs
+
+  browser-smoke:
+    # Playwright 1.56 Chromium dependencies are supported on Ubuntu 24.04, not latest Ubuntu 26.04.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Playwright test runner
+        run: npm install --no-save @playwright/test@1.56.1
+      - name: Install Chromium browser
+        run: npx playwright install --with-deps chromium
+      - name: Run responsive and workflow smoke tests
+        run: npx playwright test --config=tests/playwright.config.mjs
+      - name: Save reviewable static mockup package
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: simrs-static-mockup-preview
+          path: public/ui-preview/
+          if-no-files-found: error
+          retention-days: 7
+      - name: Save UI screenshots and traces
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: simrs-ui-smoke-artifacts
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 7

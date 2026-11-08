@@ -1,0 +1,82 @@
+/* SIMRS Baru — tema visual SATUSEHAT-inspired (provisional)
+ * Source requested: https://satusehat-stg.dto.kemkes.go.id/design-system
+ * Source was inaccessible for verification on 2026-11-08.
+ * These values are NOT official exported SATUSEHAT tokens.
+ * Keep this file as the single replaceable theme layer.
+ */
+:root {
+  --navy: #114c4d;
+  --navy2: #1c6565;
+  --blue: #177c8d;
+  --blue-soft: #eaf7f8;
+  --teal: #087e79;
+  --teal-soft: #e9f8f5;
+  --green: #217a5b;
+  --green-soft: #e9f6ef;
+  --amber: #926200;
+  --amber-soft: #fff7e5;
+  --red: #b53c47;
+  --red-soft: #fdf0f1;
+  --bg: #f5faf9;
+  --surface: #ffffff;
+  --ink: #273b40;
+  --muted: #61767b;
+  --border: #dce9e7;
+  --border-soft: #edf4f2;
+  --shadow: 0 3px 14px rgba(22, 83, 78, .055);
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --font: "Segoe UI", Inter, ui-sans-serif, system-ui, Roboto, Arial, sans-serif;
+}
+body { background:var(--bg); color:var(--ink); }
+aside {
+  background:#fff; color:var(--ink);
+  border-right:1px solid var(--border);
+  box-shadow: 2px 0 12px rgba(12,67,66,.035);
+}
+.brand {border-bottom:1px solid var(--border);background:#f6fcfa;}
+.brand-mark { background:linear-gradient(135deg,#078b86,#2ca8ae);box-shadow:0 2px 10px #05878123;}
+.brand strong {color:var(--navy)}
+.brand small {color:#69847f}
+.side-caption {color:#64817e}
+.navbtn {color:#4d656a}
+.navbtn:hover {background:#eff8f6;color:var(--navy)}
+.navbtn.active {
+  background:#e6f5f1;color:#076c67;
+  box-shadow:inset 3px 0 0 var(--teal);font-weight:800;
+}
+.navbtn .num {color:#759793}
+.sidefoot {border:1px solid var(--border);background:#f5faf8;color:#52736f}
+.sidefoot strong {color:var(--navy)}
+.sidefoot button {background:#e6f5f1;border:1px solid #bedad4;color:#076e68}
+.topbar {background:#ffffffed;border-bottom:1px solid var(--border);box-shadow:0 2px 8px #0c615709}
+.topbar .breadcrumbs b,.page-head h1,.card-h h2,.card-h h3,
+.metric strong,td strong {color:var(--navy)}
+.eyebrow {color:var(--teal)}
+.card {border-color:var(--border);box-shadow:var(--shadow)}
+.btn {min-height:36px;border-radius:10px;box-shadow:none}
+.btn-primary,.btn-blue {background:var(--teal);border-color:var(--teal);color:#fff}
+.btn-primary:hover,.btn-blue:hover {background:#086a66;border-color:#086a66}
+.btn-danger {background:#fff3f4;border-color:#f1cccf;color:#aa3244}
+.forminput,.topbar select {border-color:#d1e1dd;border-radius:10px}
+.forminput:focus,.topbar select:focus {
+  outline:2px solid #b2e4dd;outline-offset:1px;border-color:var(--teal);
+  box-shadow:none;
+}
+.field label {color:#405f5f}
+.tracebar {background:#edf8f6;border-color:#d5ebe6;color:#386963}
+.codechip {border-color:#cde4de;color:#276d67}
+th {background:#f4f9f8;color:#4e7170;border-bottom:1px solid var(--border)}
+td {border-bottom:1px solid #eaf1ef}
+tbody tr:hover {background:#f4faf8}
+.status.info {background:#e6f5f7;color:#177181}
+.status.teal {background:#e4f5f1;color:#08776f}
+.demo {border-color:#e7d9b3}
+:focus-visible {outline:3px solid #77cfc0;outline-offset:2px}
+@media(max-width:840px){
+  aside {box-shadow:none;}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after {scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important}
+}

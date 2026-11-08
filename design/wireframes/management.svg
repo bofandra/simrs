@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="970" viewBox="0 0 1600 970">
+<style>text{font-family:Inter,Arial,Helvetica,sans-serif}</style>
+<rect x="0" y="0" width="253" height="970" rx="0" fill="#152947" stroke="none"/>
+<rect x="18" y="22" width="39" height="39" rx="10" fill="#19A4A2" stroke="none"/>
+<text x="29" y="51" font-size="27" fill="#FFFFFF" font-weight="800">+</text>
+<text x="67" y="41" font-size="22" fill="#FFFFFF" font-weight="800">SIMRS Baru</text>
+<text x="67" y="59" font-size="10" fill="#B9CBDD" font-weight="700">UI BLUEPRINT</text>
+<text x="20" y="108" font-size="11" fill="#8DAAC9" font-weight="700">WORKSPACE PENGGUNA</text>
+<text x="20" y="154" font-size="14" fill="#CAD8E8" font-weight="400">Front Office</text>
+<text x="20" y="210" font-size="14" fill="#CAD8E8" font-weight="400">Dokter &amp; Perawat</text>
+<text x="20" y="266" font-size="14" fill="#CAD8E8" font-weight="400">IGD &amp; Rawat Inap</text>
+<text x="20" y="322" font-size="14" fill="#CAD8E8" font-weight="400">Laboratorium &amp; MCU</text>
+<text x="20" y="378" font-size="14" fill="#CAD8E8" font-weight="400">Farmasi &amp; Logistik</text>
+<text x="20" y="434" font-size="14" fill="#CAD8E8" font-weight="400">Keuangan &amp; Klaim</text>
+<rect x="8" y="462" width="238" height="43" rx="9" fill="#354A68" stroke="none"/>
+<rect x="8" y="462" width="4" height="43" rx="3" fill="#34C8C0" stroke="none"/>
+<text x="20" y="490" font-size="14" fill="#FFFFFF" font-weight="700">Manajemen &amp; Mutu</text>
+<text x="19" y="587" font-size="10" fill="#8DAAC9" font-weight="700">STANDAR ANTARMUKA</text>
+<text x="20" y="630" font-size="14" fill="#CAD8E8" font-weight="400">Design System</text>
+<rect x="15" y="828" width="225" height="110" rx="10" fill="#203957" stroke="none"/>
+<text x="28" y="856" font-size="12" fill="#FFFFFF" font-weight="700">STATIC WIREFRAME</text>
+<text x="28" y="881" font-size="12" fill="#B9CAD9" font-weight="400">Data sepenuhnya simulasi</text>
+<text x="28" y="902" font-size="12" fill="#B9CAD9" font-weight="400">Tidak terhubung backend</text>
+<rect x="253" y="0" width="1347" height="970" rx="0" fill="#F4F7FB" stroke="none"/>
+<rect x="253" y="0" width="1347" height="63" rx="0" fill="#FFFFFF" stroke="none"/>
+<rect x="253" y="63" width="1347" height="1" rx="0" fill="#DCE5EF" stroke="none"/>
+<text x="285" y="40" font-size="13" fill="#6A7B91" font-weight="400">SIMRS Baru  /  Manajemen &amp; Mutu</text>
+<rect x="1240" y="17" width="84" height="25" rx="7" fill="#FFF3D9" stroke="none"/>
+<text x="1250" y="34" font-size="12" fill="#A16C10" font-weight="700">DATA DEMO</text>
+<rect x="1430" y="16" width="149" height="30" rx="7" fill="#F6F9FC" stroke="#DCE5EF"/>
+<text x="1443" y="36" font-size="12" fill="#25374D" font-weight="400">RS Demo Nusantara</text>
+<text x="285" y="102" font-size="11" fill="#078D88" font-weight="800">07  ·  WORKSPACE</text>
+<text x="285" y="143" font-size="29" fill="#152947" font-weight="800">Kinerja RS &amp; kesiapan integrasi</text>
+<text x="285" y="169" font-size="13" fill="#6A7B91" font-weight="400">UI Wireframe · 8 November 2026 · Kesesuaian PRD dan role-based workflow</text>
+<rect x="284" y="189" width="1294" height="37" rx="7" fill="#EAF2FD" stroke="#D6E6F6"/>
+<text x="297" y="213" font-size="12" fill="#31526F" font-weight="800">TRACE</text>
+<rect x="360" y="195" width="63" height="25" rx="7" fill="#FFFFFF" stroke="none"/>
+<text x="370" y="212" font-size="12" fill="#406280" font-weight="700">ENT-08</text>
+<rect x="431" y="195" width="63" height="25" rx="7" fill="#FFFFFF" stroke="none"/>
+<text x="441" y="212" font-size="12" fill="#406280" font-weight="700">ENT-09</text>
+<rect x="502" y="195" width="63" height="25" rx="7" fill="#FFFFFF" stroke="none"/>
+<text x="512" y="212" font-size="12" fill="#406280" font-weight="700">ENT-11</text>
+<rect x="573" y="195" width="63" height="25" rx="7" fill="#FFFFFF" stroke="none"/>
+<text x="583" y="212" font-size="12" fill="#406280" font-weight="700">FR-030</text>
+<rect x="644" y="195" width="63" height="25" rx="7" fill="#FFFFFF" stroke="none"/>
+<text x="654" y="212" font-size="12" fill="#406280" font-weight="700">FR-032</text>
+<rect x="715" y="195" width="62" height="25" rx="7" fill="#FFFFFF" stroke="none"/>
+<text x="725" y="212" font-size="12" fill="#406280" font-weight="700">WF-15</text>
+<rect x="285" y="245" width="310" height="114" rx="12" fill="#FFFFFF" stroke="#DCE5EF"/>
+<text x="303" y="280" font-size="13" fill="#6A7B91" font-weight="700">Kunjungan</text>
+<text x="303" y="331" font-size="32" fill="#152947" font-weight="800">284</text>
+<rect x="530" y="269" width="46" height="46" rx="13" fill="#EAF2FF" stroke="none"/>
+<rect x="611" y="245" width="310" height="114" rx="12" fill="#FFFFFF" stroke="#DCE5EF"/>
+<text x="629" y="280" font-size="13" fill="#6A7B91" font-weight="700">BOR</text>
+<text x="629" y="331" font-size="32" fill="#152947" font-weight="800">76.4%</text>
+<rect x="856" y="269" width="46" height="46" rx="13" fill="#E9F8F2" stroke="none"/>
+<rect x="937" y="245" width="310" height="114" rx="12" fill="#FFFFFF" stroke="#DCE5EF"/>
+<text x="955" y="280" font-size="13" fill="#6A7B91" font-weight="700">Waktu tunggu</text>
+<text x="955" y="331" font-size="32" fill="#152947" font-weight="800">42m</text>
+<rect x="1182" y="269" width="46" height="46" rx="13" fill="#FFF4E0" stroke="none"/>
+<rect x="1263" y="245" width="310" height="114" rx="12" fill="#FFFFFF" stroke="#DCE5EF"/>
+<text x="1281" y="280" font-size="13" fill="#6A7B91" font-weight="700">ACK</text>
+<text x="1281" y="331" font-size="32" fill="#152947" font-weight="800">98.3%</text>
+<rect x="1508" y="269" width="46" height="46" rx="13" fill="#ECF2FF" stroke="none"/>
+<rect x="285" y="378" width="772" height="489" rx="13" fill="#FFFFFF" stroke="#DCE5EF"/>
+<text x="303" y="408" font-size="17" fill="#152947" font-weight="750">Tren kunjungan 7 hari</text>
+<rect x="285" y="428" width="772" height="1" rx="0" fill="#DCE5EF" stroke="none"/>
+<text x="1033" y="408" font-size="11" fill="#6A7B91" font-weight="400">Read model / freshness</text>
+<rect x="320" y="608.8" width="60" height="139.2" rx="6" fill="#078D88" stroke="none"/>
+<text x="333" y="782" font-size="12" fill="#6A7B91" font-weight="400">Sen</text>
+<rect x="422" y="565.6" width="60" height="182.4" rx="6" fill="#5E85D1" stroke="none"/>
+<text x="435" y="782" font-size="12" fill="#6A7B91" font-weight="400">Sel</text>
+<rect x="524" y="592.0" width="60" height="156.0" rx="6" fill="#078D88" stroke="none"/>
+<text x="537" y="782" font-size="12" fill="#6A7B91" font-weight="400">Rab</text>
+<rect x="626" y="534.4" width="60" height="213.6" rx="6" fill="#5E85D1" stroke="none"/>
+<text x="639" y="782" font-size="12" fill="#6A7B91" font-weight="400">Kam</text>
+<rect x="728" y="575.2" width="60" height="172.79999999999998" rx="6" fill="#078D88" stroke="none"/>
+<text x="741" y="782" font-size="12" fill="#6A7B91" font-weight="400">Jum</text>
+<rect x="830" y="548.8" width="60" height="199.2" rx="6" fill="#5E85D1" stroke="none"/>
+<text x="843" y="782" font-size="12" fill="#6A7B91" font-weight="400">Sab</text>
+<rect x="932" y="520.0" width="60" height="228.0" rx="6" fill="#078D88" stroke="none"/>
+<text x="945" y="782" font-size="12" fill="#6A7B91" font-weight="400">Min</text>
+<text x="313" y="823" font-size="12" fill="#6A7B91" font-weight="400">Source: encounter &amp; registration · Snapshot: 11:00 · Definisi KPI terversi</text>
+<rect x="1076" y="378" width="502" height="489" rx="13" fill="#FFFFFF" stroke="#DCE5EF"/>
+<text x="1094" y="408" font-size="17" fill="#152947" font-weight="750">Mutu, risiko &amp; integrasi</text>
+<rect x="1076" y="428" width="502" height="1" rx="0" fill="#DCE5EF" stroke="none"/>
+<text x="1554" y="408" font-size="11" fill="#6A7B91" font-weight="400">ENT-08 / ENT-11</text>
+<text x="1093" y="461" font-size="12" fill="#6A7B91" font-weight="400">Encounter belum lengkap</text>
+<text x="1452" y="461" font-size="14" fill="#152947" font-weight="800">18</text>
+<rect x="1093" y="480" width="462" height="1" rx="0" fill="#DCE5EF" stroke="none"/>
+<text x="1093" y="522" font-size="12" fill="#6A7B91" font-weight="400">Hasil kritis belum diakui</text>
+<text x="1452" y="522" font-size="14" fill="#152947" font-weight="800">1</text>
+<rect x="1093" y="541" width="462" height="1" rx="0" fill="#DCE5EF" stroke="none"/>
+<text x="1093" y="583" font-size="12" fill="#6A7B91" font-weight="400">Klaim ready tertunda</text>
+<text x="1452" y="583" font-size="14" fill="#152947" font-weight="800">6</text>
+<rect x="1093" y="602" width="462" height="1" rx="0" fill="#DCE5EF" stroke="none"/>
+<text x="1093" y="644" font-size="12" fill="#6A7B91" font-weight="400">SATUSEHAT ACK</text>
+<text x="1452" y="644" font-size="14" fill="#152947" font-weight="800">98.3%</text>
+<rect x="1093" y="663" width="462" height="1" rx="0" fill="#DCE5EF" stroke="none"/>
+<text x="1093" y="705" font-size="12" fill="#6A7B91" font-weight="400">DLQ integrasi</text>
+<text x="1452" y="705" font-size="14" fill="#152947" font-weight="800">1</text>
+<rect x="1093" y="724" width="462" height="1" rx="0" fill="#DCE5EF" stroke="none"/>
+<rect x="1093" y="780" width="462" height="42" rx="8" fill="#FFF3DD" stroke="none"/>
+<text x="1107" y="807" font-size="12" fill="#946516" font-weight="700">Tampilkan numerator, denominator &amp; lineage</text>
+<text x="285" y="947" font-size="12" fill="#6A7B91" font-weight="600">SCREEN CONCEPT · USE SOURCE FR / US / AC · NOT A FUNCTIONING PRODUCTION SYSTEM</text>
+<text x="1422" y="947" font-size="13" fill="#078D88" font-weight="800">7/7</text>
+</svg>

@@ -5,6 +5,7 @@ on:
       - main
     paths:
       - 'docs/simrs-baru/**'
+      - 'public/ui-preview/**'
       - 'scripts/simrs-mockup-smoke.cjs'
       - 'scripts/simrs-mockup-browser.cjs'
       - '.github/workflows/publish-mindmap-pages.yml'
@@ -32,6 +33,9 @@ jobs:
 
       - name: Validate prototype JavaScript
         run: |
+          node --check public/ui-preview/p0-forms.js
+          node --check public/ui-preview/synthetic-journey.js
+          node --check public/ui-preview/master-lookups.js
           node --check docs/simrs-baru/catalog.js
           node --check docs/simrs-baru/app.js
           node --check docs/simrs-baru/database-tables.js
@@ -62,11 +66,14 @@ jobs:
           path: artifacts/browser/
           if-no-files-found: ignore
 
-      - name: Publish SIMRS Baru as site root
+      - name: Publish SIMRS Baru as site root and integrated form preview
         run: |
-          mkdir -p _site
+          mkdir -p _site/ui-preview
           cp -a docs/simrs-baru/. _site/
+          cp -a public/ui-preview/. _site/ui-preview/
           touch _site/.nojekyll
+          test -f _site/ui-preview/index.html
+          test -f _site/index.html
 
       - name: Configure Pages
         uses: actions/configure-pages@v5

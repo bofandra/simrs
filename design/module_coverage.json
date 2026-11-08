@@ -1,0 +1,934 @@
+{
+  "source_prd": "PRD_SIMRS_Baru_Final_NodeJS_FR_US_UI_API_ERD_2026-11-08.docx",
+  "catalog_note": "68 modules mapped to seven representative workspaces. This is design traceability, not evidence of 68 implemented screens.",
+  "modules": [
+    {
+      "code": "CORE-01",
+      "name": "Tenant & Multi-RS",
+      "priority": "P0",
+      "pic": 1,
+      "user_story": "US-CORE-01",
+      "fr": [
+        "FR-001"
+      ],
+      "primary_workspace": "management",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "CORE-02",
+      "name": "Identity & Access",
+      "priority": "P0",
+      "pic": 1,
+      "user_story": "US-CORE-02",
+      "fr": [
+        "FR-002"
+      ],
+      "primary_workspace": "management",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "CORE-03",
+      "name": "Master Organization",
+      "priority": "P0",
+      "pic": 1,
+      "user_story": "US-CORE-03",
+      "fr": [
+        "FR-001"
+      ],
+      "primary_workspace": "management",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "CORE-04",
+      "name": "Master Practitioner",
+      "priority": "P0",
+      "pic": 1,
+      "user_story": "US-CORE-04",
+      "fr": [
+        "FR-002"
+      ],
+      "primary_workspace": "management",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "CORE-05",
+      "name": "Master Location & Bed",
+      "priority": "P0",
+      "pic": 1,
+      "user_story": "US-CORE-05",
+      "fr": [
+        "FR-011"
+      ],
+      "primary_workspace": "management",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "CORE-06",
+      "name": "Master Layanan & Tarif",
+      "priority": "P0",
+      "pic": 1,
+      "user_story": "US-CORE-06",
+      "fr": [
+        "FR-003",
+        "FR-035"
+      ],
+      "primary_workspace": "management",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "CORE-07",
+      "name": "Terminology Service",
+      "priority": "P0",
+      "pic": 1,
+      "user_story": "US-CORE-07",
+      "fr": [
+        "FR-037"
+      ],
+      "primary_workspace": "management",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "CORE-08",
+      "name": "MPI & Rekonsiliasi Pasien",
+      "priority": "P0",
+      "pic": 1,
+      "user_story": "US-CORE-08",
+      "fr": [
+        "FR-004"
+      ],
+      "primary_workspace": "front",
+      "supporting_workspaces": [
+        "clinical"
+      ],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "CORE-12",
+      "name": "Consent & Disclosure",
+      "priority": "P0",
+      "pic": 1,
+      "user_story": "US-CORE-12",
+      "fr": [
+        "FR-008",
+        "FR-039"
+      ],
+      "primary_workspace": "management",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "CORE-09",
+      "name": "Registrasi & Front Office",
+      "priority": "P0",
+      "pic": 2,
+      "user_story": "US-CORE-09",
+      "fr": [
+        "FR-006"
+      ],
+      "primary_workspace": "front",
+      "supporting_workspaces": [
+        "clinical",
+        "acute",
+        "lab"
+      ],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "CORE-10",
+      "name": "Appointment & Scheduling",
+      "priority": "P0",
+      "pic": 2,
+      "user_story": "US-CORE-10",
+      "fr": [
+        "FR-005"
+      ],
+      "primary_workspace": "front",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "CORE-11",
+      "name": "Antrean & Kiosk",
+      "priority": "P1",
+      "pic": 2,
+      "user_story": "US-CORE-11",
+      "fr": [
+        "FR-007"
+      ],
+      "primary_workspace": "front",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "RME-12",
+      "name": "Portal Pasien",
+      "priority": "P2",
+      "pic": 2,
+      "user_story": "US-RME-12",
+      "fr": [
+        "FR-039"
+      ],
+      "primary_workspace": "front",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "RME-01",
+      "name": "Rawat Jalan",
+      "priority": "P0",
+      "pic": 3,
+      "user_story": "US-RME-01",
+      "fr": [
+        "FR-006",
+        "FR-009"
+      ],
+      "primary_workspace": "clinical",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "RME-02",
+      "name": "IGD & Triase",
+      "priority": "P0",
+      "pic": 3,
+      "user_story": "US-RME-02",
+      "fr": [
+        "FR-010"
+      ],
+      "primary_workspace": "acute",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "RME-03",
+      "name": "Rawat Inap & Discharge",
+      "priority": "P0",
+      "pic": 3,
+      "user_story": "US-RME-03",
+      "fr": [
+        "FR-006",
+        "FR-011"
+      ],
+      "primary_workspace": "acute",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "RME-04",
+      "name": "CPPT / SOAP",
+      "priority": "P0",
+      "pic": 3,
+      "user_story": "US-RME-04",
+      "fr": [
+        "FR-009",
+        "FR-034",
+        "FR-040",
+        "FR-042"
+      ],
+      "primary_workspace": "clinical",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "RME-05",
+      "name": "Asesmen & TTV",
+      "priority": "P0",
+      "pic": 3,
+      "user_story": "US-RME-05",
+      "fr": [
+        "FR-034"
+      ],
+      "primary_workspace": "clinical",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "RME-06",
+      "name": "Diagnosis & Prosedur",
+      "priority": "P0",
+      "pic": 3,
+      "user_story": "US-RME-06",
+      "fr": [
+        "FR-009"
+      ],
+      "primary_workspace": "clinical",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "RME-07",
+      "name": "Keperawatan",
+      "priority": "P0",
+      "pic": 3,
+      "user_story": "US-RME-07",
+      "fr": [
+        "FR-012"
+      ],
+      "primary_workspace": "clinical",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "RME-09",
+      "name": "Care Plan & Care Team",
+      "priority": "P1",
+      "pic": 3,
+      "user_story": "US-RME-09",
+      "fr": [
+        "FR-012"
+      ],
+      "primary_workspace": "clinical",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "RME-10",
+      "name": "Rujukan Internal/Eksternal",
+      "priority": "P1",
+      "pic": 3,
+      "user_story": "US-RME-10",
+      "fr": [
+        "FR-014",
+        "FR-035"
+      ],
+      "primary_workspace": "clinical",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "RME-11",
+      "name": "Dokumen & Tanda Tangan",
+      "priority": "P0",
+      "pic": 3,
+      "user_story": "US-RME-11",
+      "fr": [
+        "FR-013"
+      ],
+      "primary_workspace": "clinical",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "MED-06",
+      "name": "Operasi & Kamar Bedah",
+      "priority": "P1",
+      "pic": 3,
+      "user_story": "US-MED-06",
+      "fr": [
+        "FR-012"
+      ],
+      "primary_workspace": "acute",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "MED-07",
+      "name": "Anestesi & Recovery",
+      "priority": "P1",
+      "pic": 3,
+      "user_story": "US-MED-07",
+      "fr": [
+        "FR-012"
+      ],
+      "primary_workspace": "acute",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "OPS-10",
+      "name": "Manajemen Bed Operasional",
+      "priority": "P0",
+      "pic": 3,
+      "user_story": "US-OPS-10",
+      "fr": [
+        "FR-011"
+      ],
+      "primary_workspace": "acute",
+      "supporting_workspaces": [
+        "management"
+      ],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "ENT-04",
+      "name": "Clinical Pathway",
+      "priority": "P1",
+      "pic": 3,
+      "user_story": "US-ENT-04",
+      "fr": [
+        "FR-015",
+        "FR-033"
+      ],
+      "primary_workspace": "management",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "RME-08",
+      "name": "CPOE & Order",
+      "priority": "P0",
+      "pic": 4,
+      "user_story": "US-RME-08",
+      "fr": [
+        "FR-016"
+      ],
+      "primary_workspace": "lab",
+      "supporting_workspaces": [
+        "clinical"
+      ],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "MED-01",
+      "name": "Laboratorium LIS",
+      "priority": "P0",
+      "pic": 4,
+      "user_story": "US-MED-01",
+      "fr": [
+        "FR-017",
+        "FR-034"
+      ],
+      "primary_workspace": "lab",
+      "supporting_workspaces": [
+        "clinical"
+      ],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "MED-02",
+      "name": "Radiologi RIS",
+      "priority": "P1",
+      "pic": 4,
+      "user_story": "US-MED-02",
+      "fr": [
+        "FR-018"
+      ],
+      "primary_workspace": "lab",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "MED-03",
+      "name": "PACS / DICOM",
+      "priority": "P1",
+      "pic": 4,
+      "user_story": "US-MED-03",
+      "fr": [
+        "FR-018"
+      ],
+      "primary_workspace": "lab",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "MED-08",
+      "name": "Hemodialisis",
+      "priority": "P2",
+      "pic": 4,
+      "user_story": "US-MED-08",
+      "fr": [
+        "FR-019"
+      ],
+      "primary_workspace": "lab",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "MED-09",
+      "name": "Rehabilitasi Medik",
+      "priority": "P2",
+      "pic": 4,
+      "user_story": "US-MED-09",
+      "fr": [
+        "FR-019"
+      ],
+      "primary_workspace": "lab",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "MED-10",
+      "name": "Medical Check Up",
+      "priority": "P2",
+      "pic": 4,
+      "user_story": "US-MED-10",
+      "fr": [
+        "FR-019"
+      ],
+      "primary_workspace": "lab",
+      "supporting_workspaces": [
+        "finance"
+      ],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "MED-12",
+      "name": "Bank Darah & Transfusi",
+      "priority": "P2",
+      "pic": 4,
+      "user_story": "US-MED-12",
+      "fr": [
+        "FR-019",
+        "FR-056"
+      ],
+      "primary_workspace": "lab",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "MED-04",
+      "name": "Farmasi & E-Resep",
+      "priority": "P0",
+      "pic": 5,
+      "user_story": "US-MED-04",
+      "fr": [
+        "FR-020",
+        "FR-037",
+        "FR-038"
+      ],
+      "primary_workspace": "pharmacy",
+      "supporting_workspaces": [
+        "clinical"
+      ],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "MED-05",
+      "name": "Dispensing & BCMA",
+      "priority": "P0",
+      "pic": 5,
+      "user_story": "US-MED-05",
+      "fr": [
+        "FR-021",
+        "FR-036"
+      ],
+      "primary_workspace": "pharmacy",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "MED-11",
+      "name": "Gizi Klinis",
+      "priority": "P1",
+      "pic": 5,
+      "user_story": "US-MED-11",
+      "fr": [
+        "FR-024"
+      ],
+      "primary_workspace": "pharmacy",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "OPS-01",
+      "name": "Gudang & Inventory",
+      "priority": "P0",
+      "pic": 5,
+      "user_story": "US-OPS-01",
+      "fr": [
+        "FR-022",
+        "FR-036"
+      ],
+      "primary_workspace": "pharmacy",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "OPS-02",
+      "name": "Purchase & Procurement",
+      "priority": "P2",
+      "pic": 5,
+      "user_story": "US-OPS-02",
+      "fr": [
+        "FR-045"
+      ],
+      "primary_workspace": "pharmacy",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "OPS-03",
+      "name": "CSSD & Sterilisasi",
+      "priority": "P1",
+      "pic": 5,
+      "user_story": "US-OPS-03",
+      "fr": [
+        "FR-023"
+      ],
+      "primary_workspace": "pharmacy",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "OPS-04",
+      "name": "Laundry & Linen",
+      "priority": "P2",
+      "pic": 5,
+      "user_story": "US-OPS-04",
+      "fr": [
+        "FR-023"
+      ],
+      "primary_workspace": "pharmacy",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "OPS-05",
+      "name": "Produksi & Distribusi Gizi",
+      "priority": "P1",
+      "pic": 5,
+      "user_story": "US-OPS-05",
+      "fr": [
+        "FR-024"
+      ],
+      "primary_workspace": "pharmacy",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "FIN-01",
+      "name": "Charge Capture",
+      "priority": "P0",
+      "pic": 6,
+      "user_story": "US-FIN-01",
+      "fr": [
+        "FR-025"
+      ],
+      "primary_workspace": "finance",
+      "supporting_workspaces": [
+        "pharmacy",
+        "lab"
+      ],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "FIN-02",
+      "name": "Billing & Invoice",
+      "priority": "P0",
+      "pic": 6,
+      "user_story": "US-FIN-02",
+      "fr": [
+        "FR-026"
+      ],
+      "primary_workspace": "finance",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "FIN-03",
+      "name": "Kasir & Pembayaran",
+      "priority": "P0",
+      "pic": 6,
+      "user_story": "US-FIN-03",
+      "fr": [
+        "FR-026"
+      ],
+      "primary_workspace": "finance",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "FIN-04",
+      "name": "Coverage & Penjamin",
+      "priority": "P0",
+      "pic": 6,
+      "user_story": "US-FIN-04",
+      "fr": [
+        "FR-027"
+      ],
+      "primary_workspace": "finance",
+      "supporting_workspaces": [
+        "front"
+      ],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "FIN-05",
+      "name": "Bridging BPJS",
+      "priority": "P1",
+      "pic": 6,
+      "user_story": "US-FIN-05",
+      "fr": [
+        "FR-027",
+        "FR-064"
+      ],
+      "primary_workspace": "finance",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "FIN-06",
+      "name": "Casemix & INA-CBG",
+      "priority": "P1",
+      "pic": 6,
+      "user_story": "US-FIN-06",
+      "fr": [
+        "FR-027"
+      ],
+      "primary_workspace": "finance",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "FIN-07",
+      "name": "Klaim BPJS & Swasta",
+      "priority": "P1",
+      "pic": 6,
+      "user_story": "US-FIN-07",
+      "fr": [
+        "FR-040",
+        "FR-041"
+      ],
+      "primary_workspace": "finance",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "FIN-08",
+      "name": "Accounting & General Ledger",
+      "priority": "P2",
+      "pic": 6,
+      "user_story": "US-FIN-08",
+      "fr": [
+        "FR-028"
+      ],
+      "primary_workspace": "finance",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "FIN-09",
+      "name": "AP / AR",
+      "priority": "P2",
+      "pic": 6,
+      "user_story": "US-FIN-09",
+      "fr": [
+        "FR-038",
+        "FR-045"
+      ],
+      "primary_workspace": "finance",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "FIN-10",
+      "name": "Budgeting",
+      "priority": "P3",
+      "pic": 6,
+      "user_story": "US-FIN-10",
+      "fr": [
+        "FR-028"
+      ],
+      "primary_workspace": "finance",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "FIN-11",
+      "name": "Unit Costing",
+      "priority": "P3",
+      "pic": 6,
+      "user_story": "US-FIN-11",
+      "fr": [
+        "FR-033",
+        "FR-044"
+      ],
+      "primary_workspace": "finance",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "OPS-06",
+      "name": "Manajemen Aset",
+      "priority": "P2",
+      "pic": 7,
+      "user_story": "US-OPS-06",
+      "fr": [
+        "FR-044"
+      ],
+      "primary_workspace": "management",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "OPS-07",
+      "name": "Maintenance & Kalibrasi",
+      "priority": "P2",
+      "pic": 7,
+      "user_story": "US-OPS-07",
+      "fr": [
+        "FR-044"
+      ],
+      "primary_workspace": "management",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "OPS-08",
+      "name": "Housekeeping & Fasilitas",
+      "priority": "P3",
+      "pic": 7,
+      "user_story": "US-OPS-08",
+      "fr": [
+        "FR-023"
+      ],
+      "primary_workspace": "management",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "OPS-09",
+      "name": "Ambulans & Transportasi",
+      "priority": "P3",
+      "pic": 7,
+      "user_story": "US-OPS-09",
+      "fr": [
+        "FR-014"
+      ],
+      "primary_workspace": "acute",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "ENT-01",
+      "name": "HRIS & Personnel",
+      "priority": "P2",
+      "pic": 7,
+      "user_story": "US-ENT-01",
+      "fr": [
+        "FR-029",
+        "FR-046"
+      ],
+      "primary_workspace": "management",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "ENT-02",
+      "name": "Attendance & Payroll",
+      "priority": "P3",
+      "pic": 7,
+      "user_story": "US-ENT-02",
+      "fr": [
+        "FR-029"
+      ],
+      "primary_workspace": "management",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "ENT-03",
+      "name": "Rekrutmen & Talent",
+      "priority": "P3",
+      "pic": 7,
+      "user_story": "US-ENT-03",
+      "fr": [
+        "FR-029"
+      ],
+      "primary_workspace": "management",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "ENT-05",
+      "name": "HAIs & PPI",
+      "priority": "P2",
+      "pic": 7,
+      "user_story": "US-ENT-05",
+      "fr": [
+        "FR-030"
+      ],
+      "primary_workspace": "management",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "ENT-06",
+      "name": "Patient Safety",
+      "priority": "P1",
+      "pic": 7,
+      "user_story": "US-ENT-06",
+      "fr": [
+        "FR-030"
+      ],
+      "primary_workspace": "management",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "ENT-07",
+      "name": "Risk Management",
+      "priority": "P2",
+      "pic": 7,
+      "user_story": "US-ENT-07",
+      "fr": [
+        "FR-030"
+      ],
+      "primary_workspace": "management",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "ENT-08",
+      "name": "Indikator Mutu",
+      "priority": "P1",
+      "pic": 7,
+      "user_story": "US-ENT-08",
+      "fr": [
+        "FR-043"
+      ],
+      "primary_workspace": "management",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "ENT-09",
+      "name": "Dynamic Reporting & RL",
+      "priority": "P1",
+      "pic": 7,
+      "user_story": "US-ENT-09",
+      "fr": [
+        "FR-031"
+      ],
+      "primary_workspace": "management",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "ENT-10",
+      "name": "Multi-Hospital Analytics",
+      "priority": "P3",
+      "pic": 7,
+      "user_story": "US-ENT-10",
+      "fr": [
+        "FR-031"
+      ],
+      "primary_workspace": "management",
+      "supporting_workspaces": [],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    },
+    {
+      "code": "ENT-11",
+      "name": "SATUSEHAT & API Integration",
+      "priority": "P0",
+      "pic": 7,
+      "user_story": "US-ENT-11",
+      "fr": [
+        "FR-032"
+      ],
+      "primary_workspace": "management",
+      "supporting_workspaces": [
+        "clinical",
+        "finance"
+      ],
+      "design_state": "Representative wireframe mapped; module feature UI not yet implemented"
+    }
+  ]
+}

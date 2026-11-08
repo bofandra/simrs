@@ -1,0 +1,91 @@
+{
+  "meta": {
+    "name": "SIMRS Baru UI Design System",
+    "version": "1.1.0-provisional",
+    "baseline_prd": "2026-11-08",
+    "type": "design guidance only",
+    "theme_reference_url": "https://satusehat-stg.dto.kemkes.go.id/design-system",
+    "theme_verification": "Pending: staging reference was not accessible on 2026-11-08; values are provisional, not official SATUSEHAT tokens",
+    "css_theme_path": "public/ui-preview/satusehat-theme.css"
+  },
+  "color": {
+    "navy": "#114C4D",
+    "navy_alt": "#1C6565",
+    "primary_action": "#087E79",
+    "information": "#177C8D",
+    "success": "#217A5B",
+    "warning": "#926200",
+    "danger": "#B53C47",
+    "canvas": "#F5FAF9",
+    "surface": "#FFFFFF",
+    "text": "#273B40",
+    "text_muted": "#61767B",
+    "border": "#DCE9E7"
+  },
+  "font": {
+    "family": "Segoe UI, Inter, ui-sans-serif, system-ui, Roboto, Arial, sans-serif",
+    "base_px": 13,
+    "label_px": 11,
+    "table_px": 11,
+    "metadata_px": 10,
+    "title_px": 28,
+    "panel_title_px": 14
+  },
+  "spacing_px": [
+    4,
+    8,
+    12,
+    16,
+    24,
+    32
+  ],
+  "radius_px": {
+    "sm": 8,
+    "md": 12,
+    "lg": 16
+  },
+  "elevation": {
+    "card": "0 3px 14px rgba(22,83,78,.055)"
+  },
+  "layout": {
+    "desktop_sidebar_px": 252,
+    "desktop_topbar_px": 62,
+    "content_max_width_px": 1640,
+    "breakpoints_px": {
+      "tablet": 840,
+      "mobile": 530
+    }
+  },
+  "semantic_statuses": {
+    "draft": "warning",
+    "verified": "success",
+    "error": "danger",
+    "external_pending": "warning"
+  },
+  "required_states": [
+    "default",
+    "empty",
+    "loading",
+    "validation_error",
+    "forbidden",
+    "conflict_409",
+    "saving",
+    "success_demo",
+    "signed_read_only",
+    "external_pending"
+  ],
+  "component_patterns": [
+    "patient_context_header",
+    "role_switcher",
+    "worklist",
+    "details_panel",
+    "form_grid",
+    "clinical_note",
+    "medication_review",
+    "specimen_state",
+    "bed_board",
+    "payment_summary",
+    "KPI_snapshot",
+    "FR_US_AC_trace"
+  ]
+}
