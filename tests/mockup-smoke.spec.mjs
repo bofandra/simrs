@@ -355,9 +355,12 @@ test('specialist role login opens only their work area with role task navigation
   await page.locator('[data-demo-account="akun.petugas-laundry"]').click();
   await page.locator('#demo-login-form button[type="submit"]').click();
   await expect(page.locator('#main-content h1')).toHaveText('Petugas Laundry');
-  await expect(page.locator('#role-nav [data-demo-action="module:OPS-04"]')).toBeVisible();
+  await expect(page.locator('#role-nav [data-demo-action="section:m0"]')).toBeVisible();
   await expect(page.locator('[data-nav="clinical"]')).toBeHidden();
-  await page.locator('#role-nav [data-demo-action="module:OPS-04"]').click();
+  await page.locator('#role-nav [data-demo-action="section:m0"]').click();
+  await expect(page.locator('.uxv4 h1')).toHaveText('Penerimaan linen');
+  await expect(page.locator('.uxv4 [data-demo-action="module:OPS-04"]').first()).toBeVisible();
+  await page.locator('.uxv4 [data-demo-action="module:OPS-04"]').first().click();
   await expect(page.locator('.p0-editor .card-h h2')).toContainText('Laundry');
   await expect(page.locator('.p0-catalog')).not.toContainText('Katalog 68 Modul');
   await expect(page.locator('#p0-catalog-list [data-code="RME-08"]')).toHaveCount(0);
@@ -382,4 +385,49 @@ test('Reviewer account retains previous 7-workspace test catalog for QA',async (
   await forms(page);
   await expect(page.getByText('68/68 modul memiliki form demo')).toBeVisible();
   await expect(page.locator('#role')).toBeVisible();
+});
+
+test('cashier has only billing worklists, no claim submission or tariff admin menu',async ({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('/index.html');
+ await page.locator('[data-demo-account="akun.kasir"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ await expect(page.locator('#demo-current-role')).toHaveText('Kasir');
+ await expect(page.locator('#role-nav [data-demo-action="section:m0"]')).toContainText('Daftar tagihan');
+ await expect(page.locator('#role-nav [data-demo-action="section:m1"]')).toContainText('Terima pembayaran');
+ await expect(page.locator('#role-nav')).not.toContainText('Klaim');
+ await expect(page.locator('#role-nav')).not.toContainText('Piutang');
+ await expect(page.locator('#role-nav')).not.toContainText('Tarif');
+ await page.locator('#role-nav [data-demo-action="section:m1"]').click();
+ await expect(page.locator('.uxv4 h1')).toHaveText('Terima pembayaran');
+ await expect(page.locator('.uxv4-trace')).toContainText('FIN-03');
+ await expect(page.locator('.uxv4-trace')).toContainText('WF-08');
+ await page.screenshot({path:out+'/role-kasir-worklist-v4.png',fullPage:true});
+ expect(errors).toEqual([]);
+});
+test('doctor sidebar uses role worklists and tracks PRD clinical forms',async ({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('/index.html');
+ await page.locator('[data-demo-account="akun.dokter-rj"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ await expect(page.locator('#role-nav [data-demo-action="section:m1"]')).toContainText('Asesmen dan SOAP');
+ await expect(page.locator('#role-nav')).not.toContainText('Pembayaran');
+ await page.locator('#role-nav [data-demo-action="section:m1"]').click();
+ await expect(page.locator('.uxv4 h1')).toHaveText('Asesmen dan SOAP');
+ await expect(page.locator('.uxv4-trace')).toContainText('RME-04');
+ await expect(page.locator('.uxv4-trace')).toContainText('WF-02');
+ expect(errors).toEqual([]);
+});
+test('nurse-specific menu excludes prescribing and includes handover',async ({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('/index.html');
+ await page.locator('[data-demo-account="akun.perawat"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ await expect(page.locator('#role-nav')).toContainText('CPPT dan serah terima');
+ await expect(page.locator('#role-nav')).not.toContainText('Resep elektronik');
+ await expect(page.locator('#role-nav')).not.toContainText('Invoice');
+ await page.locator('#role-nav [data-demo-action="section:m0"]').click();
+ await expect(page.locator('.uxv4 h1')).toHaveText('Pasien shift ini');
+ await page.screenshot({path:out+'/role-perawat-worklist-v4.png',fullPage:true});
+ expect(errors).toEqual([]);
 });
