@@ -7,7 +7,7 @@
   "use strict";
   var catalog = Array.isArray(window.SIMRS_FORM_CATALOG) ? window.SIMRS_FORM_CATALOG : [];
   var key = "simrs-demo-p0-forms-v1";
-  var state = { code:"CORE-09", priority:"P0", recordId:null, search:"", prefill:null, linkSource:null };
+  var state = { code:"CORE-09", priority:"P0", flow:"RJ", recordId:null, search:"", prefill:null, linkSource:null };
   var demo = readDemo();
   var lastContext = null;
   var riskyActions = "Tanda tangan, release hasil, dispensing, mutasi stok, pembayaran, posting jurnal, pengajuan klaim, pengiriman API dan publikasi laporan hanya contoh desain: NONAKTIF sampai SOP/UAT dan otorisasi.";
@@ -35,6 +35,13 @@
     var all = Array.isArray(demo.records[m.code]) ? demo.records[m.code] : [];
     if (m.patient_context) return all.filter(function(r){return r.patient_id === context().patient.id && r.encounter_id === context().patient.visit;});
     return all;
+  }
+  function guideRecord(m,flow) {
+    var rows=recordsFor(m);
+    var patient=context().patient;
+    var tag=flow+"-DEMO-"+patient.id+"-"+patient.visit;
+    return rows.find(function(r){return r.scenario_tag===tag;}) ||
+      rows.find(function(r){return !r.scenario_tag;}) || null;
   }
   function record() {return recordsFor(currentModule()).find(function(r){return r.id === state.recordId;}) || null;}
   function notice(message) {
@@ -150,30 +157,42 @@
   }
   function renderGuide() {
     var journey=window.SIMRSSyntheticJourney;
-    if(!journey || !Array.isArray(journey.steps))return "";
-    var current=journey.steps.indexOf(state.code),completed=0;
-    var tiles=journey.steps.map(function(code,index){
+    if(!journey||!journey.flows)return "";
+    var currentFlow=journey.flows[state.flow]||journey.flows.RJ;
+    var steps=currentFlow.steps,idx=steps.indexOf(state.code),complete=0;
+    var tabs=Object.keys(journey.flows).map(function(flow) {
+      var f=journey.flows[flow],active=state.flow===flow;
+      return '<button type="button" class="p0-guide-tab'+(active?' active':'')+
+        '" data-p0-action="guideFlow" data-flow="'+esc(flow)+'" aria-pressed="'+(active?'true':'false')+'">'+
+        esc(f.label)+' <span>'+f.steps.length+' tahap</span></button>';
+    }).join("");
+    var tiles=steps.map(function(code,index){
       var module=catalog.find(function(x){return x.code===code;});
       if(!module)return "";
-      var records=recordsFor(module),record=records[0];
-      var status=record?record.status:"Belum ada draft";
-      if(status==="Reviewed (Demo)")completed++;
+      var row=guideRecord(module,state.flow);
+      var status=row?row.status:"Belum ada draft";
+      if(status==="Reviewed (Demo)")complete++;
       return '<button type="button" class="p0-guide-step'+(code===state.code?' active':'')+
         '" data-p0-action="guide" data-code="'+esc(code)+'" aria-current="'+(code===state.code?'step':'false')+
         '" aria-label="Buka tahap '+(index+1)+' '+esc(module.name)+' · '+esc(status)+'">'+
         '<span class="p0-guide-number">'+(index+1)+'</span><span><strong>'+esc(code)+'</strong>'+
         '<small>'+esc(module.name)+'</small><em>'+esc(status)+'</em></span></button>';
     }).join("");
-    var next=current>=0 && current<journey.steps.length-1?journey.steps[current+1]:null;
-    var nextModule=next?catalog.find(function(x){return x.code===next;}):null;
-    var action=nextModule?button("Tahap berikut: "+next,"guide","btn-primary",'data-code="'+esc(next)+'"'):"";
+    var previous=idx>0?steps[idx-1]:null;
+    var next=idx>=0&&idx<steps.length-1?steps[idx+1]:null;
+    var nav='<div class="p0-guide-nav">'+
+      (previous?button("← Sebelumnya: "+previous,"guide","", 'data-code="'+esc(previous)+'"'):"")+
+      (next?button("Berikutnya: "+next+" →","guide","btn-primary",'data-code="'+esc(next)+'"'):"")+
+      '</div>';
     var master=window.SIMRSMasterLookups;
-    var note=master?'<p class="p0-guide-master">Katalog sintetis: '+master.units.length+' unit, '+master.doctors.length+
-      ' dokter, '+master.services.length+' layanan/tarif, '+master.medications.length+' obat.</p>':"";
-    return '<section class="card p0-guide" aria-label="Panduan alur rawat jalan"><div class="card-h"><h2>Jelajahi alur rawat jalan</h2>'+
-      pill(completed+" / "+journey.steps.length+" ditinjau (demo)")+'</div>'+
-      '<div class="card-body"><div class="p0-guide-steps">'+tiles+'</div>'+
-      '<div class="p0-guide-foot"><p>Buka tahap tanpa mencari kode modul. Peran demo akan disesuaikan saat berpindah; seluruh draft tetap pada konteks pasien dan encounter terpilih.</p>'+action+'</div>'+
+    var note=master?'<p class="p0-guide-master">Master sintetis: '+master.units.length+' unit, '+
+      master.doctors.length+' dokter, '+master.services.length+' layanan/tarif, '+master.medications.length+' obat.</p>':"";
+    return '<section class="card p0-guide" aria-label="Panduan alur '+esc(currentFlow.label)+'">'+
+      '<div class="card-h"><h2>Jelajahi alur '+esc(currentFlow.label)+'</h2>'+
+      pill(complete+" / "+steps.length+" ditinjau (demo)")+'</div>'+
+      '<div class="card-body"><div class="p0-guide-tabs" role="group" aria-label="Jenis alur pelayanan">'+tabs+'</div>'+
+      '<div class="p0-guide-steps" aria-label="Tahapan '+esc(currentFlow.label)+'">'+tiles+'</div>'+
+      '<div class="p0-guide-foot"><p>Pilih tahap untuk membuka draft, tanpa mencari kode modul. Perpindahan peran hanya simulasi UI. Draft setiap alur terisolasi berdasarkan pasien dan encounter.</p>'+nav+'</div>'+
       note+'</div></section>';
   }
   function renderLinks(m) {
@@ -235,7 +254,10 @@
     }
     return '<div class="page-head"><div><div class="eyebrow">DESAIN FORM • SEMUA PRIORITAS P0–P3</div>'+
       '<h1>Katalog Form & Workflow SIMRS</h1><p>Form sesuai domain PRD, dapat diisi dan ditinjau menggunakan data sintetis. Perubahan hanya tersimpan di browser ini.</p></div>'+
-      '<div class="actions">'+pill("68/68 modul memiliki form demo","good")+pill("DEMO – NO BACKEND")+button("Muat 10 draft rawat jalan","seedScenario","btn-primary")+'</div></div>'+
+      '<div class="actions">'+pill("68/68 modul memiliki form demo","good")+pill("DEMO – NO BACKEND")+
+      button("Muat 10 draft rawat jalan","seedScenario","btn-primary",'data-flow="RJ"')+
+      button("Muat 7 draft IGD","seedScenario","",'data-flow="IGD"')+
+      button("Muat 9 draft rawat inap","seedScenario","",'data-flow="RI"')+'</div></div>'+
       '<div class="p0-warning" role="note"><strong>Bukan sistem operasional.</strong> Jangan masukkan data pasien asli, NIK sebenarnya, nomor transaksi, atau informasi sensitif. Tidak ada sinkronisasi ke API/FHIR atau database RS.</div>'+
       '<div class="p0-layout">'+renderCatalog()+'<div class="p0-detail">'+
       '<section class="card"><div class="card-body">'+renderInfo(m)+'</div></section>'+
@@ -343,19 +365,16 @@
     if(!b)return;
     e.preventDefault();e.stopImmediatePropagation();
     var action=b.getAttribute("data-p0-action");
-    if (action==="guide"){
-      var target=b.getAttribute("data-code");
-      var next=catalog.find(function(x){return x.code===target;});
-      if(!next || !window.SIMRSSyntheticJourney || window.SIMRSSyntheticJourney.steps.indexOf(target)<0)return;
-      var requiredRole=(next.roles||[])[0],changedRole=false;
-      var shell=window.__SIMRS_PREVIEW__;
-      if(requiredRole && next.roles.indexOf(context().role)<0 && shell && shell.state){
-        shell.state.role=requiredRole;changedRole=true;
-      }
-      state.code=target;state.priority="all";state.search="";state.prefill=null;state.linkSource=null;
-      var latest=recordsFor(next)[0];state.recordId=latest?latest.id:null;
-      update();
-      if(changedRole)notice("Peran DEMO disesuaikan ke "+requiredRole+" untuk mengisi "+target+".");
+    if (action==="guideFlow"){
+      var chosen=b.getAttribute("data-flow");
+      if(!window.SIMRSSyntheticJourney || !window.SIMRSSyntheticJourney.flows[chosen])return;
+      state.flow=chosen;
+      var initial=window.SIMRSSyntheticJourney.flows[chosen].steps[0];
+      goGuide(initial);
+      return;
+    }
+    if (action==="guide") {
+      goGuide(b.getAttribute("data-code"));
       return;
     }
     if (action==="choose"){state.code=b.getAttribute("data-code");state.recordId=null;state.search="";state.prefill=null;state.linkSource=null;var selected=catalog.find(function(m){return m.code===state.code;});if(selected && state.priority!=='all')state.priority=selected.priority;update();return;}
@@ -376,7 +395,7 @@
       update();notice("Draft "+dest.code+" terhubung ke "+source.id+". Data belum tersimpan.");
       return;
     }
-    if (action==="seedScenario"){seedScenario();return;}
+    if (action==="seedScenario"){seedScenario(b.getAttribute("data-flow")||"RJ");return;}
     if (action==="blocked"){notice("NONAKTIF: menunggu SOP, UAT, dan otorisasi.");return;}
   }
   function handleInput(e) {
@@ -397,37 +416,52 @@
   document.addEventListener("submit",function(e){
     if(e.target.id==="p0-editor"){e.preventDefault();e.stopPropagation();saveDraft();}
   });
-  function seedScenario() {
-    var patient=context().patient;
-    if(!patient || !patient.id || !patient.visit || !window.SIMRSSyntheticJourney) {
-      notice("Skenario pasien sintetis belum tersedia.");return;
+  function goGuide(target) {
+    var journey=window.SIMRSSyntheticJourney;
+    var track=journey&&journey.flows&&journey.flows[state.flow];
+    var next=catalog.find(function(x){return x.code===target;});
+    if(!next || !track || track.steps.indexOf(target)<0)return;
+    var requiredRole=(next.roles||[])[0],changedRole=false;
+    var shell=window.__SIMRS_PREVIEW__;
+    if(requiredRole && next.roles.indexOf(context().role)<0 && shell && shell.state) {
+      shell.state.role=requiredRole;
+      changedRole=true;
     }
-    var scenarioId="RJ-DEMO-"+patient.id+"-"+patient.visit;
+    state.code=target;state.priority="all";state.search="";
+    state.prefill=null;state.linkSource=null;
+    var matching=guideRecord(next,state.flow);
+    state.recordId=matching?matching.id:null;
+    update();
+    if(changedRole)notice("Peran DEMO berubah ke "+requiredRole+" untuk tahap "+target+".");
+  }
+  function seedScenario(flow) {
+    var patient=context().patient,journey=window.SIMRSSyntheticJourney;
+    if(!patient||!patient.id||!patient.visit||!journey||!journey.flows[flow]) {
+      notice("Skenario sintetis tidak tersedia.");return;
+    }
+    var tag=flow+"-DEMO-"+patient.id+"-"+patient.visit;
     var existing=Object.keys(demo.records).some(function(code){
-      return (demo.records[code]||[]).some(function(x){return x.scenario_tag===scenarioId;});
+      return (demo.records[code]||[]).some(function(r){return r.scenario_tag===tag;});
     });
-    if(existing){
-      state.code="CORE-09";state.priority="P0";state.search="";state.recordId=null;
-      state.prefill=null;state.linkSource=null;
-      var row=(demo.records["CORE-09"]||[]).find(function(r){return r.scenario_tag===scenarioId;});
-      if(row)state.recordId=row.id;
-      update();notice("Skenario untuk pasien dan encounter ini sudah dimuat. Draft lama tidak ditimpa.");
+    state.flow=flow;
+    if(existing) {
+      goGuide(journey.flows[flow].steps[0]);
+      notice("Skenario "+journey.flows[flow].label+" sudah ada; draft lama tidak ditimpa.");
       return;
     }
-    var rows=window.SIMRSSyntheticJourney.make(patient,new Date().toISOString(),scenarioId);
+    var rows=journey.makeFor(flow,patient,new Date().toISOString(),tag);
     rows.forEach(function(x){
-      if(!demo.records[x.code])demo.records[x.code]=[];
+      if(!Array.isArray(demo.records[x.code]))demo.records[x.code]=[];
       demo.records[x.code].unshift(x.record);
     });
-    state.code="CORE-09";state.priority="P0";state.search="";state.recordId=rows.find(function(x){return x.code==="CORE-09";}).record.id;
-    state.prefill=null;state.linkSource=null;
     if(persist()) {
-      update();notice("10 draft sintetis dibuat. Seluruhnya berstatus Draft; tidak ada persetujuan, dispensing, pembayaran, atau pengiriman API.");
+      goGuide(journey.flows[flow].steps[0]);
+      notice(rows.length+" draft "+journey.flows[flow].label+" sintetis dibuat. Tidak ada transaksi klinis/finansial.");
     }
   }
   function resetDemo() {
     demo={version:1,seq:0,records:{}};
-    state.recordId=null;state.code="CORE-09";state.priority="P0";state.search="";state.prefill=null;state.linkSource=null;
+    state.recordId=null;state.code="CORE-09";state.priority="P0";state.flow="RJ";state.search="";state.prefill=null;state.linkSource=null;
     try{localStorage.removeItem(key);}catch(e){}
   }
   window.SIMRSFormEngine={render:render,validate:validate,collect:collect,resetDemo:resetDemo,getCatalog:function(){return catalog;},getRecords:function(){return demo.records;}};

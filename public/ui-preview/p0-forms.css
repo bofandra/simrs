@@ -130,3 +130,30 @@
 .p0-guide-master{margin:9px 0 0;color:var(--muted);font-size:10px}
 .p0-master-field select{background-color:#fafffe}
 @media(max-width:530px){.p0-guide-step{min-width:140px}.p0-guide-foot .btn{width:100%}}
+
+/* Responsive flow switcher: navigable across RJ / IGD / inpatient. */
+.p0-guide-tabs{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:14px}
+.p0-guide-tab{font:inherit;display:flex;align-items:center;justify-content:space-between;gap:13px;
+  background:#f7fafb;color:var(--navy);border:1px solid var(--border);border-radius:10px;
+  padding:10px 13px;min-height:44px;cursor:pointer;font-size:12px;font-weight:700}
+.p0-guide-tab span{color:var(--muted);font-size:10px;font-weight:500}
+.p0-guide-tab:hover{border-color:#80bfb3}
+.p0-guide-tab.active{background:var(--teal-soft);border-color:#329e91;color:#126d65}
+.p0-guide-nav{display:flex;flex-wrap:wrap;gap:9px}
+.p0-guide-nav .btn{min-height:40px;white-space:normal;text-align:center}
+.p0-guide .p0-guide-steps{max-width:100%;-webkit-overflow-scrolling:touch}
+@media(max-width:600px){
+  .p0-guide .card-body{padding:12px}
+  .p0-guide-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+  .p0-guide-tab{min-width:0;display:flex;flex-direction:column;gap:2px;align-items:center;
+    justify-content:center;text-align:center;min-height:48px;padding:7px 4px;font-size:11px}
+  .p0-guide-step{min-width:148px;max-width:172px;min-height:92px}
+  .p0-guide-steps{margin:0 -12px;padding:5px 12px 12px;overflow-x:auto;overscroll-behavior-inline:contain}
+  .p0-guide-foot{display:block}
+  .p0-guide-foot p{line-height:1.5;margin-bottom:10px}
+  .p0-guide-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+  .p0-guide-nav .btn{width:100%;min-width:0;padding:10px 7px}
+  .p0-guide-nav .btn:only-child{grid-column:1/-1}
+  .page-head .actions{flex-wrap:wrap;gap:7px}
+  .page-head .actions .btn{max-width:100%;min-height:40px}
+}

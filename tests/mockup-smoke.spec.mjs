@@ -92,12 +92,12 @@ test('mobile form navigates with visible required fields and no script errors',a
 
 test('one-click outpatient scenario produces ten drafts without transactions',async ({page}) => {
   await start(page);await forms(page);
-  await page.locator('[data-p0-action="seedScenario"]').click();
+  await page.locator('[data-p0-action="seedScenario"][data-flow="RJ"]').click();
   await expect(page.locator('.p0-editor .card-h h2')).toHaveText('Form CORE-09');
   const before=await page.evaluate(()=>Object.values(window.SIMRSFormEngine.getRecords()).flat().filter(x=>x.scenario_tag).map(x=>({status:x.status,patient_id:x.patient_id,encounter_id:x.encounter_id})));
   expect(before).toHaveLength(10);
   expect(before.every(x=>x.status==='Draft'&&x.patient_id==='p1'&&x.encounter_id==='ENC-DEMO-247')).toBeTruthy();
-  await page.locator('[data-p0-action="seedScenario"]').click();
+  await page.locator('[data-p0-action="seedScenario"][data-flow="RJ"]').click();
   const after=await page.evaluate(()=>Object.values(window.SIMRSFormEngine.getRecords()).flat().filter(x=>x.scenario_tag).length);
   expect(after).toBe(10);
   await page.screenshot({path:out+'/sample-outpatient.png',fullPage:true});
@@ -189,7 +189,7 @@ test('master reference lookup and guided outpatient steps maintain demo context'
   page.on('request',r=>{if(r.url().includes('/api/v1/'))apiRequests.push(r.url());});
   await start(page);await forms(page);
   await expect(page.locator('.p0-guide-steps [data-p0-action="guide"]')).toHaveCount(10);
-  await page.locator('[data-p0-action="seedScenario"]').click();
+  await page.locator('[data-p0-action="seedScenario"][data-flow="RJ"]').click();
   await page.locator('.p0-guide-steps [data-code="RME-01"]').click();
   await expect(page.locator('#role')).toHaveValue('Dokter RJ');
   await expect(page.locator('.p0-editor .card-h h2')).toHaveText('Form RME-01');
@@ -218,4 +218,67 @@ test('master reference lookup and guided outpatient steps maintain demo context'
   await expect(page.locator('.p0-editor .card-h')).toContainText('Reviewed (Demo)');
   expect(errors).toEqual([]);
   expect(apiRequests).toEqual([]);
+});
+
+
+test('IGD and inpatient guided tracks stay separate with idempotent draft seeding',async ({page})=>{
+  const errors=[],api=[];
+  page.on('pageerror',e=>errors.push(e.message));
+  page.on('request',r=>{if(r.url().includes('/api/v1/'))api.push(r.url());});
+  await start(page);await forms(page);
+  await page.locator('[data-p0-action="seedScenario"][data-flow="IGD"]').click();
+  await expect(page.locator('.p0-guide h2')).toContainText('IGD');
+  await expect(page.locator('.p0-guide-steps [data-p0-action="guide"]')).toHaveCount(7);
+  const first=await page.evaluate(()=>Object.values(window.SIMRSFormEngine.getRecords()).flat()
+    .filter(r=>r.scenario_tag==='IGD-DEMO-p1-ENC-DEMO-247'));
+  expect(first).toHaveLength(7);
+  expect(first.every(r=>r.status==='Draft'&&r.encounter_id==='ENC-DEMO-247')).toBeTruthy();
+  await page.locator('[data-p0-action="seedScenario"][data-flow="IGD"]').click();
+  const count=await page.evaluate(()=>Object.values(window.SIMRSFormEngine.getRecords()).flat()
+    .filter(r=>r.scenario_tag==='IGD-DEMO-p1-ENC-DEMO-247').length);
+  expect(count).toBe(7);
+  await page.locator('.p0-guide-steps [data-code="RME-02"]').click();
+  await expect(page.locator('#role')).toHaveValue('Dokter IGD');
+  await expect(page.locator('#p0-editor [name="acuity"]')).toHaveValue('Kuning');
+  await page.locator('[data-p0-action="seedScenario"][data-flow="RI"]').click();
+  await expect(page.locator('.p0-guide h2')).toContainText('Rawat Inap');
+  await expect(page.locator('.p0-guide-steps [data-p0-action="guide"]')).toHaveCount(9);
+  const values=await page.evaluate(()=>Object.values(window.SIMRSFormEngine.getRecords()).flat()
+    .filter(r=>r.scenario_tag==='RI-DEMO-p1-ENC-DEMO-247'));
+  expect(values).toHaveLength(9);
+  await page.locator('.p0-guide-steps [data-code="OPS-10"]').click();
+  await expect(page.locator('#role')).toHaveValue('DPJP Rawat Inap');
+  await expect(page.locator('#p0-editor [name="availability"]')).toHaveValue('Kosong');
+  await page.locator('.p0-guide-tabs [data-flow="IGD"]').click();
+  await expect(page.locator('.p0-guide h2')).toContainText('IGD');
+  await page.locator('.p0-guide-steps [data-code="RME-02"]').click();
+  await expect(page.locator('#p0-editor [name="acuity"]')).toHaveValue('Kuning');
+  expect(errors).toEqual([]);
+  expect(api).toEqual([]);
+});
+
+test('mobile IGD/RI tabs, forward/back navigation and synthetic patient context',async ({page})=>{
+  await page.setViewportSize({width:390,height:844});
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await start(page);await forms(page);
+  await expect(page.locator('.p0-guide-tabs [data-p0-action="guideFlow"]')).toHaveCount(3);
+  await page.locator('.p0-guide-tabs [data-flow="IGD"]').click();
+  await expect(page.locator('.p0-guide-steps [data-p0-action="guide"]')).toHaveCount(7);
+  await expect(page.locator('.p0-editor .card-h h2')).toHaveText('Form CORE-09');
+  await page.locator('.p0-guide-nav [data-code="RME-02"]').click();
+  await expect(page.locator('.p0-editor .card-h h2')).toHaveText('Form RME-02');
+  await expect(page.locator('#role')).toHaveValue('Dokter IGD');
+  await expect(page.locator('.p0-patient-banner')).toContainText('ENC-DEMO-247');
+  await page.locator('.p0-guide-nav [data-code="CORE-09"]').click();
+  await expect(page.locator('.p0-editor .card-h h2')).toHaveText('Form CORE-09');
+  await page.locator('.p0-guide-tabs [data-flow="RI"]').click();
+  await expect(page.locator('.p0-guide-steps [data-p0-action="guide"]')).toHaveCount(9);
+  const dims=await page.locator('.p0-guide').evaluate(el=>{
+    const a=el.getBoundingClientRect(),b=el.querySelector('.p0-guide-steps');
+    return {w:a.width,viewport:window.innerWidth,scrollable:b.scrollWidth>=b.clientWidth};
+  });
+  expect(dims.w).toBeLessThanOrEqual(dims.viewport+1);
+  expect(dims.scrollable).toBeTruthy();
+  await page.screenshot({path:out+'/mobile-acute-guide.png',fullPage:true});
+  expect(errors).toEqual([]);
 });

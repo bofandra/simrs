@@ -138,3 +138,15 @@ Pengujian baru mencakup field item wajib, duplikasi, ketidakcocokan jenis order,
 - Panel **Jelajahi alur rawat jalan** menyediakan 10 tahap navigasi langsung, menunjukkan ada/tidaknya draft dan status review. Klik tahap akan membuka catatan demo pasien/encounter aktif dan menyesuaikan peran demo agar pengguna dapat menguji form tanpa mencari modul secara manual. Penyesuaian peran ini **hanya UI demo**, bukan otorisasi produksi.
 - Kontrol validasi master menghindari nilai yang tidak ada pada pilihan, dokter tidak sesuai unit dan tarif melenceng. Data sintetis legacy masih perlu koreksi saat review jika tidak sesuai katalog.
 - Seluruh navigasi, lookup, dan penyimpanan tetap berjalan di browser; tidak ada permintaan API ke master database atau integrasi RS.
+
+## Tiga alur terpandu + perbaikan navigasi ponsel (8 November 2026)
+
+Panel form menyediakan pilihan **Rawat Jalan (10 tahap)**, **IGD (7 tahap)** dan **Rawat Inap (9 tahap)**. Pemilihan alur mengarahkan ke tahapan yang relevan; tombol tahap sebelumnya/berikutnya mendukung penggunaan satu tangan pada layar ponsel. Daftar tahapan digulir horizontal tanpa memperlebar layar, pilihan alur memiliki label/status aktif dan tombol minimum 44px.
+
+**Skenario sintetis** dapat diisi sekali per alur dan per pasangan pasien/encounter tanpa menimpa draft lama. ID dan \`scenario_tag\` RI/IGD berbeda dari RJ, bahkan untuk kode modul yang digunakan bersama. Semua skenario **Draft**, tidak pernah otomatis menjadi Reviewed, tidak menghasilkan persetujuan klinis, bed reservation, distribusi makanan, order release, kas, klaim, posting biaya, atau notifikasi eksternal.
+
+- **IGD**: Registrasi (\`CORE-09\`) → Triase (\`RME-02\`) → SOAP (\`RME-04\`) → CPOE (\`RME-08\`) → LIS (\`MED-01\`) → Rencana charge (\`FIN-01\`) → Draft invoice (\`FIN-02\`). Disposisi ke rawat inap dapat dijelajahi pada alur RI, **tanpa** melakukan admission nyata.
+- **RI**: Registrasi (\`CORE-09\`) → pengecekan bed rencana (\`OPS-10\`) → draft admisi (\`RME-03\`) → SOAP (\`RME-04\`) → TTV (\`RME-05\`) → asesmen gizi (\`MED-11\`) → rencana tray (\`OPS-05\`) → rencana charge (\`FIN-01\`) → draft invoice (\`FIN-02\`). Ketersediaan bed/meal tidak pernah dimutasi.
+- **RJ**: Alur 10 tahap dipertahankan lengkap agar regresi tidak berubah.
+
+Status progres menampilkan hanya draft alur saat ini atau form manual terkait, bukan catatan sintetis dari skenario lain. Perpindahan tahap dapat mengganti **role UI demonstrasi** tanpa mengubah otorisasi backend. Sebelum produksi diperlukan RBAC sebenarnya, audit log server, DTO/API/DB dan SOP/UAT keselamatan pasien/keuangan. Pengiriman real-world transaksi tetap dinonaktifkan.
