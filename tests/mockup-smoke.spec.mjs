@@ -75,7 +75,7 @@ test('contract inspector explicitly shows the missing API and database mapping',
   await selectModule(page,'FIN-02');
   await page.locator('.p0-contract summary').click();
   await expect(page.locator('.p0-contract')).toContainText('charge_ids');
-  await expect(page.locator('.p0-contract')).toContainText('Belum ada daftar charge_ids');
+  await expect(page.locator('.p0-contract')).toContainText('Komposer charge_ids[] ada di mockup');
 });
 test('mobile form navigates with visible required fields and no script errors',async ({page}) => {
   await page.setViewportSize({width:390,height:844});
