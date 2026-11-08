@@ -522,12 +522,12 @@ test('mobile role navigation opens a focused registration form, not a three-colu
  await page.locator('[data-demo-account="akun.pendaftaran"]').click();
  await page.locator('#demo-login-form button[type="submit"]').click();
  await expect(page.locator('#demo-mobile-nav-toggle')).toBeVisible();
- await expect(page.locator('#app aside')).toBeHidden();
+ await expect(page.locator('#app > aside')).toBeHidden();
  await page.locator('#demo-mobile-nav-toggle').click();
  await expect(page.locator('#demo-mobile-nav-toggle')).toHaveAttribute('aria-expanded','true');
- await expect(page.locator('#app aside')).toBeVisible();
+ await expect(page.locator('#app > aside')).toBeVisible();
  await page.locator('#role-nav [data-demo-action="section:m1"]').click();
- await expect(page.locator('#app aside')).toBeHidden();
+ await expect(page.locator('#app > aside')).toBeHidden();
  await expect(page.locator('.uxv5 h1')).toHaveText('Registrasi kunjungan');
  await expect(page.locator('.uxv5 .uxv4-table tbody tr')).toHaveCount(4);
  await page.locator('.uxv5 [data-demo-action="job:1"]').click();
@@ -554,7 +554,7 @@ test('tablet-size role workspace uses collapsed nav, and reviewer still has cata
  await page.locator('[data-demo-account="akun.farmasis"]').click();
  await page.locator('#demo-login-form button[type="submit"]').click();
  await expect(page.locator('#demo-mobile-nav-toggle')).toBeVisible();
- await expect(page.locator('#app aside')).toBeHidden();
+ await expect(page.locator('#app > aside')).toBeHidden();
  await page.locator('#demo-mobile-nav-toggle').click();
  await page.locator('#role-nav [data-demo-action="section:m0"]').click();
  await page.locator('.uxv5-detail [data-demo-action="module:MED-04"]').click();
