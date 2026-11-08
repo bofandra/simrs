@@ -59,6 +59,13 @@ function authenticated(){return !!current;}
 function isReviewer(){return !!(current&&current.reviewer);}
 function getAccount(){return current;}
 function getCurrentSection(){return currentSection;}
+function selectionForModule(code){
+ var shell=window.__SIMRS_PREVIEW__;
+ if(!current||current.reviewer||!shell||shell.state.active!=="rolehome"||!window.SIMRSRoleUXV5||!window.SIMRSRoleUXV4)return null;
+ var feature=window.SIMRSRoleUXV4.getFeature(current.role,currentSection);
+ if(!feature||feature.code!==code)return null;
+ return window.SIMRSRoleUXV5.selectionContext(current.role,currentSection,currentJob,shell.patients);
+}
 function closeMobileNav(){document.body.classList.remove("demo-mobile-nav-open");var b=document.getElementById("demo-mobile-nav-toggle");if(b)b.setAttribute("aria-expanded","false");}
 function lookup(username){return accounts.find(function(a){return a.username===username;})||null;}
 function tasks(role){
@@ -236,6 +243,7 @@ function choose(username){
  document.querySelectorAll("[data-demo-account]").forEach(function(b){b.classList.toggle("selected",b.dataset.demoAccount===a.username);});
 }
 function showLogin(){
+ if(window.SIMRSFormEngine&&window.SIMRSFormEngine.clearWorkItemContext)window.SIMRSFormEngine.clearWorkItemContext();
  closeMobileNav();
  current=null;
  document.body.classList.remove("demo-authenticated","demo-reviewer");
@@ -303,6 +311,8 @@ function handleDemoCommand(command){
   var jobs=window.SIMRSRoleUXV5.jobRows(current.role,currentSection);
   if(!Number.isInteger(index)||index<0||index>=jobs.length){shell.toast("Pekerjaan tidak ditemukan.");return;}
   currentJob=index;
+  var selected=window.SIMRSRoleUXV5.selectionContext(current.role,currentSection,index,shell.patients);
+  if(selected&&selected.patient&&shell.patients.some(function(p){return p.id===selected.patient.id;}))shell.state.patient=selected.patient.id;
   shell.render();
   return;
  }
@@ -316,7 +326,7 @@ function handleDemoCommand(command){
   if(!allowModule(code)){shell.toast("Form ini tidak tersedia untuk akun demo Anda.");return;}
   closeMobileNav();
   if(!isReviewer()){
-   if(!window.SIMRSFormEngine||!window.SIMRSFormEngine.openForRole(code,current.role)){
+   if(!window.SIMRSFormEngine||!window.SIMRSFormEngine.openForRole(code,current.role,selectionForModule(code))){
     shell.toast("Form belum tersedia untuk pekerjaan Anda.");return;
    }
    var profile=window.SIMRSRoleUXV4&&window.SIMRSRoleUXV4.getProfile(current.role);
