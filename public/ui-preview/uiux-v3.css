@@ -118,18 +118,6 @@ tbody tr:hover{background:#f4faf8}
 .demo-account-symbol{background:#edf5f4;color:#39766f;border-radius:9px}
 .demo-account.selected .demo-account-symbol{background:#d1ede3;color:#087469}
 .demo-login-foot{color:#829698}
-.demo-quick-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:1px 0 -4px}
-.demo-quick-head strong{font-size:12px;color:#2c5659}
-.demo-quick-head span{font-size:10px;color:#839898}
-.demo-quick-roles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.demo-quick-role{
-  border:1px solid #dce9e6;background:#fff;border-radius:10px;padding:9px 10px;
-  display:flex;align-items:center;gap:8px;text-align:left;color:#2d5256;
-  font-size:11px;font-weight:770;min-height:43px
-}
-.demo-quick-role:hover{border-color:#71b9ae;background:#f2faf7}
-.demo-quick-role.selected{border-color:#0c8d80;background:#e8f7f2;color:#056e65}
-.demo-quick-dot{display:grid;place-items:center;width:24px;height:24px;border-radius:7px;background:#e6f3f1;color:#087e72;font-size:10px;font-weight:900;flex:none}
 /* Role-specific home is a work queue, not a generic module map */
 .role-home-hero{
   display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:20px;
@@ -181,7 +169,6 @@ tbody tr:hover{background:#f4faf8}
   .role-home-hero{padding:20px}
 }
 @media(max-width:600px){
-  .demo-quick-roles{grid-template-columns:repeat(2,minmax(0,1fr))}
   .demo-login-points{grid-template-columns:1fr}
   .demo-login-panel{padding:18px}
   .demo-login-fields{padding:17px}
