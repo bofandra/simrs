@@ -1,13 +1,11 @@
-name: Publish SIMRS Baru Interactive Prototype
+name: Publish SIMRS Baru Mockup
 on:
   push:
     branches:
       - main
     paths:
-      - 'docs/simrs-baru/**'
       - 'public/ui-preview/**'
-      - 'scripts/simrs-mockup-smoke.cjs'
-      - 'scripts/simrs-mockup-browser.cjs'
+      - 'tests/**'
       - '.github/workflows/publish-mindmap-pages.yml'
   workflow_dispatch:
 
@@ -23,66 +21,47 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 25
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Validate prototype JavaScript
-        run: |
-          node --check public/ui-preview/p0-forms.js
-          node --check public/ui-preview/synthetic-journey.js
-          node --check public/ui-preview/master-lookups.js
-          node --check docs/simrs-baru/catalog.js
-          node --check docs/simrs-baru/app.js
-          node --check docs/simrs-baru/database-tables.js
-          node --check docs/simrs-baru/enhancements.js
-          node --check docs/simrs-baru/specialty.js
-          node --check docs/simrs-baru/feature-map.js
-          node --check docs/simrs-baru/care-journey.js
-          node --check docs/simrs-baru/role-worklists.js
-          node --check docs/simrs-baru/clinical-pathway.js
-          node --check docs/simrs-baru/design-workflows.js
-          node --check docs/simrs-baru/care-expansion.js
-          node scripts/simrs-mockup-smoke.cjs
-
-      - name: Install Chromium browser test dependencies
-        run: |
-          npm install --prefix .browser-ci --ignore-scripts --no-audit --no-fund --no-package-lock playwright@1.56.1
-          .browser-ci/node_modules/.bin/playwright install chromium
-
-      - name: Verify responsive UI in Chromium
-        run: |
-          NODE_PATH="$PWD/.browser-ci/node_modules" node scripts/simrs-mockup-browser.cjs
-
-      - name: Upload UI screenshots
-        if: always()
-        uses: actions/upload-artifact@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          name: simrs-role-worklists-browser-shots
-          path: artifacts/browser/
-          if-no-files-found: ignore
-
-      - name: Publish SIMRS Baru as site root and integrated form preview
+          node-version: '22'
+      - name: Validate active UI JavaScript
         run: |
-          mkdir -p _site/ui-preview
-          cp -a docs/simrs-baru/. _site/
-          cp -a public/ui-preview/. _site/ui-preview/
+          for f in public/ui-preview/*.js; do node --check "$f"; done
+          node --check tests/mockup-smoke.spec.mjs
+      - name: Run active form, master, finance and journey tests
+        run: node --test tests/*.test.mjs
+      - name: Install browser test runner
+        run: npm install --no-save @playwright/test@1.56.1
+      - name: Install Chromium and dependencies
+        run: npx playwright install --with-deps chromium
+      - name: Run browser responsive smoke tests
+        run: npx playwright test --config=tests/playwright.config.mjs
+      - name: Prepare only current mockup as GitHub Pages root
+        run: |
+          rm -rf _site
+          mkdir -p _site
+          cp -a public/ui-preview/. _site/
           touch _site/.nojekyll
-          test -f _site/ui-preview/index.html
           test -f _site/index.html
-
+          test -f _site/p0-forms.js
+          test -f _site/synthetic-journey.js
+          ! test -e _site/ui-preview
+          ! test -e _site/role-worklists.js
+          ! test -e _site/catalog.js
       - name: Configure Pages
         uses: actions/configure-pages@v5
-
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
           path: _site
-
       - name: Deploy GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
