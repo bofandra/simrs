@@ -26,6 +26,8 @@ var descriptions={
  "Petugas MCU":"Paket peserta, pemeriksaan, kelengkapan dan buku hasil MCU",
  "Farmasis":"Antrean resep, telaah obat, lot, dan penyiapan obat",
  "Kasir":"Tagihan, alokasi pembayaran, dan kuitansi",
+ "Petugas Billing":"Charge capture dan invoice dari tindakan yang sah",
+ "Bed Manager":"Permintaan bed, alokasi, transfer dan discharge",
  "Casemix":"Kelengkapan berkas, grouping dan rekonsiliasi klaim",
  "Manajemen RS":"Kinerja pelayanan, indikator, kepatuhan dan tren rumah sakit",
  "Admin Sistem":"Akun, organisasi, master data, terminologi dan integrasi",
@@ -37,10 +39,10 @@ var descriptions={
  "Rekruter":"Kandidat, seleksi, tahapan dan rekrutmen"
 };
 var groups={
- "Pelayanan & RME":["Pendaftaran","Dokter RJ","Dokter IGD","DPJP Rawat Inap","Perawat","Perawat HD","Terapis Rehabilitasi"],
+ "Pelayanan & RME":["Pendaftaran","Dokter RJ","Dokter IGD","DPJP Rawat Inap","Bed Manager","Perawat","Perawat HD","Terapis Rehabilitasi"],
  "Penunjang Medis":["ATLM","Petugas MCU","Radiografer","Radiolog","Farmasis","Koordinator MCU","Petugas Bank Darah","Dokter Anestesi","Koordinator OK","Ahli Gizi"],
  "Operasional & Logistik":["Gudang","Petugas CSSD","Petugas Dapur","Petugas Laundry","Pengadaan","Petugas Aset","Teknisi","Petugas Fasilitas","Koordinator Transport"],
- "Keuangan & Klaim":["Kasir","Casemix","Petugas BPJS","Coder","Akuntan","Budget Owner","Analis Biaya"],
+ "Keuangan & Klaim":["Kasir","Petugas Billing","Casemix","Petugas BPJS","Coder","Akuntan","Budget Owner","Analis Biaya"],
  "Manajemen & Enterprise":["Manajemen RS","Tim Mutu","Integrasi","Admin Sistem","HR Admin","Payroll Admin","Rekruter","Tim PPI","Pasien Demo"]
 };
 function dept(role){return Object.keys(groups).find(function(n){return groups[n].includes(role);})||"Unit Rumah Sakit";}
@@ -208,7 +210,7 @@ function renderLogin(){
  '<span class="demo-eyebrow">MOCKUP UI/UX RUMAH SAKIT</span>'+
  '<h1>Masuk sesuai <em>peran Anda.</em></h1>'+
  '<p>Setiap peran memiliki akun demo dan akan melihat tugas, menu, serta formulir sesuai pekerjaan sehari-hari di rumah sakit.</p>'+
- '<div class="demo-login-points"><span>42 akun role operasional</span><span>Workspace personal per peran</span><span>Semua data sintetis</span></div>'+
+ '<div class="demo-login-points"><span>'+roleList.length+' akun role operasional</span><span>Workspace personal per peran</span><span>Semua data sintetis</span></div>'+
  '<div class="demo-login-disclaimer"><strong>Hanya prototipe.</strong> Akun dan kata sandi demo bersifat publik. Tidak ada autentikasi server, RBAC nyata, atau data pasien asli.</div></section>'+
  '<section class="demo-login-panel"><div class="demo-login-header"><div><h2>Login Demo SIMRS</h2><p>Pilih akun atau masukkan username demo.</p></div><span class="demo-online">Mode Demo</span></div>'+
  '<form id="demo-login-form" novalidate><div class="demo-login-fields"><label for="demo-username">Username demo</label><input id="demo-username" autocomplete="username" spellcheck="false" value="'+esc(selected.username)+'"/>'+
