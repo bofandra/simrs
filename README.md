@@ -2,7 +2,7 @@
 
 **Situs resmi mockup saat ini:** https://bofandra.github.io/simrs/
 
-**LOGIN DEMO (42 ROLE):** Pengguna pertama kali masuk melalui layar login, memilih akun demo per role (contoh `akun.pendaftaran`, `akun.dokter-rj`, `akun.farmasis`) dengan password demo `demo123`. Setelah login, layar awal dan menu hanya menampilkan pekerjaan sesuai role. `reviewer.demo` adalah akun khusus QA/peninjau untuk menjelajahi seluruh workspace dan katalog, bukan akun pengguna RS. Semua akun ini hanya simulasi front-end dan **bukan autentikasi keamanan**.
+**LOGIN DEMO (44 ROLE):** Pengguna pertama kali masuk melalui layar login, memilih akun demo per role (contoh `akun.pendaftaran`, `akun.dokter-rj`, `akun.farmasis`) dengan password demo `demo123`. Setelah login, layar awal dan menu hanya menampilkan pekerjaan sesuai role. `reviewer.demo` adalah akun khusus QA/peninjau untuk menjelajahi seluruh workspace dan katalog, bukan akun pengguna RS. Semua akun ini hanya simulasi front-end dan **bukan autentikasi keamanan**.
 
 Repositori ini menyimpan prototype UI SIMRS Baru dengan **7 workspace, 68 modul/form demo** dan tiga alur terpandu:
 
@@ -37,3 +37,5 @@ Lalu buka http://localhost:8000/ . Untuk tes Node: `node --test tests/*.test.mjs
 - `app/`, `components/`, `lib/`: kode Next.js eksperimen terdahulu yang **tidak termasuk** paket GitHub Pages; tidak digunakan oleh situs di atas.
 
 > **Penting:** Ini hanya prototipe statis untuk menguji alur dan UI, bukan SIMRS yang siap dipakai di rumah sakit.
+
+**Role worklists v5 (9 November 2026):** tujuh peran prioritas (Pendaftaran, Dokter RJ, Perawat, Dokter IGD, Farmasis, Kasir, Bed Manager) mempunyai daftar kerja kontekstual, detail item, checklist, dan pencarian. Semua konteks kerja tetap sintetis; memilih item belum memprefill form klinis/keuangan. Berkas `public/ui-preview/role-worklist-detail-v5.js` dan `.css`, serta pengujian `tests/role-worklist-detail-v5.test.mjs`.
