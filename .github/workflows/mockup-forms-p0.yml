@@ -1,4 +1,4 @@
-name: Mockup Forms P0-P1 Checks
+name: Mockup Forms P0-P3 Checks
 on:
   pull_request:
     paths:
@@ -25,7 +25,8 @@ jobs:
         run: |
           node --check public/ui-preview/p0-form-catalog.js
           node --check public/ui-preview/p1-form-definitions.js
+          node --check public/ui-preview/p2-p3-form-definitions.js
           node --check public/ui-preview/demo-workflow-links.js
           node --check public/ui-preview/p0-forms.js
-      - name: P0/P1 form and demo workflow contract tests
+      - name: All form and demo workflow contract tests
         run: node --test tests/*.test.mjs
