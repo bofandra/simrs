@@ -115,7 +115,7 @@
       '<details class="p0-contract-details"><summary>Periksa mapping form terhadap OpenAPI dan kolom database — '+esc(m.code)+'</summary>'+
       '<div class="card-body"><p><strong>POST '+esc(d.path)+'</strong> · operationId <code>'+esc(d.op)+'</code> · schema <code>'+esc(d.schema)+'</code></p>'+
       '<p class="muted">Kolom pada '+esc(m.entity)+': '+esc((d.columns||[]).join(", "))+'</p>'+
-      '<p class="hint">Mapping ini merupakan audit awal dan **bukan** bukti request telah sesuai atau backend tersedia. Semua ID di mockup adalah sintetis.</p>'+
+      '<p class="hint">Mapping ini merupakan audit awal, <strong>bukan</strong> bukti request telah sesuai atau backend tersedia. Semua ID di mockup adalah sintetis.</p>'+
       '<div class="table-wrap"><table class="p0-contract-table"><thead><tr><th>Properti API</th><th>Padanan UI</th><th>Catatan</th><th>Status</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
       '<div class="p0-contract-gaps"><strong>Gap yang wajib diselesaikan</strong><ul>'+
          d.gaps.map(function(g){return '<li>'+esc(g)+'</li>';}).join("")+'</ul></div>'+
@@ -160,7 +160,7 @@
     });
     if(!cards.length)return "";
     return '<section class="card p0-related"><div class="card-h"><h2>Lanjutkan alur dari catatan demo</h2>'+pill(cards.length+" referensi")+'</div>'+
-      '<div class="card-body">'+cards.join("")+'<p class="hint">Hanya catatan Reviewed (Demo) dari pasien dan encounter yang sama. Menyalin referensi ke form lain **tidak** sama dengan persetujuan, sign, release atau posting transaksi.</p></div></section>';
+      '<div class="card-body">'+cards.join("")+'<p class="hint">Hanya catatan Reviewed (Demo) dari pasien dan encounter yang sama. Menyalin referensi ke form lain tidak sama dengan persetujuan, sign, release atau posting transaksi.</p></div></section>';
   }
   function renderRecordList(m) {
     var rs = recordsFor(m);
