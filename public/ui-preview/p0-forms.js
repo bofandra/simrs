@@ -230,7 +230,12 @@
     var values=(r && r.values)||state.prefill||{};
     var id = r?r.id:"Baru (belum tersimpan)";
     var ctx=context();
-    return '<section class="card p0-editor"><div class="card-h"><h2>Form '+esc(window.SIMRSRoleDemo&&window.SIMRSRoleDemo.isAuthenticated()&&!window.SIMRSRoleDemo.isReviewer()?m.name:m.code)+'</h2>'+pill(r?r.status:"Belum disimpan",r&&r.status==="Reviewed (Demo)"?"good":"")+'</div>'+
+    var roleUser=!!(window.SIMRSRoleDemo&&window.SIMRSRoleDemo.isAuthenticated()&&!window.SIMRSRoleDemo.isReviewer());
+    var profile=roleUser&&window.SIMRSRoleUXV4&&window.SIMRSRoleUXV4.getProfile(context().role);
+    var section=roleUser&&window.SIMRSRoleDemo.getCurrentSection&&window.SIMRSRoleDemo.getCurrentSection();
+    var task=profile&&(profile.features.find(function(f){return f.key===section&&f.code===m.code;})||profile.features.find(function(f){return f.code===m.code;}));
+    var formTitle=roleUser?(task?task.label:m.name):"Form "+m.code;
+    return '<section class="card p0-editor"><div class="card-h"><h2>'+esc(formTitle)+'</h2>'+pill(r?r.status:"Belum disimpan",r&&r.status==="Reviewed (Demo)"?"good":"")+'</div>'+
       (m.patient_context?'<div class="p0-patient-banner"><strong>Pasien demo: '+esc(ctx.patient.name)+'</strong><span>MRN '+esc(ctx.patient.mrn)+' · Encounter '+esc(ctx.patient.visit)+'</span><span>Identitas dan encounter merupakan konteks read-only.</span></div>':'<div class="p0-patient-banner"><strong>Data administrasi / master</strong><span>RS Demo Nusantara · Tenant demonstrasi</span></div>')+
       (!allowed?'<div class="p0-warning" role="status">Peran <strong>'+esc(ctx.role)+'</strong> hanya dapat melihat. Peran untuk mengisi: '+esc((m.roles||[]).join(", ")||"Belum ditetapkan")+'. Ubah peran demo di bagian kanan atas.</div>':'')+
       (r&&r.status!=="Draft"?'<div class="p0-warning">Catatan telah ditinjau dan terkunci pada mode demonstrasi. Perubahan memerlukan alur koreksi/addendum terpisah yang belum dibuat.</div>':'')+
