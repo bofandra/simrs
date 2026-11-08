@@ -80,11 +80,11 @@
       '<span class="p0-error" data-error-for="'+esc(f.key)+'" aria-live="polite"></span></div>';
   }
   function renderCatalog() {
-    return '<section class="card p0-catalog" aria-label="Katalog modul SIMRS"><div class="card-h"><h2>Katalog 68 Modul</h2>'+pill("47 form P0/P1")+'</div>'+
+    return '<section class="card p0-catalog" aria-label="Katalog modul SIMRS"><div class="card-h"><h2>Katalog 68 Modul</h2>'+pill("68 form demo")+'</div>'+
       '<div class="p0-catalog-tools"><label for="p0-search">Cari kode / nama modul</label><input id="p0-search" class="forminput" placeholder="Mis. RME-04 / farmasi" value="'+esc(state.search)+'" />'+
       '<label for="p0-priority">Prioritas</label><select id="p0-priority" class="forminput"><option value="P0"'+(state.priority==="P0"?" selected":"")+'>P0 (30 form)</option>'+
       '<option value="all"'+(state.priority==="all"?" selected":"")+'>Semua prioritas</option>'+
-      ['P1','P2','P3'].map(function(p){return '<option value="'+p+'"'+(state.priority===p?' selected':'')+'>'+p+(p==='P1'?' (17 form)':' (roadmap)')+'</option>';}).join("")+'</select></div>'+
+      ['P1','P2','P3'].map(function(p){return '<option value="'+p+'"'+(state.priority===p?' selected':'')+'>'+p+' ('+(p==='P1'?17:p==='P2'?14:7)+' form demo)</option>';}).join("")+'</select></div>'+
       '<div id="p0-catalog-list" class="p0-module-list">'+catalog.filter(function(m){return state.priority==="all" || state.priority===m.priority;}).map(function(m){
         var ready=m.fields && m.fields.length;var active=m.code===state.code;
         return '<button class="p0-module-item'+(active?' active':'')+'" type="button" data-p0-action="choose" data-code="'+esc(m.code)+'" data-search="'+esc((m.code+" "+m.name).toLowerCase())+'" aria-current="'+(active?'true':'false')+'"><span><strong>'+esc(m.code)+'</strong><small>'+esc(m.name)+'</small></span><span class="p0-module-meta">'+esc(m.priority)+'<small>'+(ready?'Form':'Roadmap')+'</small></span></button>';
@@ -178,9 +178,9 @@
       state.code=(catalog.find(function(x){return x.priority===state.priority;})||m).code;
       m=currentModule();state.recordId=null;
     }
-    return '<div class="page-head"><div><div class="eyebrow">DESAIN FORM • PRIORITAS P0 + P1</div>'+
+    return '<div class="page-head"><div><div class="eyebrow">DESAIN FORM • SEMUA PRIORITAS P0–P3</div>'+
       '<h1>Katalog Form & Workflow SIMRS</h1><p>Form sesuai domain PRD, dapat diisi dan ditinjau menggunakan data sintetis. Perubahan hanya tersimpan di browser ini.</p></div>'+
-      '<div class="actions">'+pill("30 P0 + 17 P1 dengan form","good")+pill("DEMO – NO BACKEND")+'</div></div>'+
+      '<div class="actions">'+pill("68/68 modul memiliki form demo","good")+pill("DEMO – NO BACKEND")+'</div></div>'+
       '<div class="p0-warning" role="note"><strong>Bukan sistem operasional.</strong> Jangan masukkan data pasien asli, NIK sebenarnya, nomor transaksi, atau informasi sensitif. Tidak ada sinkronisasi ke API/FHIR atau database RS.</div>'+
       '<div class="p0-layout">'+renderCatalog()+'<div class="p0-detail">'+
       '<section class="card"><div class="card-body">'+renderInfo(m)+'</div></section>'+
@@ -227,7 +227,7 @@
       if (f.type==="email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)){add(f,"Alamat email tidak valid.");return;}
       if (f.type==="select" && f.options.indexOf(val)<0){add(f,"Pilih opsi katalog yang tersedia.");return;}
     });
-    var ranges=[["valid_from","valid_until"],["effective_from","effective_until"],["start_at","end_at"],["admission_at","discharge_at"],["scheduled_start","scheduled_end"],["cycle_started","cycle_finished"],["period_start","period_end"]];
+    var ranges=[["valid_from","valid_until"],["effective_from","effective_until"],["start_at","end_at"],["admission_at","discharge_at"],["scheduled_start","scheduled_end"],["cycle_started","cycle_finished"],["period_start","period_end"],["session_start","session_end"],["departure_at","arrival_at"]];
     ranges.forEach(function(pair){
       if(values[pair[0]] && values[pair[1]] && values[pair[1]]<values[pair[0]]){
         var f=m.fields.find(function(x){return x.key===pair[1];});
@@ -239,11 +239,15 @@
     if (review && m.code==="MED-11" && values.allergy_diet_review!=="Sudah ditinjau") errors.push({key:"allergy_diet_review",label:"Alergi dan pantangan",message:"Alergi/pantangan perlu ditinjau sebelum review diet demo."});
     if (review && m.code==="FIN-06" && values.clinical_documents_state!=="Lengkap untuk simulasi") errors.push({key:"clinical_documents_state",label:"Dokumen klinis",message:"Perlu pemeriksaan kelengkapan dokumen pada mockup; bukan konfirmasi signed klinis."});
     if (review && m.code==="FIN-07" && values.dossier_check!=="Lengkap untuk simulasi") errors.push({key:"dossier_check",label:"Berkas klaim",message:"Berkas belum lengkap untuk simulasi review; pengajuan asli tetap nonaktif."});
-    if (review && m.code==="ENT-08" && (Number(values.denominator)<=0 || Number(values.numerator)>Number(values.denominator))) errors.push({key:"denominator",label:"Penyebut indikator",message:"Penyebut harus > 0 dan pembilang tidak lebih besar dari penyebut untuk indikator rasio demo ini."});
+    if (review && m.code==="ENT-08" && Number(values.denominator)<=0) errors.push({key:"denominator",label:"Penyebut indikator",message:"Penyebut harus lebih dari nol untuk indikator rasio demo."});
     if (review && values.systolic && values.diastolic && Number(values.diastolic)>=Number(values.systolic)) {
       errors.push({key:"diastolic",label:"Diastolik",message:"Nilai diastolik harus lebih kecil dari sistolik; periksa nilai demo."});
     }
     if (review && m.code==="FIN-02" && Number(values.discount||0)>Number(values.subtotal||0)) errors.push({key:"discount",label:"Diskon",message:"Diskon tidak boleh melebihi subtotal."});
+    if (review && m.code==="MED-12" && values.double_check!=="Diperiksa secara simulasi") errors.push({key:"double_check",label:"Double-check identitas",message:"Lengkapi pemeriksaan identitas simulasi sebelum review; tidak boleh dijadikan otorisasi transfusi nyata."});
+    if (review && m.code==="FIN-08" && (Number(values.debit_total)<=0 || Number(values.debit_total)!==Number(values.credit_total))) errors.push({key:"credit_total",label:"Saldo jurnal",message:"Jurnal demo harus berimbang dan nominalnya lebih dari nol; posting nyata tetap nonaktif."});
+    if (review && m.code==="ENT-02" && Number(values.deduction)>Number(values.gross_pay)) errors.push({key:"deduction",label:"Potongan payroll",message:"Potongan simulasi tidak boleh melebihi bruto."});
+    if (review && m.code==="FIN-11" && Number(values.volume)<=0) errors.push({key:"volume",label:"Volume driver",message:"Volume driver harus lebih dari nol."});
     if (review && m.code==="MED-05" && values.expiry_date && values.expiry_date<"2026-11-08") errors.push({key:"expiry_date",label:"Kedaluwarsa",message:"Lot sudah kedaluwarsa pada tanggal contoh."});
     return errors;
   }
