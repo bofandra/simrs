@@ -227,7 +227,7 @@
       if (f.type==="email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)){add(f,"Alamat email tidak valid.");return;}
       if (f.type==="select" && f.options.indexOf(val)<0){add(f,"Pilih opsi katalog yang tersedia.");return;}
     });
-    var ranges=[["valid_from","valid_until"],["effective_from","effective_until"],["start_at","end_at"],["admission_at","discharge_at"]];
+    var ranges=[["valid_from","valid_until"],["effective_from","effective_until"],["start_at","end_at"],["admission_at","discharge_at"],["scheduled_start","scheduled_end"],["cycle_started","cycle_finished"],["period_start","period_end"]];
     ranges.forEach(function(pair){
       if(values[pair[0]] && values[pair[1]] && values[pair[1]]<values[pair[0]]){
         var f=m.fields.find(function(x){return x.key===pair[1];});
@@ -236,6 +236,10 @@
     });
     if (review && m.code==="MED-04" && values.allergy_checked!=="Sudah ditinjau") errors.push({key:"allergy_checked",label:"Review alergi",message:"Review alergi wajib sebelum lanjut."});
     if (review && m.code==="MED-05" && values.identity_check!=="Sudah ditinjau") errors.push({key:"identity_check",label:"Identitas pasien",message:"Verifikasi identitas demo wajib sebelum lanjut."});
+    if (review && m.code==="MED-11" && values.allergy_diet_review!=="Sudah ditinjau") errors.push({key:"allergy_diet_review",label:"Alergi dan pantangan",message:"Alergi/pantangan perlu ditinjau sebelum review diet demo."});
+    if (review && m.code==="FIN-06" && values.clinical_documents_state!=="Lengkap untuk simulasi") errors.push({key:"clinical_documents_state",label:"Dokumen klinis",message:"Perlu pemeriksaan kelengkapan dokumen pada mockup; bukan konfirmasi signed klinis."});
+    if (review && m.code==="FIN-07" && values.dossier_check!=="Lengkap untuk simulasi") errors.push({key:"dossier_check",label:"Berkas klaim",message:"Berkas belum lengkap untuk simulasi review; pengajuan asli tetap nonaktif."});
+    if (review && m.code==="ENT-08" && (Number(values.denominator)<=0 || Number(values.numerator)>Number(values.denominator))) errors.push({key:"denominator",label:"Penyebut indikator",message:"Penyebut harus > 0 dan pembilang tidak lebih besar dari penyebut untuk indikator rasio demo ini."});
     if (review && values.systolic && values.diastolic && Number(values.diastolic)>=Number(values.systolic)) {
       errors.push({key:"diastolic",label:"Diastolik",message:"Nilai diastolik harus lebih kecil dari sistolik; periksa nilai demo."});
     }
