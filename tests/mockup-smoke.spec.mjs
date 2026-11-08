@@ -362,7 +362,7 @@ test('specialist role login opens only their work area with role task navigation
   await expect(page.locator('.uxv4 [data-demo-action="module:OPS-04"]').first()).toBeVisible();
   await page.locator('.uxv4 [data-demo-action="module:OPS-04"]').first().click();
   await expect(page.locator('.p0-editor .card-h h2')).toContainText('Laundry');
-  await expect(page.locator('.p0-catalog')).not.toContainText('Katalog 68 Modul');
+  await expect(page.locator('.p0-catalog')).toHaveCount(0);
   await expect(page.locator('#p0-catalog-list [data-code="RME-08"]')).toHaveCount(0);
   expect(errors).toEqual([]);
 });
