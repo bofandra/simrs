@@ -14,6 +14,14 @@
 - Some supporting worklists mapped to a workflow are illustrative rather than explicitly enumerated as separate workflow steps in chapter 6.
 - Form engine, detailed worklist evidence, comprehensive field specifications and state gates still require individual screen-by-screen design and testing.
 
+## Coverage
+
+- **44** role demo operasional dengan **153** area/menu kerja.
+- **68/68** modul PRD final terwakili pada setidaknya satu area kerja.
+- **12** workflow PRD tetap menjadi alur acuan. Tidak semua pekerjaan pendukung adalah langkah workflow eksplisit.
+- Bed Manager dan Petugas Billing ditambahkan sebagai role berbeda demi separation of duties: alokasi bed (OPS-10) tidak dibebankan kepada DPJP; charge capture (FIN-01) tidak otomatis menjadi hak Kasir.
+- Coverage desain **bukan** bukti form sudah implementable untuk semua role. Bila form catalogue belum memberi akses, tombol tetap dinonaktifkan.
+
 ## Matrix by role
 | Role | Unit / scope | Screen (menu) | Modul PRD | FR | Workflow |
 |---|---|---|---|---|---|
@@ -38,6 +46,7 @@
 | DPJP Rawat Inap | Bangsal rawat inap | Order dan tindakan | `RME-08` | FR-016 | WF-05 |
 | DPJP Rawat Inap | Bangsal rawat inap | Persiapan pulang | `RME-03` | FR-011 | WF-04 |
 | DPJP Rawat Inap | Bangsal rawat inap | Resume medis | `RME-11` | FR-013 | WF-04 |
+| DPJP Rawat Inap | Bangsal rawat inap | Clinical pathway | `ENT-04` | FR-015 | WF-12 |
 | Perawat | Keperawatan / ruang perawatan | Pasien shift ini | `RME-07` | FR-012 | WF-04 |
 | Perawat | Keperawatan / ruang perawatan | TTV dan asesmen | `RME-05` | FR-034 | WF-04 |
 | Perawat | Keperawatan / ruang perawatan | Asuhan keperawatan | `RME-07` | FR-012 | WF-04 |
@@ -117,6 +126,7 @@
 | Petugas BPJS | Administrasi BPJS | Eligibilitas dan SEP | `FIN-05` | FR-027 | WF-08 |
 | Petugas BPJS | Administrasi BPJS | Kontrol dan bridging | `FIN-05` | FR-027 | WF-08 |
 | Petugas BPJS | Administrasi BPJS | Status dan pengecualian | `FIN-05` | FR-027 | WF-08 |
+| Petugas BPJS | Administrasi BPJS | Coverage dan eligibility | `FIN-04` | FR-027 | WF-08 |
 | Coder | Coding klinis | Daftar berkas coding | `FIN-06` | FR-027 | WF-08 |
 | Coder | Coding klinis | Diagnosis dan prosedur | `FIN-06` | FR-027 | WF-08 |
 | Coder | Coding klinis | Review dan grouping | `FIN-06` | FR-027 | WF-08 |
@@ -146,6 +156,8 @@
 | Admin Sistem | Administrasi SIMRS | Layanan dan tarif | `CORE-06` | FR-003 | WF-08 |
 | Admin Sistem | Administrasi SIMRS | Terminologi | `CORE-07` | FR-003 | WF-02 |
 | Admin Sistem | Administrasi SIMRS | Consent dan audit | `CORE-12` | FR-008 | WF-01 |
+| Admin Sistem | Administrasi SIMRS | Tenant dan organisasi | `CORE-01` | FR-001 | WF-01 |
+| Admin Sistem | Administrasi SIMRS | Master lokasi dan bed | `CORE-05` | FR lintas domain | WF-04 |
 | HR Admin | Administrasi SDM | Data pegawai | `ENT-01` | FR-029 | WF-01 |
 | HR Admin | Administrasi SDM | Penugasan staf | `ENT-01` | FR-046 | WF-01 |
 | HR Admin | Administrasi SDM | Kompetensi dan dokumen | `ENT-01` | FR-029 | WF-01 |
@@ -160,6 +172,12 @@
 | Tim PPI | Pencegahan dan pengendalian infeksi | Indikator pencegahan | `ENT-08` | FR-030 | WF-12 |
 | Pasien Demo | Portal pasien | Janji temu saya | `CORE-10` | FR-005 | WF-01 |
 | Pasien Demo | Portal pasien | Dokumen saya | `RME-12` | FR-039 | WF-01 |
+| Petugas Billing | Unit billing / charge capture | Tindakan siap ditagihkan | `FIN-01` | FR-025 | WF-08 |
+| Petugas Billing | Unit billing / charge capture | Charge capture | `FIN-01` | FR-025 | WF-08 |
+| Petugas Billing | Unit billing / charge capture | Invoice draft | `FIN-02` | FR-026 | WF-08 |
+| Bed Manager | Manajemen tempat tidur | Ketersediaan bed | `OPS-10` | FR-011 | WF-04 |
+| Bed Manager | Manajemen tempat tidur | Permintaan alokasi | `OPS-10` | FR-011 | WF-04 |
+| Bed Manager | Manajemen tempat tidur | Transfer dan pelepasan | `OPS-10` | FR-011 | WF-04 |
 
 ## Key separation-of-duties decisions
 
@@ -175,7 +193,7 @@
 10. **Manajemen:** read-model KPIs require approved indicator definitions, source lineage, freshness and tenant-safe access.
 
 ## QA / remaining work
-- Check all 42 login accounts, unique role sidebars and section navigation.
+- Check all 44 login accounts, unique role sidebars and section navigation.
 - Check every module CTA against the existing demo form catalogue permissions.
 - Check negative access cases and reviewer QA isolation.
 - Complete high-fidelity detailed worklist/field designs (particularly IGD, RI, LIS, RIS, pharmacy, finance) and align data states before any production implementation.
