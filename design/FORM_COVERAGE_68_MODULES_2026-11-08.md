@@ -79,3 +79,36 @@ Contoh navigasi ke `MED-06 → MED-07`, `MED-11 → OPS-05`, serta area mutu `EN
 3. Implementasikan simulasi data dependency yang lebih kaya (master referensial, order/result, routing state), workflow aktual 15 alur, dan status error lengkap.
 4. Pisahkan prototipe UI dari aplikasi produksi; audit/perlindungan data, kontrak API dan transaksi nyata hanya setelah pengembangan backend, SOP dan UAT.
 5. Jangan merge atau deploy otomatis: butuh review PR, persetujuan desain dan keputusan rilis GitHub Pages.
+
+
+## Tambahan implementasi — kontrak API dan browser smoke test
+
+### Audit kontrak 12 modul inti
+
+UI telah memperoleh panel **Kontrak API & database**, menggunakan artefak berikut:
+
+- OpenAPI 3.1: https://drive.google.com/file/d/1RMo7tZ9rdoLjEVYRf-tycxTLzrDgzd08/view
+- Model database: https://drive.google.com/file/d/16UTtaKH-wDhXWMtVaf5Z68Osom2ZWfx1/view
+- Data mapping yang ditinjau: `public/ui-preview/contract-audit.js`
+
+Modul yang diaudit: **CORE-08, CORE-09, CORE-10, RME-01, RME-04, RME-08, MED-01, MED-04, MED-05, FIN-01, FIN-02, FIN-03**.
+
+Kontrak asli mempunyai perbedaan dari form demo, di antaranya: ID pasien/unit/slot UUID referensial, SOAP `content_ref`, CPOE `items[]`, resep `items[]`, dispensing `prescription_item_id` dan `lot_id`, billing `charge_ids[]` serta payment `allocations[]`. Panel memperlihatkan mana yang masih belum dipenuhi; **ini bukan payload API yang sudah valid**. Modul lain (56 dari 68) **belum diaudit satu-per-satu** terhadap request schema.
+
+### Skenario sintetis satu klik
+
+Tombol **Muat 10 draft rawat jalan** membuat contoh data lokal untuk appointment, registrasi, rawat jalan, SOAP, order, lab, resep, charge, invoice dan rencana pembayaran. Kesepuluhnya **berstatus Draft**, tidak melakukan persetujuan, sign, release, posting, dispensing, settlement atau integrasi. Draft diberi referensi source dan patient/encounter sintetis yang sama. Pemanggilan ulang tidak menggandakan data untuk encounter yang sama.
+
+File: `public/ui-preview/synthetic-journey.js`. Pemeriksaan: `tests/synthetic-journey.test.mjs`.
+
+### Smoke test Chromium
+
+`tests/mockup-smoke.spec.mjs` memeriksa 7 workspace, 68 katalog form, validasi registrasi dan kaitan antarform, panel kontrak, viewport mobile, dan skenario 10 draft. Job GitHub Actions menyimpan screenshot dan trace untuk review. Periksa hasil Actions terbaru pada PR sebelum persetujuan merge; hasil lulus dalam CI **tidak** sama dengan UAT RS atau kelayakan rilis.
+
+### Gap prioritas setelah tahap ini
+
+1. **Kecocokan field-to-API-to-DB:** tinjau per field, bukan hanya nama modul. Bentuk ID dan tipe data mesti mengikuti kontrak; `content_ref`, CPOE items, charge IDs, payment allocations masih perlu rancangan form kompleks.
+2. **Master referensial dan dependensi:** lookup unit/slot/practitioner/terminologi/obat/lot, serta relasi identitas pasien dan encounter yang tegas.
+3. **Desain UX khusus klinis:** repeatable order item, medication prescription item, spesimen, daftar charge, dan allocation pembayaran; jangan memaksakan satu form generik.
+4. **Pengujian:** UAT negatif lintas role/org/pasien, mobile accessibility, validasi draft vs signed, audit immutability, konflik 409, idempotency.
+5. **Rilis:** PR tetap draft sampai reviewer 7 PIC dan pemilik RS menyetujui; jangan merge atau menggantikan GitHub Pages main tanpa persetujuan.
