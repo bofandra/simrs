@@ -393,6 +393,8 @@ test('cashier has only billing worklists, no claim submission or tariff admin me
  await page.locator('[data-demo-account="akun.kasir"]').click();
  await page.locator('#demo-login-form button[type="submit"]').click();
  await expect(page.locator('#demo-current-role')).toHaveText('Kasir');
+ await expect(page.locator('.uxv4 h1')).toHaveText('Beranda Kasir');
+ await expect(page.locator('#main-content')).not.toContainText('Casemix INA-CBG');
  await expect(page.locator('#role-nav [data-demo-action="section:m0"]')).toContainText('Daftar tagihan');
  await expect(page.locator('#role-nav [data-demo-action="section:m1"]')).toContainText('Terima pembayaran');
  await expect(page.locator('#role-nav')).not.toContainText('Klaim');
@@ -429,5 +431,21 @@ test('nurse-specific menu excludes prescribing and includes handover',async ({pa
  await page.locator('#role-nav [data-demo-action="section:m0"]').click();
  await expect(page.locator('.uxv4 h1')).toHaveText('Pasien shift ini');
  await page.screenshot({path:out+'/role-perawat-worklist-v4.png',fullPage:true});
+ expect(errors).toEqual([]);
+});
+
+test('pharmacist starts in prescription queue without warehouse management controls',async ({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('/index.html');
+ await page.locator('[data-demo-account="akun.farmasis"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ await expect(page.locator('.uxv4 h1')).toHaveText('Beranda Farmasis');
+ await expect(page.locator('#role-nav')).toContainText('Verifikasi resep');
+ await expect(page.locator('#role-nav')).not.toContainText('Gudang');
+ await page.locator('#role-nav [data-demo-action="section:m0"]').click();
+ await expect(page.locator('.uxv4 h1')).toHaveText('Antrean resep');
+ await expect(page.locator('.uxv4-table tbody tr')).toHaveCount(4);
+ await expect(page.locator('.uxv4-table')).toContainText('RX-0027');
+ await page.screenshot({path:out+'/role-farmasi-worklist-v4.png',fullPage:true});
  expect(errors).toEqual([]);
 });
