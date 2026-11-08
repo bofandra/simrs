@@ -565,7 +565,7 @@ test('tablet-size role workspace uses collapsed nav, and reviewer still has cata
  await page.locator('[data-demo-account="reviewer.demo"]').click();
  await page.locator('#demo-login-form button[type="submit"]').click();
  await page.locator('[data-nav="forms"]').click();
- await expect(page.locator('#p0-catalog-list [data-code]')).toHaveCount(30);
+ await expect(page.locator('#p0-catalog-list [data-code]')).toHaveCount(68);
  await expect(page.getByText('Katalog Form & Workflow SIMRS')).toBeVisible();
  expect(errors).toEqual([]);
 });
