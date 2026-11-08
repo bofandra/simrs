@@ -4,6 +4,8 @@
 **Baseline:** PRD_SIMRS_Baru_Final_NodeJS_FR_US_UI_API_ERD_2026-11-08.docx  
 **Status:** desain untuk review; bukan fitur implementasi atau sertifikasi keamanan.
 
+> **Pembaruan visual 8 November 2026:** tema preview kini memakai lapisan `public/ui-preview/satusehat-theme.css` dan token `design/design_tokens.json` v1.1.0-provisional. Acuan yang diminta adalah `https://satusehat-stg.dto.kemkes.go.id/design-system`, tetapi situs tersebut belum dapat diverifikasi dari lingkungan akses saat ini. Tabel token warna pada bagian 3 di bawah merupakan *baseline historis*, bukan palet tema preview aktif. Lihat [SATUSEHAT_THEME_ADOPTION.md](SATUSEHAT_THEME_ADOPTION.md) sebelum menyatakan kepatuhan terhadap desain resmi.
+
 ## 1. Tujuan
 
 Membuat satu desain antarmuka yang konsisten bagi **7 workspace** pengguna, sesuai cakupan **68 modul**, **66 FR**, dan **15 workflow** pada PRD. Setiap workspace menggunakan relasi `Patient → Registration → Encounter → UnitVisit`, namun komposisi layar menyesuaikan tugas operator.
