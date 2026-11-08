@@ -106,7 +106,7 @@ test('one-click outpatient scenario produces ten drafts without transactions',as
 test('item-level CPOE composer saves two draft services and reviews without API requests',async ({page}) => {
   const errors=[],apiRequests=[];
   page.on('pageerror',e=>errors.push(e.message));
-  page.on('request',r=>{if (/\\/api\\/v1\\//.test(r.url()))apiRequests.push(r.url());});
+  page.on('request',r=>{if (r.url().includes('/api/v1/')) apiRequests.push(r.url());});
   await start(page);await forms(page);await selectModule(page,'RME-08');
   await page.locator('#role').selectOption('Dokter RJ');
   await page.locator('[data-p0-action="new"]').click();
