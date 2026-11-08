@@ -14,7 +14,7 @@ const forms = async (page) => {
 const selectModule = async (page, code) => {
   await page.locator('#p0-priority').selectOption('all');
   await page.locator('#p0-search').fill(code);
-  await page.locator('[data-p0-action="choose"][data-code="'+code+'"]').click();
+  await page.locator('#p0-catalog-list [data-p0-action="choose"][data-code="'+code+'"]').click();
 };
 test('7 workspaces and 68 form catalog render with no browser errors',async ({page}) => {
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
@@ -26,9 +26,9 @@ test('7 workspaces and 68 form catalog render with no browser errors',async ({pa
   }
   await forms(page);
   await expect(page.getByText('68/68 modul memiliki form demo')).toBeVisible();
-  await expect(page.locator('[data-p0-action="choose"][data-code]')).toHaveCount(30);
+  await expect(page.locator('#p0-catalog-list [data-p0-action="choose"][data-code]')).toHaveCount(30);
   await page.locator('#p0-priority').selectOption('all');
-  await expect(page.locator('[data-p0-action="choose"][data-code]')).toHaveCount(68);
+  await expect(page.locator('#p0-catalog-list [data-p0-action="choose"][data-code]')).toHaveCount(68);
   expect(errors).toEqual([]);
 });
 test('registration draft validates and creates only a related simulated form',async ({page}) => {
@@ -87,4 +87,18 @@ test('mobile form navigates with visible required fields and no script errors',a
   await expect(page.locator('[data-p0-action="blocked"]')).toBeDisabled();
   await page.screenshot({path:out+'/mobile-form.png',fullPage:true});
   expect(errors).toEqual([]);
+});
+
+
+test('one-click outpatient scenario produces ten drafts without transactions',async ({page}) => {
+  await start(page);await forms(page);
+  await page.locator('[data-p0-action="seedScenario"]').click();
+  await expect(page.locator('.p0-editor .card-h h2')).toHaveText('Form CORE-09');
+  const before=await page.evaluate(()=>Object.values(window.SIMRSFormEngine.getRecords()).flat().filter(x=>x.scenario_tag).map(x=>({status:x.status,patient_id:x.patient_id,encounter_id:x.encounter_id})));
+  expect(before).toHaveLength(10);
+  expect(before.every(x=>x.status==='Draft'&&x.patient_id==='p1'&&x.encounter_id==='ENC-DEMO-247')).toBeTruthy();
+  await page.locator('[data-p0-action="seedScenario"]').click();
+  const after=await page.evaluate(()=>Object.values(window.SIMRSFormEngine.getRecords()).flat().filter(x=>x.scenario_tag).length);
+  expect(after).toBe(10);
+  await page.screenshot({path:out+'/sample-outpatient.png',fullPage:true});
 });
