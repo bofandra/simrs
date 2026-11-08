@@ -68,7 +68,7 @@ test("V5 has deny-by-default form navigation and escapes account content",()=>{
  assert.match(html,/&lt;script&gt;/);
  assert.match(html,/data-demo-action="job:0"/);
  assert.match(html,/aria-pressed="true"/);
- assert.match(html,/belum terhubung otomatis ke form/);
+ assert.match(html,/Konteks belum tersedia/);
 });
 
 test("worklist search hides unrelated rows and shows empty state",()=>{
@@ -90,4 +90,34 @@ test("worklist search hides unrelated rows and shows empty state",()=>{
  assert.equal(empty.hidden,true);
  ctx.document.querySelector=original;
  ctx.document.getElementById=oldById;
+});
+
+test("V7 resolves only known synthetic patient identities and role-specific encounters",()=>{
+ const patients=[
+  {id:"p1",name:"Sari Amelia",unit:"Poli Penyakit Dalam",mrn:"RM-DEMO-0083",visit:"ENC-DEMO-247",payer:"BPJS"},
+  {id:"p2",name:"Bima Rahman",unit:"Poli Jantung",mrn:"RM-DEMO-0094",visit:"ENC-DEMO-248",payer:"Umum"},
+  {id:"p3",name:"Nadia Laras",unit:"Poli Umum",mrn:"RM-DEMO-0117",visit:"ENC-DEMO-249",payer:"Asuransi"},
+  {id:"p4",name:"Kirana Raka",unit:"Poli Bedah",mrn:"RM-DEMO-0108",visit:"ENC-DEMO-251",payer:"BPJS"}
+ ];
+ ctx.window.__SIMRS_PREVIEW__={patients};
+ const registration=api.selectionContext("Pendaftaran","m1",1,patients);
+ assert.equal(registration.workItem.id,"REG-D002");
+ assert.equal(registration.patient.id,"p2");
+ assert.equal(registration.patient.name,"Bima Rahman");
+ assert.equal(registration.patient.visit,"ENC-DEMO-248");
+ assert.equal(api.selectionContext("Pendaftaran","m1",2,patients).patient.visit,"ENC-IGD-DEMO-03");
+ assert.equal(api.selectionContext("Pendaftaran","m1",3,patients).patient.visit,"ENC-RI-DEMO-04");
+ assert.equal(api.selectionContext("Dokter IGD","m1",0,patients).patient.visit,"ENC-IGD-DEMO-01");
+ assert.equal(api.selectionContext("Perawat","m1",0,patients).patient.visit,"ENC-RI-DEMO-01");
+ assert.equal(api.selectionContext("Pendaftaran","m1",99,patients),null);
+ assert.equal(api.selectionContext("Pendaftaran","m1",1,[]),null);
+ const bed=api.selectionContext("Bed Manager","m1",0,patients);
+ assert.equal(bed.kind,"bed");
+ assert.equal(bed.patient,null);
+ assert.equal(bed.workItem.id,"BED-A05");
+ const html=api.renderPage({role:"Pendaftaran",section:"m1",username:"akun.pendaftaran",selectedJob:1,canOpen:()=>true});
+ assert.match(html,/Bima Rahman/);
+ assert.match(html,/RM-DEMO-0094/);
+ assert.match(html,/ENC-DEMO-248/);
+ assert.match(html,/Konteks pasien dan encounter sintetis/);
 });
