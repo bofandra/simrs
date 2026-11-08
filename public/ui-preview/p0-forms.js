@@ -260,9 +260,20 @@
       state.code=(catalog.find(function(x){return x.priority===state.priority;})||m).code;
       m=currentModule();state.recordId=null;
     }
-    if(roleView){return '<div class="page-head"><div><div class="eyebrow">PEKERJAAN SAYA · '+esc(context().role)+'</div><h1>Form Pelayanan</h1><p>Isi dan tinjau formulir sesuai peran, dengan data sintetis dan konteks pasien demo.</p></div></div>'+
-      '<div class="p0-warning">Ini adalah formulir simulasi, tanpa tanda tangan, pembayaran, distribusi, pengiriman data, atau otorisasi nyata.</div>'+
-      '<div class="p0-layout">'+renderCatalog()+'<div class="p0-detail">'+renderRecordList(m)+renderLinks(m)+renderEditor(m)+'</div></div>';}
+    if(roleView){
+      var profile=window.SIMRSRoleUXV4&&window.SIMRSRoleUXV4.getProfile(context().role);
+      var section=window.SIMRSRoleDemo&&window.SIMRSRoleDemo.getCurrentSection&&window.SIMRSRoleDemo.getCurrentSection();
+      var feature=profile&&profile.features.find(function(f){return f.key===section&&f.code===m.code;});
+      if(!feature)feature=profile&&profile.features.find(function(f){return f.code===m.code;});
+      var label=feature?feature.label:m.name;
+      return '<div class="p0-operational" data-module="'+esc(m.code)+'">'+
+        '<header class="page-head p0-operational-head"><div><div class="eyebrow">'+esc(profile?profile.unit:context().role)+' · PEKERJAAN SAYA</div>'+
+        '<h1>'+esc(label)+'</h1><p>'+esc(feature?feature.task:"Lengkapi informasi pada formulir kerja sesuai kewenangan Anda.")+'</p></div>'+
+        '<div class="actions"><button type="button" class="btn" data-demo-action="section:'+esc(feature?feature.key:(section||"m0"))+'">Kembali ke daftar kerja</button></div></header>'+
+        '<div class="p0-operational-banner" role="note">Simulasi pengisian untuk pelatihan. Konfirmasi identitas pasien dan konteks kunjungan sebelum menyimpan draft. Tidak ada data yang dikirim ke sistem RS.</div>'+
+        '<div class="p0-operational-detail">'+renderEditor(m)+
+        '<details class="p0-operational-history"><summary>Lihat draft dan catatan sebelumnya</summary>'+renderRecordList(m)+renderLinks(m)+'</details></div></div>';
+    }
     return '<div class="page-head"><div><div class="eyebrow">DESAIN FORM • SEMUA PRIORITAS P0–P3</div>'+
       '<h1>Katalog Form & Workflow SIMRS</h1><p>Form sesuai domain PRD, dapat diisi dan ditinjau menggunakan data sintetis. Perubahan hanya tersimpan di browser ini.</p></div>'+
       '<div class="actions">'+pill("68/68 modul memiliki form demo","good")+pill("DEMO – NO BACKEND")+
@@ -475,5 +486,11 @@
     state.recordId=null;state.code="CORE-09";state.priority="P0";state.flow="RJ";state.search="";state.prefill=null;state.linkSource=null;
     try{localStorage.removeItem(key);}catch(e){}
   }
-  window.SIMRSFormEngine={render:render,validate:validate,collect:collect,resetDemo:resetDemo,getCatalog:function(){return catalog;},getRecords:function(){return demo.records;}};
+  function openForRole(code,role){
+    var module=catalog.find(function(item){return item.code===code;});
+    if(!module||!Array.isArray(module.roles)||!module.roles.includes(role)||!module.fields||!module.fields.length)return false;
+    state.code=code;state.recordId=null;state.priority="all";state.search="";state.prefill=null;state.linkSource=null;
+    return true;
+  }
+  window.SIMRSFormEngine={render:render,openForRole:openForRole,validate:validate,collect:collect,resetDemo:resetDemo,getCatalog:function(){return catalog;},getRecords:function(){return demo.records;}};
 })();
