@@ -35,7 +35,7 @@ function patientCard(p,s,isActive){
  return '<button type="button" class="ux-patient'+(isActive?' active':'')+'" data-patient="'+esc(p.id)+'" aria-current="'+(isActive?'true':'false')+'"><span class="ux-patient-head"><strong>'+esc(p.name)+'</strong>'+chip(s,"wait")+'</span><span>'+esc(p.mrn)+' · '+esc(p.age)+'</span><span>'+esc(p.unit)+' · '+esc(p.payer)+'</span></button>';
 }
 function front(params){
- var selected=current(params),r=frontRecord(selected),checked=params.patients.filter(function(p){return frontRecord(p).checkedIn;}).length;
+ var selected=current(params),r=frontRecord(selected),allowed=params.state.role==="Pendaftaran"||params.state.role==="Admin Sistem",checked=params.patients.filter(function(p){return frontRecord(p).checkedIn;}).length;
  var optionsUnit=["Poli Penyakit Dalam","Poli Jantung","Poli Umum","Poli Bedah","IGD","Rawat Inap"];
  if(optionsUnit.indexOf(r.unit)<0)optionsUnit.unshift(r.unit);
  var step=r.checkedIn?3:r.draftSaved?2:r.mpiChecked?1:0;
@@ -44,11 +44,11 @@ function front(params){
    var x=frontRecord(p);return patientCard(p,x.checkedIn?"Check-in":x.draftSaved?"Draft":"Terjadwal",p.id===selected.id);
  }).join("");
  return '<div class="page-head"><div><div class="eyebrow">FR-004 / FR-005 / FR-006 · WF-01</div><h1>Registrasi & perjalanan pasien</h1><p>Daftar kerja pendaftaran, pencocokan identitas, penjamin dan check-in dalam satu konteks.</p></div><div class="actions">'+button("Buat appointment","appointment")+' '+button("Buka katalog CORE-09","module:CORE-09","btn-primary")+'</div></div>'+
- '<div class="ux-kpis"><div><span>Pasien demo terjadwal</span><strong>'+params.patients.length+'</strong></div><div><span>Check-in demo</span><strong>'+checked+'</strong></div><div><span>Menunggu registrasi</span><strong>'+(params.patients.length-checked)+'</strong></div></div>'+
+ (allowed?'':'<p class="ux-notice">Peran ini hanya dapat melihat registrasi. Pilih Pendaftaran untuk mengubah draft atau check-in demo.</p>')+'<div class="ux-kpis"><div><span>Pasien demo terjadwal</span><strong>'+params.patients.length+'</strong></div><div><span>Check-in demo</span><strong>'+checked+'</strong></div><div><span>Menunggu registrasi</span><strong>'+(params.patients.length-checked)+'</strong></div></div>'+
  '<div class="ux-flow" aria-label="Tahapan registrasi">'+stepNames.map(function(n,i){return '<span class="'+(i<=step?'done':'')+'">'+(i+1)+'. '+esc(n)+'</span>';}).join('')+'</div>'+
  '<div class="ux-main-grid"><section class="card ux-worklist"><div class="card-h"><h2>Daftar pasien hari ini</h2>'+chip("Data sintetis")+'</div><div class="card-body"><label for="ux-patient-search">Cari nama / nomor RM</label><input class="forminput" id="ux-patient-search" placeholder="Cari pasien demo" autocomplete="off"/><div class="ux-patient-list" id="ux-patients">'+work+'</div></div></section>'+
  '<section class="card ux-work-area"><div class="ux-patient-banner"><div><strong>'+esc(selected.name)+'</strong><span>'+esc(selected.mrn)+' · '+esc(selected.age)+' · '+esc(selected.visit)+'</span></div><div>'+chip(r.checkedIn?"Check-in (Demo)":r.draftSaved?"Draft tersimpan":"Belum check-in",r.checkedIn?"good":"wait")+'</div></div>'+
- '<div class="card-body"><div class="ux-subhead"><div><h2>Registrasi kunjungan</h2><p>Identitas pasien dan encounter berasal dari konteks demo yang sama.</p></div>'+button("Periksa MPI (Demo)","mpi")+'</div>'+
+ '<div class="card-body"><div class="ux-subhead"><div><h2>Registrasi kunjungan</h2><p>Identitas pasien dan encounter berasal dari konteks demo yang sama.</p></div>'+(allowed?button("Periksa MPI (Demo)","mpi"):'')+'</div>'+
  (r.mpiChecked?'<p class="ux-positive" role="status">Pencocokan identitas telah ditinjau dalam simulasi. Tidak membuat/merge master pasien.</p>':'<p class="ux-notice">Sebelum check-in, tinjau kemungkinan duplikasi dan pastikan pasien yang benar.</p>')+
  '<form id="ux-registration" novalidate><div class="ux-form-grid">'+
  field("Pasien · read-only","ux-reg-patient",selected.name+" / "+selected.mrn,"readonly",null,true)+
@@ -59,7 +59,7 @@ function front(params){
  field("Dokter / penanggung jawab *","ux-reg-doctor",r.doctor,"select",["dr. Andi Demo","dr. Budi Demo","dr. Citra Demo"],r.checkedIn)+
  field("Alasan kunjungan","ux-reg-reason",r.reason,"textarea",null,r.checkedIn)+
  '</div><div id="ux-reg-error" class="ux-error" role="alert" hidden></div><div class="ux-actionbar">'+chip(r.draftSaved?"Draft tersimpan":"Belum disimpan",r.draftSaved?"good":"wait")+'<span class="spacer"></span>'+
- button("Simpan draft","save-front",r.checkedIn?"ux-hide":"")+' '+button("Check-in demo","checkin-front","btn-primary"+(r.checkedIn?" ux-hide":""))+'</div></form>'+
+ button("Simpan draft","save-front",r.checkedIn||!allowed?"ux-hide":"")+' '+button("Check-in demo","checkin-front","btn-primary"+(r.checkedIn||!allowed?" ux-hide":""))+'</div></form>'+
  '<div class="ux-links"><strong>Lanjutkan ke:</strong>'+button("Appointment","module:CORE-10")+' '+button("Antrean","module:CORE-11")+' '+button("Workspace dokter","route:clinical:soap")+'</div></div></section>'+
  '<section class="card ux-aside"><div class="card-h"><h2>Ringkasan episode</h2></div><div class="card-body"><div class="statline"><span>Nomor RM</span><strong>'+esc(selected.mrn)+'</strong></div><div class="statline"><span>Encounter</span><strong>'+esc(selected.visit)+'</strong></div><div class="statline"><span>Unit</span><strong>'+esc(r.unit)+'</strong></div><div class="statline"><span>Penjamin</span><strong>'+esc(r.payer)+'</strong></div><div class="statline"><span>Status</span>'+chip(r.checkedIn?"Check-in (Demo)":"Belum check-in",r.checkedIn?"good":"wait")+'</div><p class="ux-notice">Check-in ini hanya mengubah status lokal di browser; tidak membuat Encounter atau nomor antrean nyata.</p></div></section></div>';
 }
@@ -78,7 +78,7 @@ function clinical(params){
    field("Rencana (P) *","ux-soap-p",r.soapP,"textarea",null,readOnly)+'</div>'+
    '<label class="ux-check"><input id="ux-allergy" type="checkbox"'+(r.allergyReviewed?' checked':'')+(readOnly?' disabled':'')+'/> Saya telah meninjau informasi alergi, obat aktif dan riwayat pada panel kanan.</label>'+
    '<div id="ux-soap-error" class="ux-error" role="alert" hidden></div><div class="ux-actionbar">'+chip(r.status,r.status==="Reviewed (Demo)"?"good":"wait")+'<span class="spacer"></span>'+
-   (locked?button("Buat addendum demo","doctor-addendum"):button("Simpan draft","doctor-save"))+' '+button("Tinjau kelengkapan","doctor-review","btn-primary"+(readOnly?" ux-hide":""))+'</div>';
+   (locked?(authorized?button("Buat addendum demo","doctor-addendum"):''):button("Simpan draft","doctor-save",readOnly?"ux-hide":""))+' '+button("Tinjau kelengkapan","doctor-review","btn-primary"+(readOnly?" ux-hide":""))+'</div>';
  }else if(tab==="vitals"){
   main='<div class="ux-module-panel"><h3>Asesmen dan tanda vital</h3><p>Catat tekanan darah, suhu, nadi, respirasi, antropometri, dan asesmen dengan referensi kunjungan yang sama.</p>'+button("Buka form Asesmen & TTV","module:RME-05","btn-primary")+'</div>';
  }else if(tab==="diagnosis"){
@@ -160,11 +160,13 @@ function openModule(code){
  shell.state.active="forms";
  shell.render();
  var control=document.querySelector('#p0-catalog-list [data-code="'+code+'"]');
+ if(!control){var filter=document.getElementById("p0-priority");if(filter){filter.value="all";filter.dispatchEvent(new Event("change",{bubbles:true}));control=document.querySelector('#p0-catalog-list [data-code="'+code+'"]');}}
  if(control)control.click();
  location.hash="#/forms/"+code;
 }
 function saveFront(checkin){
  var shell=window.__SIMRS_PREVIEW__;if(!shell)return;
+ if(shell.state.role!=="Pendaftaran"&&shell.state.role!=="Admin Sistem"){shell.toast("Peran ini tidak dapat mengubah registrasi demo.");return;}
  var p=shell.patients.find(function(item){return item.id===shell.state.patient;});
  if(!p)return;
  var k=ctxKey(p),r=frontRecord(p);
@@ -207,6 +209,7 @@ function action(command){
  }
  var p=shell.patients.find(function(item){return item.id===shell.state.patient;});if(!p)return;
  if(command==="mpi"){
+  if(shell.state.role!=="Pendaftaran"&&shell.state.role!=="Admin Sistem"){shell.toast("Peran ini tidak dapat meninjau MPI demo.");return;}
   var r=frontRecord(p);r.mpiChecked=true;store.front[ctxKey(p)]=r;persist();shell.render();
   shell.toast("Review MPI disimulasikan; verifikasi identitas asli tidak dilakukan.");return;
  }
@@ -215,6 +218,7 @@ function action(command){
  if(command==="doctor-save"){saveDoctor(false);return;}
  if(command==="doctor-review"){saveDoctor(true);return;}
  if(command==="doctor-addendum"){
+  if(!["Dokter RJ","Perawat","DPJP Rawat Inap"].includes(shell.state.role)){shell.toast("Peran demo tidak memiliki akses addendum.");return;}
   var d=doctorRecord(p);if(d.status!=="Reviewed (Demo)")return;
   d.revision++;d.status="Draft";store.doctor[ctxKey(p)]=d;persist();shell.render();
   shell.toast("Addendum demo baru dibuat; riwayat review sebelumnya disimpan.");return;
