@@ -556,9 +556,9 @@ test('tablet-size role workspace uses collapsed nav, and reviewer still has cata
  await expect(page.locator('#demo-mobile-nav-toggle')).toBeVisible();
  await expect(page.locator('#app > aside')).toBeHidden();
  await page.locator('#demo-mobile-nav-toggle').click();
- await page.locator('#role-nav [data-demo-action="section:m0"]').click();
- await page.locator('.uxv5-detail [data-demo-action="module:MED-04"]').click();
- await expect(page.locator('#main-content h1')).toHaveText('Antrean resep');
+ await page.locator('#role-nav [data-demo-action="section:m2"]').click();
+ await page.locator('.uxv5-detail [data-demo-action="module:MED-05"]').click();
+ await expect(page.locator('#main-content h1')).toHaveText('Penyiapan obat');
  await expect(page.locator('#p0-catalog-list')).toHaveCount(0);
  await expect(page.locator('#p0-editor')).toBeVisible();
  await page.locator('#demo-logout').click();
