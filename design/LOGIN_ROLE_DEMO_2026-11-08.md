@@ -1,11 +1,11 @@
 # Login Demo dan Landing Page Berbasis Role — SIMRS Baru
 
-**Tanggal:** 8 November 2026  
+**Tanggal:** 8 November 2026 (diperbarui 9 November 2026)  
 **Cakupan:** Mockup static GitHub Pages pada `public/ui-preview/`
 
 ## Alur pengguna
 1. Buka situs SIMRS Baru: yang terlihat pertama kali adalah halaman **Login Demo**. Aplikasi utama disembunyikan sebelum login.
-2. Pilih akun role dari katalog 42 role atau ketik username. Kata sandi setiap akun: **`demo123`**.
+2. Pilih akun role dari katalog 44 role atau ketik username. Kata sandi setiap akun: **`demo123`**.
 3. Setelah login, role disetel dari akun (bukan pilihan role bebas). Menu navigasi global/teknis disembunyikan.
 4. Peran dengan workspace operasional yang sudah tersedia diarahkan langsung ke workspace itu. Peran lain diarahkan ke halaman **Beranda Saya**, yang berisi hanya menu dan tugas yang sesuai dengan hak akses modul role itu.
 5. Form hanya menampilkan modul yang mencantumkan role terkait. Interaksi tetap lokal dan data sintetis.
@@ -60,6 +60,8 @@
 | 40 | Payroll Admin | `akun.payroll-admin` | Beranda tugas khusus role |
 | 41 | Rekruter | `akun.rekruter` | Beranda tugas khusus role |
 | 42 | Tim PPI | `akun.tim-ppi` | Beranda tugas khusus role |
+| 43 | Petugas Billing | `akun.petugas-billing` | Beranda Billing dan Charge Capture |
+| 44 | Bed Manager | `akun.bed-manager` | Beranda Pengelolaan Tempat Tidur |
 
 ## Batasan keamanan dan pemisahan data
 - Login dan password diproses sepenuhnya di browser. **Bukan autentikasi sebenarnya**; semua kredensial demo sengaja bersifat publik dan terdapat di source code.
@@ -73,6 +75,7 @@
 - Untuk produksi: backend autentikasi, otorisasi per aksi, peran per unit, cakupan organisasi, MFA/SSO bila diperlukan, audit akses, session management, dan pemisahan data RS.
 
 ## Pemeriksaan
-- `tests/role-demo-login.test.mjs` menguji 42 akun, login gagal/berhasil, navigasi, logout, reviewer.
+- `tests/role-demo-login.test.mjs` menguji 44 akun, login gagal/berhasil, navigasi, logout, reviewer.
 - `tests/mockup-smoke.spec.mjs` memeriksa login-first serta role Pendaftaran, Perawat, Laundry, reviewer dengan browser Chromium.
 - Deployment GitHub Pages dipicu pada update branch `main` setelah seluruh pemeriksaan CI lulus.
+**Pembaruan V5:** Pendaftaran, Dokter RJ, Perawat, Dokter IGD, Farmasis, Kasir, dan Bed Manager mempunyai worklist detail dan checklist per tahapan. Pada tiga role pertama, halaman operasional v2 tetap landing page dan worklist V5 diakses melalui menu peran. Reviewer QA tetap terpisah.

@@ -1,9 +1,9 @@
 # SIMRS Baru — Status Mockup Form 68 Modul
 
 **Tanggal:** 8 November 2026
-**Sumber PRD:** PRD_SIMRS_Baru_Final_NodeJS_FR_US_UI_API_ERD_2026-11-08.docx
-**PRD:** https://docs.google.com/document/d/1VTWUqjGeK-VA5otZB4WiGFj6KkqJdo2x/edit
-**Status:** Draft PR UI/UX pada `design/ui-system-7-workspaces-20261108` — belum merge atau deploy GitHub Pages.
+**Baseline PRD resmi:** `PRD_SIMRS_Baru_Final_User_Stories_Acceptance_Technical_7PIC_2026-11-06`
+**Catatan:** kode modul dan jumlah form diuji terhadap katalog prototipe, sedangkan pemetaan field, API dan database masih perlu verifikasi terhadap baseline resmi.
+**Status:** Katalog form P0–P3 telah masuk `main` dan diterbitkan di GitHub Pages pada 8 November 2026; daftar gap di bawah merupakan backlog yang belum seluruhnya ditutup.
 
 ## Ringkasan hasil
 
@@ -150,3 +150,7 @@ Panel form menyediakan pilihan **Rawat Jalan (10 tahap)**, **IGD (7 tahap)** dan
 - **RJ**: Alur 10 tahap dipertahankan lengkap agar regresi tidak berubah.
 
 Status progres menampilkan hanya draft alur saat ini atau form manual terkait, bukan catatan sintetis dari skenario lain. Perpindahan tahap dapat mengganti **role UI demonstrasi** tanpa mengubah otorisasi backend. Sebelum produksi diperlukan RBAC sebenarnya, audit log server, DTO/API/DB dan SOP/UAT keselamatan pasien/keuangan. Pengiriman real-world transaksi tetap dinonaktifkan.
+
+## Pengembangan lanjut — 9 November 2026
+
+Navigasi tujuh peran prioritas disempurnakan pada `role-worklist-detail-v5.js`: daftar tugas kontekstual, panel detail, checklist, dan pencarian, tanpa memberi hak akses modul baru. Basis persyaratan tetap PRD final 6 November 2026. Pemilihan pekerjaan belum mengikat `patient_id`, `encounter_id`, status order, bed, atau invoice ke formulir lain; semuanya hanya demonstrasi UI. Tahap lanjutan adalah validasi field/DTO dan state machine bersama 7 PIC dan pengguna RS.

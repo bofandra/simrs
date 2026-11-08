@@ -51,6 +51,7 @@ var accounts=roleList.map(function(role){return {username:ACCOUNT_PREFIX+slug(ro
 accounts.push(reviewer);
 var current=null;
 var currentSection="home";
+var currentJob=0;
 var selected=accounts[0];
 var loginRoot=document.getElementById("demo-login");
 function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,function(x){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[x];});}
@@ -115,6 +116,7 @@ function paintRoleNav(){
 }
 function renderHome(){
  if(!current)return "";
+ if(window.SIMRSRoleUXV5)return window.SIMRSRoleUXV5.renderPage({role:current.role,section:currentSection,selectedJob:currentJob,username:current.username,canOpen:allowModule});
  if(window.SIMRSRoleUXV4)return window.SIMRSRoleUXV4.renderPage({role:current.role,section:currentSection,username:current.username,canOpen:allowModule});
  var role=current.role,list=tasks(role);
  var examples={
@@ -242,6 +244,7 @@ function showLogin(){
 function showApp(){
  if(!current)return;
  currentSection="home";
+ currentJob=0;
  document.body.classList.remove("demo-login-active");
  document.body.classList.add("demo-authenticated");
  document.body.classList.toggle("demo-reviewer",!!current.reviewer);
@@ -277,16 +280,26 @@ function logout(){
 function handleDemoCommand(command){
  var shell=window.__SIMRS_PREVIEW__;
  if(!shell||!current)return;
- if(command==="home"){currentSection="home";shell.state.active="rolehome";location.hash="#/rolehome";shell.render();return;}
+ if(command==="home"){currentSection="home";currentJob=0;shell.state.active="rolehome";location.hash="#/rolehome";shell.render();return;}
  if(command.startsWith("section:")){
   var section=command.slice(8);
   if(!window.SIMRSRoleUXV4||!window.SIMRSRoleUXV4.getFeature(current.role,section)){
    shell.toast("Area kerja tidak tersedia untuk akun demo ini.");return;
   }
   currentSection=section;
+  currentJob=0;
   shell.state.active="rolehome";
   location.hash="#/rolehome/"+section;
   shell.render();return;
+ }
+ if(command.startsWith("job:")){
+  if(shell.state.active!=="rolehome"||!window.SIMRSRoleUXV5)return;
+  var index=Number(command.slice(4));
+  var jobs=window.SIMRSRoleUXV5.jobRows(current.role,currentSection);
+  if(!Number.isInteger(index)||index<0||index>=jobs.length){shell.toast("Pekerjaan tidak ditemukan.");return;}
+  currentJob=index;
+  shell.render();
+  return;
  }
  if(command==="logout"){logout();return;}
  if(command==="forms"){
