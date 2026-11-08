@@ -12,10 +12,10 @@ const context={window:{}};
 runInNewContext(source,context,{timeout:1500});
 const api=context.window.SIMRSRoleUXV4;
 
-test("42 login roles each have an intentional, unique role-specific menu",()=>{
- assert.equal(roles.length,42);
+test("44 login roles each have an intentional, unique role-specific menu",()=>{
+ assert.equal(roles.length,44);
  assert.deepEqual([...Object.keys(api.profiles)].sort(),[...roles].sort());
- assert.equal(api.matrix().length,42);
+ assert.equal(api.matrix().length,44);
  for(const role of roles){
   const profile=api.getProfile(role);
   assert.ok(profile?.unit,role);
@@ -31,7 +31,10 @@ test("42 login roles each have an intentional, unique role-specific menu",()=>{
    assert.match(feature.wf,/^WF-(0[1-9]|1[012])$/);
   }
  }
- assert.equal(api.matrix().reduce((sum,r)=>sum+r.menus.length,0),143);
+ assert.equal(api.matrix().reduce((sum,r)=>sum+r.menus.length,0),153);
+ assert.equal(new Set(api.matrix().flatMap(r=>r.menus.map(m=>m.modul))).size,68);
+ assert.ok(api.getProfile("Bed Manager").features.every(f=>f.code==="OPS-10"));
+ assert.ok(api.getProfile("Petugas Billing").features.some(f=>f.code==="FIN-01"));
 });
 
 test("separation of duties: cashier cannot see claims, debt ledger or tariff admin",()=>{
