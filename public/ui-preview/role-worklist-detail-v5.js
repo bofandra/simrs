@@ -47,7 +47,7 @@ var specs={
   ]
  },
  "Farmasis":{
-  rows:[["RX-D027","Resep Demo A","Poli Dalam · 4 item obat"],["RX-D028","Resep Demo B","Poli Anak · 2 item obat"],["RX-D029","Resep Demo C","IGD · 3 item obat"],["RX-D030","Resep Demo D","Poli Jantung · 5 item obat"]],
+  rows:[["RX-0027","Resep Demo A","Poli Dalam · 4 item obat"],["RX-0028","Resep Demo B","Poli Anak · 2 item obat"],["RX-0029","Resep Demo C","IGD · 3 item obat"],["RX-0030","Resep Demo D","Poli Jantung · 5 item obat"]],
   stages:[
    ["Resep masuk",["Resep baru menunggu telaah","Riwayat alergi belum diperiksa","Item perlu klarifikasi","Resep dari IGD menunggu"],["Pastikan identitas, dokter dan encounter","Cek item resep dan status review","Tidak memproses resep pasien nyata"]],
    ["Telaah kefarmasian",["Interaksi obat perlu ditinjau","Penyesuaian dosis perlu konfirmasi","Riwayat alergi perlu ditelaah","Duplikasi terapi perlu review"],["Periksa dosis, rute, frekuensi dan interaksi","Tinjau alergi, kontraindikasi dan duplikasi","Review UI bukan verifikasi farmasis sah"]],
