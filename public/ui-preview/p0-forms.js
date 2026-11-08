@@ -256,5 +256,10 @@
   document.addEventListener("submit",function(e){
     if(e.target.id==="p0-editor"){e.preventDefault();e.stopPropagation();saveDraft();}
   });
-  window.SIMRSFormEngine={render:render,validate:validate,collect:collect,getCatalog:function(){return catalog;},getRecords:function(){return demo.records;}};
+  function resetDemo() {
+    demo={version:1,seq:0,records:{}};
+    state.recordId=null;state.code="CORE-09";state.priority="P0";state.search="";
+    try{localStorage.removeItem(key);}catch(e){}
+  }
+  window.SIMRSFormEngine={render:render,validate:validate,collect:collect,resetDemo:resetDemo,getCatalog:function(){return catalog;},getRecords:function(){return demo.records;}};
 })();
