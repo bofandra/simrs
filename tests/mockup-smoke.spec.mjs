@@ -620,3 +620,26 @@ test('V7 preserves patient episode boundaries for emergency and avoids false bed
  await expect(page.locator('.uxv5-detail [data-demo-action="module:OPS-10"]')).toHaveCount(0);
  expect(errors).toEqual([]);
 });
+
+test('V8 design gallery exposes 13 screens, context, search and simulated draft',async ({page}) => {
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.goto('/design-gallery.html');
+  await expect(page.locator('#gallery-nav button[data-view]')).toHaveCount(13);
+  await page.locator('#gallery-nav [data-view="2"]').click();
+  await expect(page.locator('#screen-host h2')).toHaveText('Konsultasi & Rekam Medis');
+  await page.locator('#gallery-search').fill('Siti Rahma');
+  await expect(page.locator('#gallery-table tbody tr').nth(0)).toBeHidden();
+  await expect(page.locator('#gallery-table tbody tr').nth(1)).toBeVisible();
+  await page.locator('#gallery-search').fill('');
+  await page.locator('#gallery-table tbody tr').nth(0).click();
+  await page.locator('[data-tab="1"]').click();
+  await expect(page.locator('.tabs button.active')).toHaveText('Diagnosis');
+  await page.locator('[data-action="draft"]').click();
+  await expect(page.locator('#gallery-toast')).toContainText('Tidak ada data pasien/keuangan yang disimpan');
+  await page.setViewportSize({width:390,height:844});
+  await page.locator('#gallery-nav [data-view="6"]').click();
+  await expect(page.locator('#screen-host h2')).toHaveText('Laboratorium & LIS');
+  const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+2);
+  expect(overflow).toBe(false);
+  expect(errors).toEqual([]);
+});
