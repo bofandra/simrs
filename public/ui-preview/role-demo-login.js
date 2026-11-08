@@ -8,10 +8,13 @@ var KEY="simrs-demo-login-session-v1";
 var roleList=(window.__SIMRS_PREVIEW__&&window.__SIMRS_PREVIEW__.roles)||[];
 var ACCOUNT_PREFIX="akun.";
 var reviewer={username:"reviewer.demo",role:"Reviewer UI/QA",label:"Reviewer UI/QA",department:"Pengujian Mockup",reviewer:true};
+/* Dedicated legacy screens are retained only where they are already role-scoped.
+ * Generic finance/pharmacy/acute/management pages mix duties, so those accounts
+ * now enter their PRD-specific operational worklist instead.
+ */
 var areaByRole={
- "Pendaftaran":"front","Dokter RJ":"clinical","Perawat":"clinical","Dokter IGD":"acute",
- "ATLM":"lab","Petugas MCU":"lab","Farmasis":"pharmacy","Kasir":"finance",
- "Manajemen RS":"management"
+ "Pendaftaran":"front","Dokter RJ":"clinical","Perawat":"clinical",
+ "ATLM":"lab","Petugas MCU":"lab"
 };
 var descriptions={
  "Pendaftaran":"Pencarian pasien, identitas, registrasi, janji temu, dan antrean",
