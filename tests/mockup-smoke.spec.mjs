@@ -114,7 +114,7 @@ test('item-level CPOE composer saves two draft services and reviews without API 
   await page.locator('#p0-editor [name="priority"]').selectOption('Rutin');
   await page.locator('#p0-editor [name="ordered_at"]').fill('2026-11-08T09:15');
   await page.locator('#p0-editor [name="indication"]').fill('Demonstrasi indikasi pemeriksaan sintetis');
-  await page.locator('#p0-editor [name="orderer"]').fill('Dokter Demo');
+  await page.locator('#p0-editor [name="orderer"]').selectOption('dr. Demo');
   await page.locator('#p0-editor [name="line-0-service_code"]').selectOption('CBC — Darah lengkap');
   await page.locator('#p0-editor [name="line-0-quantity"]').fill('1');
   await page.locator('[data-line-action="add"]').click();
@@ -139,7 +139,7 @@ test('FIN-01 to FIN-02 charge refs to FIN-03 allocation stays local and checked'
   page.on('request',r=>{if(r.url().includes('/api/v1/'))apiRequests.push(r.url());});
   await start(page);await forms(page);await selectModule(page,'FIN-01');
   await page.locator('#role').selectOption('Kasir');
-  await page.locator('#p0-editor [name="service_ref"]').fill('LAB-DEMO-01');
+  await page.locator('#p0-editor [name="service_ref"]').selectOption('LAB-DEMO-01');
   await page.locator('#p0-editor [name="performed_at"]').fill('2026-11-08T09:50');
   await page.locator('#p0-editor [name="quantity"]').fill('2');
   await page.locator('#p0-editor [name="unit_price"]').fill('75000');

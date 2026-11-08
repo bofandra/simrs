@@ -59,7 +59,7 @@ test("lookup renders escaped selection labels, disabled read-only and master pro
 
 test("guided journey renders 10 navigable stages with patient context and traceability",()=>{
   const html=engine.render(baseCtx);
-  assert.equal((html.match(/class="p0-guide-step/g)||[]).length,10);
+  assert.equal((html.match(/<button type="button" class="p0-guide-step/g)||[]).length,10);
   assert.ok(html.includes("Jelajahi alur rawat jalan"));
   assert.ok(html.includes("10 ditinjau")===false);
   assert.ok(html.includes('data-code="CORE-10"'));
