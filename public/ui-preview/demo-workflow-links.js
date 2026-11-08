@@ -65,12 +65,16 @@
       if(Number.isFinite(count)&&Number.isFinite(unitPrice)&&count>=0&&unitPrice>=0)
         result.subtotal=String(count*unitPrice);
       result.invoice_no="INV-DEMO-"+sourceRecord.id;
+      result.charge_lines=[{charge_ref:sourceRecord.id}];
+      result.charge_ids=[sourceRecord.id];
     }
     if(k==="FIN-02>FIN-03"){
       result.invoice_ref=sourceRecord.id;
       var subtotal=Number(values.subtotal),discount=Number(values.discount||0);
-      if(Number.isFinite(subtotal)&&Number.isFinite(discount)&&subtotal>=discount)
+      if(Number.isFinite(subtotal)&&Number.isFinite(discount)&&subtotal>=discount) {
         result.amount=String(subtotal-discount);
+        result.allocations=[{invoice_ref:sourceRecord.id,amount:String(subtotal-discount)}];
+      }
     }
     if(k==="FIN-02>FIN-07"){result.invoice_reference=sourceRecord.id;var amt=targetValue(targetModule.fields,"claim_amount",values.subtotal);if(amt!==undefined)result.claim_amount=amt;}
     if(k==="RME-03>MED-11")result.assessed_at="";

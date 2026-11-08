@@ -29,6 +29,7 @@ jobs:
           node --check public/ui-preview/contract-audit.js
           node --check public/ui-preview/demo-workflow-links.js
           node --check public/ui-preview/complex-form-rows.js
+          node --check public/ui-preview/finance-form-rows.js
           node --check public/ui-preview/p0-forms.js
           node --check tests/mockup-smoke.spec.mjs
       - name: All form and demo workflow contract tests

@@ -105,3 +105,12 @@
 .p0-line-editor>.hint{display:block;margin-top:9px}
 @media(max-width:1024px){.p0-line-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:530px){.p0-line-editor{padding:12px}.p0-line-head{flex-direction:column}.p0-line-fields{grid-template-columns:minmax(0,1fr)}.p0-line-row .btn,.p0-line-editor>.btn{width:100%}}
+
+/* Finance worklist composer — cross-checked demo references, non-transactional */
+.p0-finance-fields{display:grid;grid-template-columns:minmax(190px,1.4fr) minmax(120px,.8fr) minmax(120px,.8fr);gap:11px;align-items:end;margin-bottom:12px}
+.p0-finance-editor .p0-warning{margin:0 0 13px}
+.p0-finance-amount{display:grid;gap:6px;min-height:54px;color:var(--muted);font-size:11px}
+.p0-finance-amount strong{color:var(--navy);font-size:13px}
+.p0-finance-summary{display:block;margin-top:13px;background:#e7f6f1;color:#0c665e;padding:10px 13px;border-radius:8px;font-size:12px;font-weight:750;line-height:1.55}
+@media(max-width:1100px){.p0-finance-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:530px){.p0-finance-fields{grid-template-columns:minmax(0,1fr)}}

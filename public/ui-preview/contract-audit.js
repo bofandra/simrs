@@ -484,8 +484,8 @@ window.SIMRS_CONTRACT_AUDIT = {
         "Belum terkait pembayaran/adjustment"
       ],
       "charge_ids": [
-        "(belum tersedia)",
-        "Wajib daftar UUID charge yang valid"
+        "charge_lines[].charge_ref → charge_ids[] (demo)",
+        "ID lokal sintetis; perlu UUID charge aktif, ledger, dan DTO"
       ],
       "invoice_no": [
         "invoice_no",
@@ -493,7 +493,7 @@ window.SIMRS_CONTRACT_AUDIT = {
       ]
     },
     "gaps": [
-      "Belum ada daftar charge_ids dan invoice ledger tervalidasi.",
+      "Komposer charge_ids[] ada di mockup; UUID dan invoice ledger belum tervalidasi.",
       "Settlement dan posting finansial tetap nonaktif."
     ]
   },
@@ -529,8 +529,8 @@ window.SIMRS_CONTRACT_AUDIT = {
         "Label metode demo perlu kode metode"
       ],
       "allocations": [
-        "invoice_ref/amount",
-        "Memerlukan array invoice_id UUID dan amount"
+        "allocations[].invoice_ref/amount (demo)",
+        "ID referensi lokal; belum memenuhi UUID dan schema API"
       ],
       "payment_no": [
         "payment_reference",
@@ -542,7 +542,7 @@ window.SIMRS_CONTRACT_AUDIT = {
       ]
     },
     "gaps": [
-      "Draft pembayaran belum membentuk allocations sesuai schema API.",
+      "Komposer allocations[] sudah ada dalam mockup, tetapi belum menghasilkan payload DTO valid.",
       "Pengakuan kas/settlement riil tetap nonaktif."
     ]
   }
