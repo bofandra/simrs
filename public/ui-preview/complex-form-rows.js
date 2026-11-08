@@ -52,7 +52,7 @@
     });
     return [first];
   }
-  function fieldMarkup(f, value, index, editable) {
+  function fieldMarkup(f, value, index, editable, code) {
     var name = "line-" + index + "-" + f.key;
     var attrs = ' class="forminput" name="' + esc(name) + '" data-line-input="' + esc(f.key) + '" id="' + esc(name) + '"' +
       (editable ? '' : ' disabled') + (f.required ? ' required' : '') +
@@ -60,10 +60,14 @@
       (f.max !== undefined ? ' max="' + esc(f.max) + '"' : '');
     var control;
     if (f.type === "select") {
-      control = '<select' + attrs + '><option value="">— Pilih —</option>' +
-        (f.options || []).map(function (option) {
-          return '<option value="' + esc(option) + '"' + (String(value) === String(option) ? ' selected' : '') +
-            '>' + esc(option) + '</option>';
+      var master=window.SIMRSMasterLookups;
+      var opts=(master && master.supports(code,f.key))?
+        master.entries(code,f.key,{}).map(function(m){return {value:m.value,label:m.label};}):
+        (f.options||[]).map(function(x){return {value:x,label:x};});
+      control = '<select' + attrs + '><option value="">— Pilih dari katalog demo —</option>' +
+        opts.map(function (option) {
+          return '<option value="' + esc(option.value) + '"' + (String(value) === String(option.value) ? ' selected' : '') +
+            '>' + esc(option.label) + '</option>';
         }).join('') + '</select>';
     } else {
       control = '<input type="' + (f.type === "number" ? "number" : "text") + '"' + attrs +
@@ -78,7 +82,7 @@
     return rows.map(function (row, index) {
       return '<fieldset class="p0-line-row" data-line-row="' + index + '">' +
         '<legend>Item ' + (index + 1) + '</legend><div class="p0-line-fields">' +
-        cfg.fields.map(function (f) { return fieldMarkup(f, row[f.key] || "", index, editable); }).join('') +
+        cfg.fields.map(function (f) { return fieldMarkup(f, row[f.key] || "", index, editable, code); }).join('') +
         '</div>' + (editable ? '<button type="button" class="btn btn-sm" data-line-action="remove" data-line-index="' + index +
         '" aria-label="Hapus item ' + (index + 1) + '">Hapus item</button>' : '') + '</fieldset>';
     }).join('');

@@ -129,3 +129,12 @@ Pengujian baru mencakup field item wajib, duplikasi, ketidakcocokan jenis order,
 - Tautan dari Reviewed FIN-01 → FIN-02 dan FIN-02 → FIN-03 sudah memprefill baris awal; tidak memicu transaksi.
 - Workflow tetap menolak referensi yang belum Reviewed (Demo), beda pasien, atau beda encounter. Data lama tanpa `charge_lines[]`/`allocations[]` tetap ditampilkan sebagai draft legacy, tetapi format lama tidak boleh diperlakukan sebagai payload FIN API.
 - Kinerja: lookup dari localStorage saja; belum ada debit/kredit, invoice ledger, settlement atau pengiriman API. Penghitungan tidak memperhitungkan diskon per item, pajak, multi-payer, posting charge riil, atau outstanding lintas settlement. Semua tindakan keuangan tetap **nonaktif** hingga SOP, kontrak, UAT, dan security sign-off.
+
+## Penambahan master referensial dan navigasi terpandu (8 November 2026)
+
+- **Master sintetis lokal** (`public/ui-preview/master-lookups.js`) untuk 7 unit, 5 dokter, 5 layanan/tarif, dan 3 obat. Seluruh ID `*-DEMO-*` adalah data buatan untuk pengujian UI; **tidak** berasal dari master RS, registri SATUSEHAT, atau layanan tarif produksi.
+- `CORE-09`, `CORE-10`, `RME-01`, dan `CORE-04` memilih unit dari dropdown master. `CORE-10` dan `RME-01` memfilter dokter sesuai unit. `RME-04` (author), `RME-08` (orderer), dan `MED-04` (prescriber) memakai daftar dokter contoh. `RME-08` item CPOE, `MED-04` item obat dan `MED-05` kode obat memakai pilihan master contoh.
+- `FIN-01` memilih layanan dari master contoh; perubahan layanan mengisi tarif dan kategori charge, serta review menolak tarif/kategori yang tidak sesuai. Ini hanya simulasi harga, bukan kebijakan tarif resmi.
+- Panel **Jelajahi alur rawat jalan** menyediakan 10 tahap navigasi langsung, menunjukkan ada/tidaknya draft dan status review. Klik tahap akan membuka catatan demo pasien/encounter aktif dan menyesuaikan peran demo agar pengguna dapat menguji form tanpa mencari modul secara manual. Penyesuaian peran ini **hanya UI demo**, bukan otorisasi produksi.
+- Kontrol validasi master menghindari nilai yang tidak ada pada pilihan, dokter tidak sesuai unit dan tarif melenceng. Data sintetis legacy masih perlu koreksi saat review jika tidak sesuai katalog.
+- Seluruh navigasi, lookup, dan penyimpanan tetap berjalan di browser; tidak ada permintaan API ke master database atau integrasi RS.
