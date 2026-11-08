@@ -61,7 +61,7 @@ test("guided journey renders 10 navigable stages with patient context and tracea
   const html=engine.render(baseCtx);
   assert.equal((html.match(/<button type="button" class="p0-guide-step/g)||[]).length,10);
   assert.ok(html.includes("Jelajahi alur rawat jalan"));
-  assert.ok(html.includes("10 ditinjau")===false);
+  assert.ok(html.includes("0 / 10 ditinjau (demo)"));
   assert.ok(html.includes('data-code="CORE-10"'));
   assert.ok(html.includes('data-code="FIN-03"'));
   assert.ok(html.includes("Master")||html.includes("katalog"));
