@@ -109,22 +109,94 @@ function paintRoleNav(){
 function renderHome(){
  if(!current)return "";
  var role=current.role,list=tasks(role);
- var cards=list.map(function(item,i){
-  return '<article class="demo-task-card"><div class="demo-task-index">'+String(i+1).padStart(2,"0")+'</div>'+
-  '<h3>'+esc(item[0])+'</h3><p>'+esc(actionToLabel(item))+'</p>'+
-  '<button class="btn btn-primary" type="button" data-demo-action="'+esc(item[1])+'">Buka pekerjaan</button></article>';
+ var examples={
+  "Pendaftaran":["Verifikasi identitas dan kemungkinan data ganda","Periksa janji temu dan check-in","Teruskan pasien ke antrean unit"],
+  "Dokter RJ":["Buka pasien berikutnya di poli","Lengkapi catatan SOAP dan diagnosis","Periksa order pemeriksaan dan resep"],
+  "Dokter IGD":["Tinjau prioritas triase pasien","Periksa hasil asesmen dan tindakan","Tentukan disposisi pasien"],
+  "DPJP Rawat Inap":["Visite dan evaluasi pasien rawat inap","Review terapi dan hasil penunjang","Siapkan resume dan rencana pulang"],
+  "Perawat":["Cek instruksi keperawatan per shift","Input observasi dan tanda vital","Catat serah terima pasien"],
+  "ATLM":["Cek spesimen masuk dan barcode","Validasi hasil pemeriksaan laboratorium","Tindak lanjuti hasil yang perlu review"],
+  "Farmasis":["Review resep yang menunggu telaah","Cek alergi dan ketersediaan obat","Siapkan penyerahan obat sesuai SOP"],
+  "Gudang":["Tinjau permintaan bahan dan alat","Periksa lot serta masa berlaku","Review selisih stok sebelum mutasi"],
+  "Kasir":["Periksa tagihan siap pembayaran","Rekonsiliasi pembayaran dan kuitansi","Tinjau pembayaran yang perlu koreksi"],
+  "Casemix":["Review kelengkapan dossier klaim","Cek kode diagnosis dan tindakan","Tinjau status klaim dari penjamin"],
+  "Manajemen RS":["Pantau indikator layanan harian","Baca pengecualian pelayanan utama","Tinjau mutu dan keterlambatan data"],
+  "Tim Mutu":["Review indikator mutu dan insiden","Tindak lanjuti audit kepatuhan","Periksa rencana perbaikan"],
+  "Integrasi":["Tinjau ACK dan gagal kirim adapter","Periksa antrean dan retry pengiriman","Telusuri status integrasi eksternal"],
+  "Admin Sistem":["Kelola organisasi, unit, dan role","Review hak akses pengguna","Tinjau audit aktivitas dan konfigurasi"],
+  "Koordinator OK":["Cek jadwal dan kesiapan ruang operasi","Review daftar operasi terjadwal","Pantau pemulihan dan serah-terima"],
+  "Dokter Anestesi":["Tinjau asesmen pra-anestesi","Catat tindakan dan pemantauan anestesi","Review catatan pemulihan"],
+  "Radiografer":["Tinjau worklist pemeriksaan radiologi","Konfirmasi pelaksanaan pemeriksaan","Periksa kesiapan citra untuk dokter"],
+  "Radiolog":["Tinjau pemeriksaan menunggu interpretasi","Review hasil dan temuan pemeriksaan","Verifikasi laporan radiologi"],
+  "Ahli Gizi":["Review skrining risiko gizi pasien","Buat rencana asuhan gizi","Evaluasi kebutuhan dan intervensi"],
+  "Petugas CSSD":["Terima instrumen dan cek kelengkapan","Tinjau siklus sterilisasi","Siapkan bukti serah terima instrumen"],
+  "Petugas Dapur":["Tinjau jumlah tray diet harian","Periksa kesesuaian menu diet","Konfirmasi pengiriman makanan"],
+  "Petugas BPJS":["Periksa eligibilitas dan jaminan","Review berkas penagihan BPJS","Telusuri status respons penjamin"],
+  "Coder":["Tinjau rekam medis siap coding","Review ICD-10 dan kode tindakan","Periksa konflik dan kelengkapan kode"],
+  "Pasien Demo":["Lihat ringkasan kunjungan contoh","Periksa janji temu contoh","Baca informasi administrasi"],
+  "Perawat HD":["Cek jadwal hemodialisis","Review asesmen pra-tindakan","Catat observasi saat tindakan"],
+  "Terapis Rehabilitasi":["Tinjau rencana sesi terapi","Catat pelaksanaan rehabilitasi","Review perkembangan terapi"],
+  "Koordinator MCU":["Pantau paket MCU peserta","Review kelengkapan hasil MCU","Siapkan daftar laporan perlu review"],
+  "Petugas MCU":["Cek peserta dan jadwal MCU","Pantau progres pemeriksaan peserta","Tinjau kelengkapan hasil"],
+  "Petugas Bank Darah":["Cek permintaan produk darah","Review kecocokan dan ketersediaan","Catat serah-terima produk darah"],
+  "Pengadaan":["Review permintaan pengadaan","Bandingkan kebutuhan dan pemasok","Pantau penerimaan barang"],
+  "Petugas Laundry":["Cek penerimaan linen per unit","Review selisih dan status proses","Konfirmasi serah-terima linen"],
+  "Akuntan":["Periksa jurnal transaksi belum review","Lakukan rekonsiliasi akun","Cek laporan keuangan periode"],
+  "Budget Owner":["Review realisasi anggaran unit","Tinjau permintaan persetujuan","Pantau deviasi terhadap anggaran"],
+  "Analis Biaya":["Analisis biaya pelayanan dan unit","Review komponen tarif layanan","Tinjau anomali biaya"],
+  "Petugas Aset":["Cek aset dalam pemeliharaan","Review permintaan mutasi aset","Periksa hasil inventarisasi"],
+  "Teknisi":["Tinjau tiket pemeliharaan","Update hasil inspeksi dan pekerjaan","Review pekerjaan yang tertunda"],
+  "Petugas Fasilitas":["Cek permintaan fasilitas","Tinjau status pekerjaan sarana","Konfirmasi penyelesaian pekerjaan"],
+  "Koordinator Transport":["Pantau permintaan transport pasien","Alokasikan armada sesuai prioritas","Tinjau jadwal pengantaran"],
+  "HR Admin":["Review data pegawai dan penugasan","Tinjau dokumen kepegawaian","Kelola izin serta jadwal kerja"],
+  "Payroll Admin":["Review komponen penggajian","Validasi data payroll periode","Periksa selisih pembayaran"],
+  "Rekruter":["Review kandidat dan lamaran masuk","Atur tahapan seleksi","Konfirmasi hasil wawancara"],
+  "Tim PPI":["Pantau laporan surveilans HAIs","Review tindak lanjut PPI","Tinjau indikator pencegahan infeksi"]
+ };
+ var queue=examples[role]||["Tinjau tugas prioritas hari ini","Periksa pekerjaan yang memerlukan review","Buka formulir sesuai kewenangan"];
+ var activeCount=list.length;
+ var queueRows=queue.map(function(name,i){
+  var item=list[i%Math.max(1,list.length)];
+  var action=item?item[1]:"";
+  var info=item?item[0]:"Belum ada form demo yang dipetakan";
+  var clickable=!!item;
+  return '<div class="role-home-row"><span class="role-home-number">'+String(i+1).padStart(2,"0")+'</span><div><h4>'+esc(name)+'</h4>'+
+   '<p>Contoh tugas · '+esc(info)+' · Data sintetis</p></div>'+
+   (clickable?'<button class="btn '+(i===0?"btn-primary":"")+'" type="button" data-demo-action="'+esc(action)+'">Buka tugas</button>':'<span class="small muted">Belum tersedia</span>')+
+   '</div>';
+ }).join("");
+ var cards=list.slice(0,5).map(function(item,i){
+  return '<article class="demo-task-card"><span class="demo-task-index">'+String(i+1).padStart(2,"0")+'</span>'+
+   '<h3>'+esc(item[0])+'</h3><p>'+esc(actionToLabel(item))+'</p>'+
+   '<button class="btn" type="button" data-demo-action="'+esc(item[1])+'">Buka form / halaman</button></article>';
  }).join("");
  return '<div class="page-head"><div><div class="eyebrow">BERANDA SAYA · '+esc(dept(role))+'</div>'+
-  '<h1>'+esc(role)+'</h1><p>'+esc(descriptions[role]||"Daftar tugas dan formulir sesuai kewenangan peran ini.")+'</p></div></div>'+
-  '<div class="demo-welcome"><div><span class="demo-eyebrow">SIMRS BARU · SESI DEMO</span><h2>Selamat bekerja</h2>'+
-  '<p>Anda sedang menggunakan akun contoh <strong>'+esc(current.username)+'</strong> pada RS Demo Nusantara. Semua aktivitas di bawah bersifat simulasi.</p></div>'+
-  '<span class="demo-welcome-tag">'+esc(role)+'</span></div>'+
-  '<section class="demo-task-section"><div class="demo-task-head"><div><h2>Daftar kerja saya</h2><p>Hanya tugas untuk peran ini. Pilih pekerjaan untuk membuka halaman/form terkait.</p></div><span>'+list.length+' akses tugas</span></div>'+
-  '<div class="demo-task-grid">'+cards+'</div></section>'+
-  '<div class="demo-safe-line"><strong>Mode latihan:</strong> data pasien dan transaksi hanyalah contoh. Aplikasi tidak melakukan perubahan klinis, keuangan, stok, atau integrasi nasional.</div>';
+   '<h1>Ruang kerja '+esc(role)+'</h1><p>Antrean dan akses yang relevan dengan pekerjaan Anda di RS Demo Nusantara.</p></div></div>'+
+   '<section class="role-home-hero"><div><span class="role-hero-overline">SIMRS BARU · WORKSPACE BERBASIS ROLE</span>'+
+   '<h2>Mulai dari pekerjaan yang perlu ditangani</h2><p>'+esc(descriptions[role]||"Kelola kegiatan dan formulir sesuai kewenangan pengguna.")+
+   '. Pilih contoh tugas di bawah untuk membuka halaman terkait.</p></div>'+
+   '<div class="role-home-identity"><strong>'+esc(role)+'</strong><span>'+esc(current.username)+'</span><span>Lingkungan simulasi</span></div></section>'+
+   '<div class="role-home-stats"><div class="role-home-stat"><span>Contoh prioritas</span><strong>03</strong><small>Antrean simulasi</small></div>'+
+   '<div class="role-home-stat"><span>Akses pekerjaan</span><strong>'+activeCount+'</strong><small>Sesuai role demo</small></div>'+
+   '<div class="role-home-stat"><span>Status lingkungan</span><strong style="font-size:17px">DEMO</strong><small>Tidak terhubung RS asli</small></div></div>'+
+   '<div class="role-home-layout"><section class="role-home-worklist"><div class="role-home-block-h">'+
+   '<h3>Daftar kerja saya</h3><span>Simulasi antrean prioritas</span></div>'+queueRows+
+   '</section><aside class="role-home-side" style="width:auto;height:auto;position:static;display:block;overflow:visible;box-shadow:none;color:inherit">'+
+   '<div class="role-home-block-h"><h3>Akses cepat</h3><span>'+activeCount+' pekerjaan</span></div>'+
+   (cards||'<div class="card-body small muted">Belum ada akses contoh yang dipetakan.</div>')+
+   '</aside></div>'+
+   '<div class="role-home-safety"><strong>Data latihan:</strong> semua antrean, identitas dan aktivitas ini hanya contoh. Sign klinis, pembayaran, dispense, mutasi stok dan pengiriman ke sistem eksternal tidak aktif.</div>';
 }
 function renderLogin(){
  if(!loginRoot)return;
+ var quickRoleNames=["Pendaftaran","Dokter RJ","Dokter IGD","Perawat","Farmasis","Kasir"];
+ var quick=quickRoleNames.map(function(role){
+  var a=lookup(ACCOUNT_PREFIX+slug(role));
+  if(!a)return "";
+  return '<button type="button" class="demo-quick-role'+(selected.username===a.username?' selected':'')+
+   '" data-demo-account="'+esc(a.username)+'"><span class="demo-quick-dot">'+esc(role.slice(0,2).toUpperCase())+
+   '</span><span>'+esc(role)+'</span></button>';
+ }).join("");
  var byDept=Object.keys(groups).map(function(g){
   var members=accounts.filter(function(a){return a.department===g;});
   if(!members.length)return "";
@@ -145,7 +217,7 @@ function renderLogin(){
  '<label for="demo-password">Kata sandi demo</label><input id="demo-password" type="password" autocomplete="off" value="'+PASSWORD+'"/>'+
  '<p class="demo-pass-hint">Semua akun menggunakan kata sandi latihan: <strong>demo123</strong></p><div id="demo-login-error" role="alert" aria-live="polite" hidden></div>'+
  '<button class="demo-login-submit" type="submit">Masuk ke workspace</button></div></form>'+
- '<div class="demo-account-title"><div><h3>Pilih akun berdasarkan role</h3><p>Daftar akun demo tersedia untuk semua pengguna.</p></div><span>'+roleList.length+' Role</span></div>'+
+ '<div class="demo-quick-head"><strong>Masuk cepat sesuai profesi</strong><span>6 role populer</span></div>'+'<div class="demo-quick-roles">'+quick+'</div>'+'<div class="demo-account-title"><div><h3>Pilih akun berdasarkan role</h3><p>Daftar akun demo tersedia untuk semua pengguna.</p></div><span>'+roleList.length+' Role</span></div>'+
  '<input id="demo-account-filter" aria-label="Cari akun demo" placeholder="Cari role atau username (mis. farmasi, dokter, kasir)"/>'+
  '<div id="demo-account-list" class="demo-account-scroll">'+byDept+
  '<div class="demo-account-group"><h3>Reviewer / QA <span>1</span></h3><div class="demo-accounts">'+
