@@ -361,8 +361,8 @@ test('specialist role login opens only their work area with role task navigation
   await expect(page.locator('.uxv4 h1')).toHaveText('Penerimaan linen');
   await expect(page.locator('.uxv4 [data-demo-action="module:OPS-04"]').first()).toBeVisible();
   await page.locator('.uxv4 [data-demo-action="module:OPS-04"]').first().click();
-  await expect(page.locator('.p0-editor .card-h h2')).toContainText('Laundry');
-  await expect(page.locator('.p0-catalog')).not.toContainText('Katalog 68 Modul');
+  await expect(page.locator('.p0-editor .card-h h2')).toHaveText('Penerimaan linen');
+  await expect(page.locator('.p0-catalog')).toHaveCount(0);
   await expect(page.locator('#p0-catalog-list [data-code="RME-08"]')).toHaveCount(0);
   expect(errors).toEqual([]);
 });
@@ -511,5 +511,61 @@ test('V5 registration and emergency role worklists show contextual checks',async
  await expect(page.locator('.uxv5-detail')).toContainText('Rencana rujukan perlu konfirmasi');
  await expect(page.locator('.uxv5-detail')).toContainText('RME-02');
  await expect(page.locator('#role-nav')).not.toContainText('Invoice');
+ expect(errors).toEqual([]);
+});
+
+
+test('mobile role navigation opens a focused registration form, not a three-column module catalog',async ({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:390,height:844});
+ await page.goto('/index.html');
+ await page.locator('[data-demo-account="akun.pendaftaran"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ await expect(page.locator('#demo-mobile-nav-toggle')).toBeVisible();
+ await expect(page.locator('#app > aside')).toBeHidden();
+ await page.locator('#demo-mobile-nav-toggle').click();
+ await expect(page.locator('#demo-mobile-nav-toggle')).toHaveAttribute('aria-expanded','true');
+ await expect(page.locator('#app > aside')).toBeVisible();
+ await page.locator('#role-nav [data-demo-action="section:m1"]').click();
+ await expect(page.locator('#app > aside')).toBeHidden();
+ await expect(page.locator('.uxv5 h1')).toHaveText('Registrasi kunjungan');
+ await expect(page.locator('.uxv5 .uxv4-table tbody tr')).toHaveCount(4);
+ await page.locator('.uxv5 [data-demo-action="job:1"]').click();
+ await expect(page.locator('.uxv5-detail')).toContainText('REG-D002');
+ await page.locator('.uxv5-detail [data-demo-action="module:CORE-09"]').click();
+ await expect(page.locator('#main-content h1')).toHaveText('Registrasi kunjungan');
+ await expect(page.locator('#p0-editor')).toBeVisible();
+ await expect(page.locator('#p0-editor [name="visit_type"]')).toBeVisible();
+ await expect(page.locator('.p0-operational .p0-catalog')).toHaveCount(0);
+ await expect(page.locator('#p0-catalog-list')).toHaveCount(0);
+ await expect(page.locator('.p0-operational-history')).toBeVisible();
+ await expect(page.locator('#main-content')).not.toContainText('Katalog 68 Modul');
+ const dimensions=await page.evaluate(()=>({viewport:innerWidth,scrollWidth:document.documentElement.scrollWidth,form:document.querySelector('#p0-editor').getBoundingClientRect().width}));
+ expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.viewport+2);
+ expect(dimensions.form).toBeGreaterThan(290);
+ await page.screenshot({path:out+'/role-registration-native-mobile-v6.png',fullPage:true});
+ expect(errors).toEqual([]);
+});
+
+test('tablet-size role workspace uses collapsed nav, and reviewer still has catalog',async ({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:980,height:800});
+ await page.goto('/index.html');
+ await page.locator('[data-demo-account="akun.farmasis"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ await expect(page.locator('#demo-mobile-nav-toggle')).toBeVisible();
+ await expect(page.locator('#app > aside')).toBeHidden();
+ await page.locator('#demo-mobile-nav-toggle').click();
+ await page.locator('#role-nav [data-demo-action="section:m2"]').click();
+ await page.locator('.uxv5-detail [data-demo-action="module:MED-05"]').click();
+ await expect(page.locator('#main-content h1')).toHaveText('Penyiapan obat');
+ await expect(page.locator('#p0-catalog-list')).toHaveCount(0);
+ await expect(page.locator('#p0-editor')).toBeVisible();
+ await page.locator('#demo-logout').click();
+ await page.locator('[data-demo-account="reviewer.demo"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ await page.locator('[data-nav="forms"]').click();
+ await expect(page.locator('#p0-catalog-list [data-code]')).toHaveCount(68);
+ await expect(page.getByText('Katalog Form & Workflow SIMRS')).toBeVisible();
  expect(errors).toEqual([]);
 });
