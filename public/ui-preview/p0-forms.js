@@ -7,7 +7,7 @@
   "use strict";
   var catalog = Array.isArray(window.SIMRS_FORM_CATALOG) ? window.SIMRS_FORM_CATALOG : [];
   var key = "simrs-demo-p0-forms-v1";
-  var state = { code:"CORE-09", priority:"P0", recordId:null, search:"" };
+  var state = { code:"CORE-09", priority:"P0", recordId:null, search:"", prefill:null, linkSource:null };
   var demo = readDemo();
   var lastContext = null;
   var riskyActions = "Tanda tangan, release hasil, dispensing, mutasi stok, pembayaran, posting jurnal, pengajuan klaim, pengiriman API dan publikasi laporan hanya contoh desain: NONAKTIF sampai SOP/UAT dan otorisasi.";
@@ -33,7 +33,7 @@
   function canEdit(m) {return !!(m && m.fields && m.fields.length && m.roles.indexOf(context().role) >= 0);}
   function recordsFor(m) {
     var all = Array.isArray(demo.records[m.code]) ? demo.records[m.code] : [];
-    if (m.patient_context) return all.filter(function(r){return r.patient_id === context().patient.id;});
+    if (m.patient_context) return all.filter(function(r){return r.patient_id === context().patient.id && r.encounter_id === context().patient.visit;});
     return all;
   }
   function record() {return recordsFor(currentModule()).find(function(r){return r.id === state.recordId;}) || null;}
@@ -80,11 +80,11 @@
       '<span class="p0-error" data-error-for="'+esc(f.key)+'" aria-live="polite"></span></div>';
   }
   function renderCatalog() {
-    return '<section class="card p0-catalog" aria-label="Katalog modul SIMRS"><div class="card-h"><h2>Katalog 68 Modul</h2>'+pill("30 P0")+'</div>'+
+    return '<section class="card p0-catalog" aria-label="Katalog modul SIMRS"><div class="card-h"><h2>Katalog 68 Modul</h2>'+pill("47 form P0/P1")+'</div>'+
       '<div class="p0-catalog-tools"><label for="p0-search">Cari kode / nama modul</label><input id="p0-search" class="forminput" placeholder="Mis. RME-04 / farmasi" value="'+esc(state.search)+'" />'+
-      '<label for="p0-priority">Prioritas</label><select id="p0-priority" class="forminput"><option value="P0"'+(state.priority==="P0"?" selected":"")+'>P0 (form tersedia)</option>'+
+      '<label for="p0-priority">Prioritas</label><select id="p0-priority" class="forminput"><option value="P0"'+(state.priority==="P0"?" selected":"")+'>P0 (30 form)</option>'+
       '<option value="all"'+(state.priority==="all"?" selected":"")+'>Semua prioritas</option>'+
-      ['P1','P2','P3'].map(function(p){return '<option value="'+p+'"'+(state.priority===p?' selected':'')+'>'+p+'</option>';}).join("")+'</select></div>'+
+      ['P1','P2','P3'].map(function(p){return '<option value="'+p+'"'+(state.priority===p?' selected':'')+'>'+p+(p==='P1'?' (17 form)':' (roadmap)')+'</option>';}).join("")+'</select></div>'+
       '<div id="p0-catalog-list" class="p0-module-list">'+catalog.filter(function(m){return state.priority==="all" || state.priority===m.priority;}).map(function(m){
         var ready=m.fields && m.fields.length;var active=m.code===state.code;
         return '<button class="p0-module-item'+(active?' active':'')+'" type="button" data-p0-action="choose" data-code="'+esc(m.code)+'" data-search="'+esc((m.code+" "+m.name).toLowerCase())+'" aria-current="'+(active?'true':'false')+'"><span><strong>'+esc(m.code)+'</strong><small>'+esc(m.name)+'</small></span><span class="p0-module-meta">'+esc(m.priority)+'<small>'+(ready?'Form':'Roadmap')+'</small></span></button>';
@@ -105,7 +105,11 @@
     "WF-04":["CORE-05","OPS-10","RME-03"],
     "WF-05":["RME-08","MED-01"],
     "WF-07":["RME-08","MED-04","MED-05"],
-    "WF-08":["FIN-01","FIN-02","FIN-03"],
+    "WF-08":["FIN-01","FIN-02","FIN-03","FIN-05","FIN-06","FIN-07"],
+    "WF-06":["RME-08","MED-02","MED-03"],
+    "WF-10":["MED-06","MED-07","OPS-03"],
+    "WF-11":["RME-03","MED-11","OPS-05"],
+    "WF-12":["ENT-06","ENT-08","ENT-09"],
     "WF-14":["RME-08","MED-01"],
     "WF-15":["MED-01","OPS-01"]
   };
@@ -118,6 +122,23 @@
         return '<button class="p0-journey-step'+(code===m.code?' active':'')+'" type="button" data-p0-action="choose" data-code="'+esc(code)+'" aria-current="'+(code===m.code?'step':'false')+'"><span>'+esc(i+1)+'</span><strong>'+esc(code)+'</strong><small>'+esc(x?x.name:"")+'</small></button>';
       }).join("")+'</div><p class="hint">Konteks pasien/encounter tetap mengikuti pasien demo yang dipilih. Perpindahan ini belum membuat order, hasil, charge, atau transaksi lintas modul secara otomatis.</p></div></section>';
   }
+  function renderLinks(m) {
+    if (!window.SIMRSDemoLinks || !m.fields.length)return "";
+    var rows=recordsFor(m).filter(function(r){return r.status==="Reviewed (Demo)";}).slice(0,3);
+    var cards=[];
+    rows.forEach(function(r) {
+      var targets=window.SIMRSDemoLinks.edgesFrom(m.code,r.values);
+      targets.forEach(function(edge) {
+        var dest=catalog.find(function(x){return x.code===edge.to;});
+        if(!dest || !dest.fields || !dest.fields.length)return;
+        cards.push('<div class="p0-link-row"><div><strong>'+esc(r.id)+'</strong><span>'+esc(edge.label)+' → '+esc(dest.code)+' · '+esc(dest.name)+'</span></div>'+
+          button('Buat draft terkait','link','', 'data-source="'+esc(r.id)+'" data-target="'+esc(dest.code)+'"')+'</div>');
+      });
+    });
+    if(!cards.length)return "";
+    return '<section class="card p0-related"><div class="card-h"><h2>Lanjutkan alur dari catatan demo</h2>'+pill(cards.length+" referensi")+'</div>'+
+      '<div class="card-body">'+cards.join("")+'<p class="hint">Hanya catatan Reviewed (Demo) dari pasien dan encounter yang sama. Menyalin referensi ke form lain **tidak** sama dengan persetujuan, sign, release atau posting transaksi.</p></div></section>';
+  }
   function renderRecordList(m) {
     var rs = recordsFor(m);
     return '<section class="card"><div class="card-h"><h2>Daftar & detail form</h2>'+pill(rs.length+" data demo")+'</div>'+
@@ -129,15 +150,16 @@
       '<div class="card-body">'+button("+ Form baru","new","btn-primary","",!canEdit(m))+'</div></section>';
   }
   function renderEditor(m) {
-    if (!m.fields.length) return '<section class="card"><div class="card-body"><h3>Belum masuk tahap P0</h3><p>Modul '+esc(m.code)+' sudah terpetakan ke PRD, FR dan User Story, tetapi form spesifiknya belum dibuat.</p><p>Rencana berikutnya: susun field, validasi, worklist dan skenario UAT untuk modul '+esc(m.priority)+'.</p></div></section>';
+    if (!m.fields.length) return '<section class="card"><div class="card-body"><h3>Form modul belum tersedia</h3><p>Modul '+esc(m.code)+' sudah terpetakan ke PRD, FR dan User Story, tetapi form spesifiknya belum dibuat.</p><p>Rencana berikutnya: susun field, validasi, worklist dan skenario UAT untuk modul '+esc(m.priority)+'.</p></div></section>';
     var r=record(), allowed=canEdit(m), editable=allowed && (!r || r.status==="Draft");
-    var values=(r && r.values)||{};
+    var values=(r && r.values)||state.prefill||{};
     var id = r?r.id:"Baru (belum tersimpan)";
     var ctx=context();
     return '<section class="card p0-editor"><div class="card-h"><h2>Form '+esc(m.code)+'</h2>'+pill(r?r.status:"Belum disimpan",r&&r.status==="Reviewed (Demo)"?"good":"")+'</div>'+
       (m.patient_context?'<div class="p0-patient-banner"><strong>Pasien demo: '+esc(ctx.patient.name)+'</strong><span>MRN '+esc(ctx.patient.mrn)+' · Encounter '+esc(ctx.patient.visit)+'</span><span>Identitas dan encounter merupakan konteks read-only.</span></div>':'<div class="p0-patient-banner"><strong>Data administrasi / master</strong><span>RS Demo Nusantara · Tenant demonstrasi</span></div>')+
       (!allowed?'<div class="p0-warning" role="status">Peran <strong>'+esc(ctx.role)+'</strong> hanya dapat melihat. Peran untuk mengisi: '+esc((m.roles||[]).join(", ")||"Belum ditetapkan")+'. Ubah peran demo di bagian kanan atas.</div>':'')+
       (r&&r.status!=="Draft"?'<div class="p0-warning">Catatan telah ditinjau dan terkunci pada mode demonstrasi. Perubahan memerlukan alur koreksi/addendum terpisah yang belum dibuat.</div>':'')+
+      ((r&&r.linked_source)||state.linkSource?'<div class="p0-provenance"><strong>Referensi catatan demo:</strong> '+esc(((r&&r.linked_source)||state.linkSource).module)+' / '+esc(((r&&r.linked_source)||state.linkSource).record_id)+' — hanya salin rujukan ke draft, tanpa membuat transaksi klinis/keuangan.</div>':'')+
       '<form id="p0-editor" novalidate><div class="p0-form-head"><div><span class="muted">Nomor catatan</span><strong>'+esc(id)+'</strong></div><div><span class="muted">Peran penginput</span><strong>'+esc(ctx.role)+'</strong></div></div>'+
       '<div class="p0-fields">'+m.fields.map(function(f){return renderField(f,values,editable);}).join("")+'</div>'+
       '<div id="p0-validation-summary" class="p0-validation-summary" role="alert" hidden></div>'+
@@ -156,13 +178,13 @@
       state.code=(catalog.find(function(x){return x.priority===state.priority;})||m).code;
       m=currentModule();state.recordId=null;
     }
-    return '<div class="page-head"><div><div class="eyebrow">DESAIN FORM • P0 IMPLEMENTATION</div>'+
+    return '<div class="page-head"><div><div class="eyebrow">DESAIN FORM • PRIORITAS P0 + P1</div>'+
       '<h1>Katalog Form & Workflow SIMRS</h1><p>Form sesuai domain PRD, dapat diisi dan ditinjau menggunakan data sintetis. Perubahan hanya tersimpan di browser ini.</p></div>'+
-      '<div class="actions">'+pill("30/30 modul P0 terdefinisi","good")+pill("DEMO – NO BACKEND")+'</div></div>'+
+      '<div class="actions">'+pill("30 P0 + 17 P1 dengan form","good")+pill("DEMO – NO BACKEND")+'</div></div>'+
       '<div class="p0-warning" role="note"><strong>Bukan sistem operasional.</strong> Jangan masukkan data pasien asli, NIK sebenarnya, nomor transaksi, atau informasi sensitif. Tidak ada sinkronisasi ke API/FHIR atau database RS.</div>'+
       '<div class="p0-layout">'+renderCatalog()+'<div class="p0-detail">'+
       '<section class="card"><div class="card-body">'+renderInfo(m)+'</div></section>'+
-      renderJourney(m)+renderRecordList(m)+renderEditor(m)+
+      renderJourney(m)+renderRecordList(m)+renderLinks(m)+renderEditor(m)+
       '<section class="card p0-acceptance"><div class="card-h"><h2>Traceability & kriteria penerimaan PRD</h2></div><div class="card-body"><p>Referensi: '+esc(m.us)+' · '+esc(m.fr.join(", "))+' · '+esc((m.wf||[]).join(", ")||"Alur lintas modul")+'.</p>'+
       '<div class="p0-trace">'+m.ac_ids.map(function(x){return pill(x);}).join("")+'</div>'+
       '<p class="muted">Enam AC adalah ID kontrak PRD. Form ini hanya memprototipe input, validasi dan review; pengujian kontrak OpenAPI, DB constraint, RBAC/IDOR, konkurensi, audit/outbox serta UAT masih diperlukan.</p>'+
@@ -230,11 +252,11 @@
     if(!Array.isArray(demo.records[m.code]))demo.records[m.code]=[];
     if(!old){
       demo.seq+=1;
-      old={id:"DEMO-"+m.code+"-"+String(demo.seq).padStart(4,"0"),status:"Draft",patient_id:m.patient_context?context().patient.id:null,encounter_id:m.patient_context?context().patient.visit:null,created_at:at,history:[]};
+      old={id:"DEMO-"+m.code+"-"+String(demo.seq).padStart(4,"0"),status:"Draft",patient_id:m.patient_context?context().patient.id:null,encounter_id:m.patient_context?context().patient.visit:null,created_at:at,linked_source:state.linkSource?{module:state.linkSource.module,record_id:state.linkSource.record_id}:null,history:[]};
       demo.records[m.code].unshift(old);
     }
     old.values=vals;old.updated_at=at;old.history.push({at:at,event:"Draft disimpan di browser",actor:actor});
-    state.recordId=old.id;if(persist()){update();notice("Draft sintetis tersimpan secara lokal: "+old.id);}
+    state.recordId=old.id;state.prefill=null;state.linkSource=null;if(persist()){update();notice("Draft sintetis tersimpan secara lokal: "+old.id);}
   }
   function review() {
     var m=currentModule();if(!canEdit(m)){notice("Peran tidak diizinkan meninjau form ini (demo).");return;}
@@ -251,11 +273,24 @@
     if(!b)return;
     e.preventDefault();e.stopImmediatePropagation();
     var action=b.getAttribute("data-p0-action");
-    if (action==="choose"){state.code=b.getAttribute("data-code");state.recordId=null;state.search="";update();return;}
-    if (action==="open"){state.recordId=b.getAttribute("data-record");update();return;}
-    if (action==="new"){state.recordId=null;update();return;}
+    if (action==="choose"){state.code=b.getAttribute("data-code");state.recordId=null;state.search="";state.prefill=null;state.linkSource=null;var selected=catalog.find(function(m){return m.code===state.code;});if(selected && state.priority!=='all')state.priority=selected.priority;update();return;}
+    if (action==="open"){state.recordId=b.getAttribute("data-record");state.prefill=null;state.linkSource=null;update();return;}
+    if (action==="new"){state.recordId=null;state.prefill=null;state.linkSource=null;update();return;}
     if (action==="save"){saveDraft();return;}
     if (action==="review"){review();return;}
+    if (action==="link"){
+      var targetCode=b.getAttribute("data-target"),sourceId=b.getAttribute("data-source");
+      var dest=catalog.find(function(x){return x.code===targetCode;});
+      var from=currentModule();
+      var source=recordsFor(from).find(function(r){return r.id===sourceId && r.status==="Reviewed (Demo)";});
+      if(!source || !dest || !dest.fields.length || !window.SIMRSDemoLinks){notice("Referensi tidak valid atau belum direview (demo).");return;}
+      if(!window.SIMRSDemoLinks.edgesFrom(from.code,source.values).some(function(x){return x.to===dest.code;})){notice("Relasi antar-modul tidak berlaku untuk catatan ini.");return;}
+      state.prefill=window.SIMRSDemoLinks.suggest(from,source,dest);
+      state.linkSource={module:from.code,record_id:source.id};
+      state.code=dest.code;state.recordId=null;state.search="";state.priority="all";
+      update();notice("Draft "+dest.code+" terhubung ke "+source.id+". Data belum tersimpan.");
+      return;
+    }
     if (action==="blocked"){notice("NONAKTIF: menunggu SOP, UAT, dan otorisasi.");return;}
   }
   function handleInput(e) {
@@ -271,14 +306,14 @@
   document.addEventListener("click",handleClick);
   document.addEventListener("input",handleInput);
   document.addEventListener("change",function(e){
-    if(e.target.id==="p0-priority"){state.priority=e.target.value;state.search="";state.recordId=null;update();}
+    if(e.target.id==="p0-priority"){state.priority=e.target.value;state.search="";state.recordId=null;state.prefill=null;state.linkSource=null;update();}
   });
   document.addEventListener("submit",function(e){
     if(e.target.id==="p0-editor"){e.preventDefault();e.stopPropagation();saveDraft();}
   });
   function resetDemo() {
     demo={version:1,seq:0,records:{}};
-    state.recordId=null;state.code="CORE-09";state.priority="P0";state.search="";
+    state.recordId=null;state.code="CORE-09";state.priority="P0";state.search="";state.prefill=null;state.linkSource=null;
     try{localStorage.removeItem(key);}catch(e){}
   }
   window.SIMRSFormEngine={render:render,validate:validate,collect:collect,resetDemo:resetDemo,getCatalog:function(){return catalog;},getRecords:function(){return demo.records;}};
