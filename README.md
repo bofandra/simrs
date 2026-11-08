@@ -1,78 +1,35 @@
-# SIMRS Prototype
+# SIMRS Baru — Mockup Interaktif
 
-Starter project ini menyiapkan fondasi awal prototipe SIMRS berbasis `Next.js + TypeScript` sesuai arah yang sudah dibahas:
+**Situs resmi mockup saat ini:** https://bofandra.github.io/simrs/
 
-1. Fokus pada modul MVP operasional.
-2. Menyatukan alur pasien melalui `Encounter`.
-3. Menjaga kebutuhan akreditasi dan regulasi tetap terlihat sejak awal desain.
+Repositori ini menyimpan prototype UI SIMRS Baru dengan **7 workspace, 68 modul/form demo** dan tiga alur terpandu:
 
-## Struktur Awal
+- Rawat Jalan — 10 tahapan.
+- IGD — 7 tahapan.
+- Rawat Inap — 9 tahapan.
 
-- `app/`
-  - Halaman prototype utama dan area modul awal.
-- `components/`
-  - Shell layout dan navigasi dasar.
-- `lib/prototype-data.ts`
-  - Data dummy dan definisi awal modul, alur, queue, compliance, serta entitas inti.
-- `.env.example`
-  - Placeholder untuk integrasi Supabase pada fase berikutnya.
+Kode HTML/CSS/JavaScript yang **diterbitkan GitHub Pages** ada di [`public/ui-preview/`](public/ui-preview/). Semua data pasien, jadwal, layanan, obat, tarif, catatan klinis, dan transaksi **sintetis**, disimpan hanya dalam `localStorage` browser. Tidak ada backend, autentikasi rumah sakit, FHIR/SATUSEHAT, pembayaran, dispensing, mutasi stok atau proses klinis sungguhan.
 
-## Halaman yang Sudah Disiapkan
+## Status situs
 
-1. `/`
-   - Executive overview, scope MVP, roadmap modul, dan compliance guardrail.
-2. `/patients`
-   - Front office, registrasi, queue, dan keputusan admission awal.
-3. `/clinical`
-   - Clinical core untuk rawat jalan, UGD, rawat inap, dan rekam medik.
-4. `/operations`
-   - Support operations untuk lab, radiologi, farmasi, dan bed board.
-5. `/finance`
-   - Billing minimum dan laporan dasar.
-6. `/compliance`
-   - Peta compliance dan entitas data inti.
+GitHub Pages menerbitkan **hanya mockup terbaru sebagai halaman utama**. Halaman prototipe lama telah dihapus dari site dan source HTML/CSS/JS legacy. Folder `docs/simrs-baru/` sekarang menyimpan **dokumen referensi teknis saja**, bukan situs lain.
 
-## Setup Lokal
+Pengujian dan deployment:
+- `.github/workflows/mockup-forms-p0.yml`: pengujian Node dan Chromium pada perubahan mockup.
+- `.github/workflows/publish-mindmap-pages.yml`: tes ulang dan deploy isi `public/ui-preview/` ke root Pages ketika perubahan masuk `main`.
 
-Project ini disusun manual agar fondasi kodenya bisa dibuat terlebih dulu. Untuk menjalankannya, install dependency Node sesuai package manager yang kamu pilih.
-
-Contoh dengan `npm`:
+Untuk menjalankan preview secara lokal:
 
 ```bash
-npm install
-npm run dev
+python3 -m http.server 8000 --directory public/ui-preview
 ```
 
-Contoh dengan `pnpm`:
+Lalu buka http://localhost:8000/ . Untuk tes Node: `node --test tests/*.test.mjs`. Untuk tes browser, instal `@playwright/test` dan Chromium sesuai workflow.
 
-```bash
-pnpm install
-pnpm dev
-```
+## Struktur tambahan
 
-Jika `pnpm` belum ada di shell, gunakan binary lokal yang sudah disiapkan di workspace ini:
+- `design/`: desain, pemetaan form, dan rancangan UI.
+- `docs/simrs-baru/`: arsip kontrak dan dokumen teknis (tanpa halaman web lama).
+- `app/`, `components/`, `lib/`: kode Next.js eksperimen terdahulu yang **tidak termasuk** paket GitHub Pages; tidak digunakan oleh situs di atas.
 
-```bash
-/Users/dto/code/Prototipe_SIMRS/simrs/.tools/bin/pnpm install
-/Users/dto/code/Prototipe_SIMRS/simrs/.tools/bin/pnpm dev
-```
-
-Lalu buka:
-
-```bash
-http://localhost:3000
-```
-
-## Deploy Gratis yang Disarankan
-
-1. Frontend: `Vercel`
-2. Database/Auth/Storage tahap berikutnya: `Supabase`
-
-Untuk fase ini, app masih memakai data dummy. Integrasi Supabase bisa ditambahkan setelah struktur layar dan entitas inti dianggap cukup stabil.
-
-## Langkah Berikutnya yang Disarankan
-
-1. Tambahkan `master data` dan `mock record` yang lebih detail per modul.
-2. Ubah data dummy menjadi typed repository per domain.
-3. Sambungkan auth dan database Supabase.
-4. Mulai bangun layar transaksi nyata: registrasi, detail encounter, order, hasil, dan billing.
+> **Penting:** Ini hanya prototipe statis untuk menguji alur dan UI, bukan SIMRS yang siap dipakai di rumah sakit.
