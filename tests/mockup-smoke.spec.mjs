@@ -354,7 +354,7 @@ test('specialist role login opens only their work area with role task navigation
   await page.goto('/index.html');
   await page.locator('[data-demo-account="akun.petugas-laundry"]').click();
   await page.locator('#demo-login-form button[type="submit"]').click();
-  await expect(page.locator('#main-content h1')).toHaveText('Petugas Laundry');
+  await expect(page.locator('#main-content h1')).toHaveText('Beranda Petugas Laundry');
   await expect(page.locator('#role-nav [data-demo-action="section:m0"]')).toBeVisible();
   await expect(page.locator('[data-nav="clinical"]')).toBeHidden();
   await page.locator('#role-nav [data-demo-action="section:m0"]').click();
