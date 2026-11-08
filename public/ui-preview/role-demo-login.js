@@ -45,6 +45,7 @@ function slug(s){return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f
 var accounts=roleList.map(function(role){return {username:ACCOUNT_PREFIX+slug(role),role:role,label:role,department:dept(role),reviewer:false};});
 accounts.push(reviewer);
 var current=null;
+var currentSection="home";
 var selected=accounts[0];
 var loginRoot=document.getElementById("demo-login");
 function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,function(x){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[x];});}
@@ -101,6 +102,7 @@ function paintRoleNav(){
  var holder=document.getElementById("role-nav");
  if(!holder)return;
  var shell=window.__SIMRS_PREVIEW__;
+ if(window.SIMRSRoleUXV4){holder.innerHTML=window.SIMRSRoleUXV4.navHtml(current.role,currentSection);return;}
  holder.innerHTML='<button class="ux-nav-link'+(shell.state.active==="rolehome"?" active":"")+'" data-demo-action="home" type="button">Beranda saya</button>'+
   tasks(current.role).map(function(x){
    return '<button type="button" class="ux-nav-link" data-demo-action="'+esc(x[1])+'">'+esc(x[0])+'</button>';
@@ -108,6 +110,7 @@ function paintRoleNav(){
 }
 function renderHome(){
  if(!current)return "";
+ if(window.SIMRSRoleUXV4)return window.SIMRSRoleUXV4.renderPage({role:current.role,section:currentSection,username:current.username,canOpen:allowModule});
  var role=current.role,list=tasks(role);
  var examples={
   "Pendaftaran":["Verifikasi identitas dan kemungkinan data ganda","Periksa janji temu dan check-in","Teruskan pasien ke antrean unit"],
@@ -233,6 +236,7 @@ function showLogin(){
 }
 function showApp(){
  if(!current)return;
+ currentSection="home";
  document.body.classList.remove("demo-login-active");
  document.body.classList.add("demo-authenticated");
  document.body.classList.toggle("demo-reviewer",!!current.reviewer);
@@ -268,7 +272,17 @@ function logout(){
 function handleDemoCommand(command){
  var shell=window.__SIMRS_PREVIEW__;
  if(!shell||!current)return;
- if(command==="home"){shell.state.active="rolehome";location.hash="#/rolehome";shell.render();return;}
+ if(command==="home"){currentSection="home";shell.state.active="rolehome";location.hash="#/rolehome";shell.render();return;}
+ if(command.startsWith("section:")){
+  var section=command.slice(8);
+  if(!window.SIMRSRoleUXV4||!window.SIMRSRoleUXV4.getFeature(current.role,section)){
+   shell.toast("Area kerja tidak tersedia untuk akun demo ini.");return;
+  }
+  currentSection=section;
+  shell.state.active="rolehome";
+  location.hash="#/rolehome/"+section;
+  shell.render();return;
+ }
  if(command==="logout"){logout();return;}
  if(command==="forms"){
   if(isReviewer()){shell.state.active="forms";shell.render();return;}
