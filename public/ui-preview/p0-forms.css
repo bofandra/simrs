@@ -78,3 +78,16 @@
 .p0-link-row .btn{flex:none}
 .p0-related .hint{display:block;margin-top:12px}
 @media(max-width:530px){.p0-link-row{align-items:flex-start;flex-direction:column}.p0-link-row .btn{width:100%}}
+
+/* API/DB contract audit inspector — informational only */
+.p0-contract-details>summary{cursor:pointer;padding:13px 17px;font-weight:720;color:var(--navy);font-size:12px;list-style-position:inside}
+.p0-contract-details>summary:focus-visible{outline:3px solid #77cfc0;outline-offset:-3px}
+.p0-contract-details[open]>summary{border-bottom:1px solid var(--border)}
+.p0-contract .card-body p{font-size:11px;line-height:1.6}
+.p0-contract-table{white-space:normal;min-width:620px}
+.p0-contract-table td{vertical-align:top;font-size:11px;line-height:1.45}
+.p0-contract-table code{overflow-wrap:anywhere;white-space:normal}
+.p0-contract-gaps{background:#fffaf0;border:1px solid #efdeb5;border-radius:9px;padding:12px;margin-top:14px;font-size:11px;line-height:1.55}
+.p0-contract-gaps ul{padding-left:20px;margin:8px 0 0}
+.p0-contract-gaps li{margin-bottom:5px}
+.p0-contract-details .hint{color:var(--muted)}
