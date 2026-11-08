@@ -466,3 +466,50 @@ test('bed manager and billing user get distinct specialized menus',async ({page}
  await expect(page.locator('#role-nav')).not.toContainText('Terima pembayaran');
  expect(errors).toEqual([]);
 });
+
+
+test('V5 clinical and cashier worklist details select the correct task without exposing unrelated modules',async ({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('/index.html');
+ await page.locator('[data-demo-account="akun.kasir"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ await page.locator('#role-nav [data-demo-action="section:m1"]').click();
+ await expect(page.locator('.uxv5 h1')).toHaveText('Terima pembayaran');
+ await expect(page.locator('.uxv5-detail')).toContainText('INV-D081');
+ await page.locator('.uxv5 [data-demo-action="job:2"]').click();
+ await expect(page.locator('.uxv5-detail')).toContainText('INV-D083');
+ await expect(page.locator('.uxv5-detail')).toContainText('Sisa tagihan perlu ditinjau');
+ await expect(page.locator('.uxv5-detail')).toContainText('FIN-03');
+ await expect(page.locator('.uxv5-detail')).not.toContainText('FIN-01');
+ await expect(page.locator('.uxv5 [data-demo-action="job:2"]')).toHaveAttribute('aria-pressed','true');
+ await page.locator('#uxv5-search').fill('tidak ada');
+ await expect(page.locator('#uxv5-empty')).toBeVisible();
+ await expect(page.locator('.uxv5 .uxv4-table tbody tr:visible')).toHaveCount(0);
+ await page.locator('#uxv5-search').fill('INV-D082');
+ await expect(page.locator('#uxv5-empty')).toBeHidden();
+ await expect(page.locator('.uxv5 .uxv4-table tbody tr:visible')).toHaveCount(1);
+ await page.screenshot({path:out+'/role-kasir-contextual-v5.png',fullPage:true});
+ expect(errors).toEqual([]);
+});
+
+test('V5 registration and emergency role worklists show contextual checks',async ({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('/index.html');
+ await page.locator('[data-demo-account="akun.pendaftaran"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ await page.locator('#role-nav [data-demo-action="home"]').click();
+ await expect(page.locator('.uxv5 h1')).toHaveText('Beranda Pendaftaran');
+ await page.locator('#role-nav [data-demo-action="section:m0"]').click();
+ await expect(page.locator('.uxv5-detail')).toContainText('Cek nomor RM dan data identitas');
+ await expect(page.locator('.uxv5 .uxv4-table tbody tr')).toHaveCount(4);
+ await page.locator('#demo-logout').click();
+ await page.locator('[data-demo-account="akun.dokter-igd"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ await page.locator('#role-nav [data-demo-action="section:m3"]').click();
+ await expect(page.locator('.uxv5 h1')).toHaveText('Keputusan disposisi');
+ await page.locator('.uxv5 [data-demo-action="job:3"]').click();
+ await expect(page.locator('.uxv5-detail')).toContainText('Rencana rujukan perlu konfirmasi');
+ await expect(page.locator('.uxv5-detail')).toContainText('RME-02');
+ await expect(page.locator('#role-nav')).not.toContainText('Invoice');
+ expect(errors).toEqual([]);
+});
