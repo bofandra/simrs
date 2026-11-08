@@ -194,6 +194,13 @@ function openModule(code){
  var shell=window.__SIMRS_PREVIEW__;
  if(!shell||!window.SIMRSFormEngine)return;
  if(window.SIMRSRoleDemo&&!window.SIMRSRoleDemo.allowModule(code)){shell.toast("Form tidak tersedia untuk akun demo ini.");return;}
+ if(window.SIMRSRoleDemo&&window.SIMRSRoleDemo.isAuthenticated()&&!window.SIMRSRoleDemo.isReviewer()){
+  if(!window.SIMRSFormEngine.openForRole(code,shell.state.role)){shell.toast("Form belum tersedia untuk akun demo ini.");return;}
+  shell.state.active="forms";
+  location.hash="#/forms/"+code;
+  shell.render();
+  return;
+ }
  shell.state.active="forms";
  shell.render();
  var control=document.querySelector('#p0-catalog-list [data-code="'+code+'"]');
