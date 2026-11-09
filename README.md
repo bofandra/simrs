@@ -86,3 +86,12 @@ Dokumentasi: [V11 mapping worklist ke PRD](design/ROLE_WORKLIST_COVERAGE_V11_202
 Situs utama kini memuat `operational-parity-v12.css` dan `operational-parity-v12.js`: lapisan tampilan role-native untuk 14 persona representatif dari 13 layar galeri, dengan panel konteks pasien/episode atau objek, jumlah pekerjaan, filter status gabungan pencarian, layout worklist → detail → form yang lebih konsisten, dan peningkatan tampilan desktop/mobile. Galeri tetap berfungsi sebagai referensi desain, bukan situs operasional kedua. Tidak menambah izin role atau transaksi riil.
 
 Lihat `design/OPERATIONAL_VISUAL_PARITY_V12_2026-11-09.md`. Unit tests dan browser smoke ditambahkan. Implementasi tidak berarti seluruh 68 form sudah high-fidelity atau telah menjalani UAT RS.
+
+
+## V13 — Form kerja spesifik per profesi (9 November 2026)
+
+V13 melengkapi mockup operasional dengan **22 desain form terkelompok** untuk pendaftaran, rawat jalan, IGD, rawat inap, SOAP, TTV, keperawatan, CPOE, laboratorium, radiologi, resep, farmasi, MCU, dan keuangan. Sesi staf menampilkan bagian isian berdasarkan pekerjaan; status kelengkapan field wajib terisi diperbarui langsung. Katalog reviewer 68 form tetap tersedia tanpa perubahan layout.
+
+Implementasi: `public/ui-preview/role-form-blueprints-v13.js`, `.css`; pengujian: `tests/role-form-blueprints-v13.test.mjs` dan `tests/mockup-smoke.spec.mjs`. Penjelasan lengkap: [V13 form per profesi](design/ROLE_NATIVE_FORMS_V13_2026-11-09.md).
+
+**Batasan:** tidak mengubah kontrak field, role, draft per pasien/encounter, validasi, dan tidak mengaktifkan backend, signing, dispensing, stock mutation, billing, klaim, serta sistem klinis sungguhan. Sisa 46 form belum mendapat layout V13 unik.
