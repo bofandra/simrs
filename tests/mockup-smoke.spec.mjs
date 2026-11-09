@@ -864,8 +864,7 @@ test('V13 operational forms display distinct clinical and administrative workflo
  for(const [account,section,code,field,label] of scenarios){
   await openV13RoleForm(page,account,section,code);
   await expect(page.locator('.v13-form-intro')).toContainText(label);
-  await expect(page.locator('.v13-form-section')).toHaveCount(
-   await page.locator('.v13-form-section').count());
+  expect(await page.locator('#p0-editor .v13-form-section').count()).toBeGreaterThanOrEqual(2);
   await expect(page.locator('#p0-editor [name="'+field+'"]')).toBeVisible();
   await expect(page.locator('#p0-editor .v13-form-section').first()).toBeVisible();
   await expect(page.locator('#p0-editor [data-p0-action="blocked"]')).toBeDisabled();
