@@ -84,5 +84,6 @@ test("form engine allows scoped admin object but rejects object for patient-cont
 test("patient selection fails closed if synthetic patients are absent",()=>{
  const {api}=setup();
  assert.equal(api.selectionContext("DPJP Rawat Inap","m1",0,[]),null);
- assert.equal(api.selectionContext("Radiolog","m0",0,[]).patient,null);
+ assert.equal(api.selectionContext("Radiolog","m0",0,[]),null);
+ assert.equal(api.selectionContext("Gudang","m0",0,[]).patient,null);
 });
