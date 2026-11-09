@@ -101,23 +101,30 @@ function jobRows(role,section){
  var i=p.features.indexOf(feature),stage=spec.stages[i];
  if(!stage)return [];
  var shell=window.__SIMRS_PREVIEW__,patients=shell&&Array.isArray(shell.patients)?shell.patients:[];
- return spec.rows.map(function(row,j){
-  var patient=role==="Bed Manager"?null:patients[j];
-  var patientId=role==="Bed Manager"?null:(patient?patient.id:"p"+(j+1));
-  var title=(patient&&["Pendaftaran","Dokter RJ","Perawat","Dokter IGD"].indexOf(role)>=0)?patient.name:row[1];
+ var rows=(spec.rowsBySection&&spec.rowsBySection[feature.key])||spec.rows;
+ var rowKind=(spec.kindBySection&&spec.kindBySection[feature.key])||spec.kind||(role==="Bed Manager"?"bed":"patient");
+ return rows.map(function(row,j){
+  var patient=rowKind==="patient"?patients[j]:null;
+  var patientId=patient?patient.id:null;
+  var title=(patient&&["Pendaftaran","Dokter RJ","Perawat","Dokter IGD","DPJP Rawat Inap"].indexOf(role)>=0)?patient.name:row[1];
   var scope=patient&&role==="Dokter RJ"?patient.unit+" · "+row[0]:row[2];
   if(patient&&role==="Pendaftaran"){
     scope=j===2?"IGD · walk-in":j===3?"Rawat Inap · rencana admisi":"Rawat Jalan · "+patient.unit;
   }
-  if(patient&&(role==="Farmasis"||role==="Kasir"))scope+=" · "+patient.name;
-  var encounterId=patient?(role==="Dokter IGD"?"ENC-IGD-DEMO-"+String(j+1).padStart(2,"0"):
-    role==="Perawat"?"ENC-RI-DEMO-"+String(j+1).padStart(2,"0"):
+  if(patient&&!["Pendaftaran","Dokter RJ","Perawat","Dokter IGD","DPJP Rawat Inap"].includes(role))scope+=" · "+patient.name;
+  var suffix=String(j+1).padStart(2,"0"),workLabel=row[1]+" "+row[2];
+  var encounterId=patient?(
+    role==="Dokter IGD"?"ENC-IGD-DEMO-"+suffix:
+    ["Perawat","DPJP Rawat Inap","Koordinator OK","Dokter Anestesi"].includes(role)?"ENC-RI-DEMO-"+suffix:
     role==="Pendaftaran"&&j===2?"ENC-IGD-DEMO-03":
-    role==="Pendaftaran"&&j===3?"ENC-RI-DEMO-04":patient.visit):null;
+    role==="Pendaftaran"&&j===3?"ENC-RI-DEMO-04":
+    (role==="Radiolog"||role==="Radiografer")&&/\bIGD\b/.test(workLabel)?"ENC-IGD-DEMO-"+suffix:
+    role==="Casemix"&&/\bRI\b/.test(workLabel)?"ENC-RI-DEMO-"+suffix:
+    patient.visit):null;
   return {
    id:row[0],title:title,scope:scope,patientId:patientId,encounterId:encounterId,
    progress:role==="Bed Manager"?null:localProgress(feature.code,row[0],patientId,encounterId),
-   kind:role==="Bed Manager"?"bed":"patient",
+   kind:rowKind,
    status:(j===0?"Perlu ditinjau":j===1?"Menunggu":j===2?"Dalam proses":"Menunggu"),
    reason:stage[1][j],checks:stage[2],feature:feature,queue:stage[0]
   };
@@ -129,7 +136,7 @@ function selectionContext(role,section,index,patients){
  var rows=jobRows(role,section),position=Number(index);
  if(!Number.isInteger(position)||position<0||position>=rows.length)return null;
  var item=rows[position],workItem={id:item.id,title:item.title,scope:item.scope,kind:item.kind};
- if(item.kind==="bed")return {role:role,kind:"bed",workItem:workItem,patient:null};
+ if(item.kind==="bed"||item.kind==="object")return {role:role,kind:item.kind,workItem:workItem,patient:null};
  var patient=Array.isArray(patients)&&patients.find(function(p){return p.id===item.patientId;});
  if(!patient||!patient.id||!patient.visit)return null;
  var visit=item.encounterId||patient.visit;
@@ -165,11 +172,11 @@ function renderPage(ctx){
   '<aside class="uxv5-detail" aria-label="Detail pekerjaan yang dipilih"><div class="uxv5-detail-header"><span>RINCIAN PEKERJAAN · DEMO</span><strong>'+esc(selected.id)+'</strong><h3>'+esc(selected.title)+'</h3><p>'+esc(selected.scope)+'</p></div>'+
   '<dl><div><dt>Status</dt><dd>'+esc(selected.status)+'</dd></div><div><dt>Perlu diperiksa</dt><dd>'+esc(selected.reason)+'</dd></div>'+
   (selectedContext&&selectedContext.patient?'<div><dt>Konteks pasien</dt><dd>'+esc(selectedContext.patient.mrn)+' · '+esc(selectedContext.patient.visit)+'</dd></div>':'')+
-  '<div><dt>Form / modul</dt><dd>'+esc(active.code)+' · '+esc(active.fr)+'</dd></div>'+  '<div><dt>Dokumentasi lokal</dt><dd>'+(selected.progress?esc(selected.progress.label+' · '+selected.progress.id):'Belum ada draft untuk pekerjaan ini')+'</dd></div></dl>'+
+  '<div><dt>Form / modul</dt><dd>'+esc(active.code)+' · '+esc(active.fr)+'</dd></div>'+  '<div><dt>Akses form</dt><dd>'+(canOpen?'Draft simulasi tersedia':'Belum diotorisasi bagi role ini')+'</dd></div>'+  '<div><dt>Dokumentasi lokal</dt><dd>'+(selected.progress?esc(selected.progress.label+' · '+selected.progress.id):'Belum ada draft untuk pekerjaan ini')+'</dd></div></dl>'+
   '<h4>Checklist sebelum melanjutkan</h4><ul>'+checks+'</ul><div class="uxv5-detail-actions">'+moduleAction+'</div>'+
   '<p class="uxv5-context-note">'+(selectedContext&&selectedContext.patient?
    'Konteks pasien dan encounter sintetis dari pekerjaan '+esc(selected.id)+' akan diteruskan ke form. Verifikasi sebelum menyimpan draft.':
-   selected.kind==="bed"?'Objek kerja adalah tempat tidur, bukan pasien. Tidak ada pasien yang ditautkan otomatis.':
+   selected.kind==="bed"?'Objek kerja adalah tempat tidur, bukan pasien. Tidak ada pasien yang ditautkan otomatis.':   selected.kind==="object"?'Objek kerja nonpasien. Tidak ada pasien atau encounter yang ditautkan otomatis.':
    'Konteks belum tersedia. Pastikan pasien demo dan encounter valid sebelum menyimpan draft.')+'</p></aside></div>'+trace+'</section>'+
   '<p class="uxv4-safety"><strong>Data latihan saja:</strong> seluruh identitas, antrean, status dan angka adalah contoh. Tidak ada keputusan klinis, pengeluaran obat, pemindahan bed, pembayaran, posting atau pengiriman data sungguhan.</p></div>';
 }

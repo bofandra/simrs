@@ -643,3 +643,65 @@ test('V8 design gallery exposes 13 screens, context, search and simulated draft'
   expect(overflow).toBe(false);
   expect(errors).toEqual([]);
 });
+
+test('V10 ATLM worklist opens correct specimen and patient-context demo form',async ({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('/index.html');
+ await page.locator('[data-demo-account="akun.atlm"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ await expect(page.locator('#main-content h1')).toHaveText('Beranda ATLM');
+ await page.locator('#role-nav [data-demo-action="section:m1"]').click();
+ await expect(page.locator('.uxv5')).toBeVisible();
+ await page.locator('.uxv5 [data-demo-action="job:1"]').click();
+ await expect(page.locator('.uxv5-detail')).toContainText('LAB-002');
+ await page.locator('.uxv5-detail [data-demo-action="module:MED-01"]').click();
+ await expect(page.locator('#p0-editor')).toHaveAttribute('data-work-item','LAB-002');
+ await expect(page.locator('.p0-patient-banner')).toContainText('Bima Rahman');
+ expect(errors).toEqual([]);
+});
+
+test('V10 radiologist opens permitted report form with synthetic study and patient context',async ({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('/index.html');
+ await page.locator('[data-demo-account="akun.radiolog"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ await page.locator('#role-nav [data-demo-action="section:m2"]').click();
+ await expect(page.locator('.uxv5-detail')).toContainText('Konteks pasien');
+ await expect(page.locator('.uxv5-detail')).toContainText('Draft simulasi tersedia');
+ await page.locator('.uxv5-detail [data-demo-action="module:MED-02"]').click();
+ await expect(page.locator('#p0-editor')).toHaveAttribute('data-work-item','RAD-REP-001');
+ await expect(page.locator('.p0-patient-banner')).toContainText('Sari Amelia');
+ await expect(page.locator('.p0-patient-banner')).toContainText('ENC-IGD-DEMO-01');
+ expect(errors).toEqual([]);
+});
+
+test('V10 admin distinguishes access request objects and patient-specific consent',async ({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('/index.html');
+ await page.locator('[data-demo-account="akun.admin-sistem"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ await page.locator('#role-nav [data-demo-action="section:m0"]').click();
+ await expect(page.locator('.uxv5-detail')).toContainText('Objek kerja nonpasien');
+ await page.locator('.uxv5-detail [data-demo-action="module:CORE-02"]').click();
+ await expect(page.locator('#p0-editor')).toHaveAttribute('data-work-item','ADM-001');
+ await expect(page.locator('.p0-patient-banner')).toContainText('Data administrasi / master');
+ await page.locator('#role-nav [data-demo-action="section:m5"]').click();
+ await expect(page.locator('.uxv5-detail')).toContainText('Konteks pasien');
+ await page.locator('.uxv5-detail [data-demo-action="module:CORE-12"]').click();
+ await expect(page.locator('.p0-patient-banner')).toContainText('ENC-DEMO-247');
+ expect(errors).toEqual([]);
+});
+
+test('V10 MCU links authorized checkup form to a synthetic participant encounter',async ({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('/index.html');
+ await page.locator('[data-demo-account="akun.petugas-mcu"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ await expect(page.locator('#main-content h1')).toHaveText('Beranda Petugas MCU');
+ await page.locator('#role-nav [data-demo-action="section:m0"]').click();
+ await expect(page.locator('.uxv5-detail')).toContainText('Konteks pasien');
+ await page.locator('.uxv5-detail [data-demo-action="module:MED-10"]').click();
+ await expect(page.locator('#p0-editor')).toHaveAttribute('data-work-item','MCU-001');
+ await expect(page.locator('.p0-patient-banner')).toContainText('Sari Amelia');
+ expect(errors).toEqual([]);
+});

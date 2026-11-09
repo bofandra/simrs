@@ -14,7 +14,7 @@ var reviewer={username:"reviewer.demo",role:"Reviewer UI/QA",label:"Reviewer UI/
  */
 var areaByRole={
  "Pendaftaran":"front","Dokter RJ":"clinical","Perawat":"clinical",
- "ATLM":"lab","Petugas MCU":"lab"
+ /* ATLM dan MCU memakai worklist role-native V10. */
 };
 var descriptions={
  "Pendaftaran":"Pencarian pasien, identitas, registrasi, janji temu, dan antrean",
