@@ -433,7 +433,7 @@
     }
     if (action==="choose"){state.code=b.getAttribute("data-code");state.recordId=null;state.search="";state.prefill=null;state.linkSource=null;var selected=catalog.find(function(m){return m.code===state.code;});if(selected && state.priority!=='all')state.priority=selected.priority;update();return;}
     if (action==="open"){state.recordId=b.getAttribute("data-record");state.prefill=null;state.linkSource=null;update();return;}
-    if (action==="new"){state.recordId=null;state.prefill=null;state.linkSource=null;update();return;}
+    if (action==="new"){state.recordId=null;state.prefill=prefillFromWorkItem(currentModule(),activeWorkItem);state.linkSource=null;update();return;}
     if (action==="save"){saveDraft();return;}
     if (action==="review"){review();return;}
     if (action==="link"){
@@ -524,7 +524,7 @@
     if(!module||!Array.isArray(module.roles)||!module.roles.includes(role)||!module.fields||!module.fields.length)return false;
     var shell=window.__SIMRS_PREVIEW__;
     var selectionValid=!!(selected&&selected.role===role&&selected.workItem&&selected.workItem.id&&
-      (selected.kind==="bed"||(selected.kind==="patient"&&selected.patient&&shell&&Array.isArray(shell.patients)&&
+      (selected.kind==="bed"||(selected.kind==="patient"&&selected.patient&&selected.patient.visit&&selected.patient.mrn&&shell&&Array.isArray(shell.patients)&&
        shell.patients.some(function(p){return p.id===selected.patient.id;}))));
     if(selected&&!selectionValid)return false;
     if(selected&&module.patient_context&&!selected.patient)return false;
@@ -533,7 +533,14 @@
       patient:selected.patient?Object.assign({},selected.patient):null,
       workItem:Object.assign({},selected.workItem)
     }:null;
-    state.code=code;state.recordId=null;state.priority="all";state.search="";
+    /* Resume only the exact same synthetic work item, patient and encounter.
+     * A draft for another patient, episode, or task is never reopened. */
+    var matches=selectionValid&&Array.isArray(demo.records[code])?demo.records[code].filter(function(r){
+      return r&&r.work_item_id===selected.workItem.id&&
+        (!module.patient_context||(selected.patient&&r.patient_id===selected.patient.id&&r.encounter_id===selected.patient.visit))&&
+        (r.status==="Draft"||r.status==="Reviewed (Demo)");
+    }).sort(function(a,b){return String(b.updated_at||"").localeCompare(String(a.updated_at||""));}):[];
+    state.code=code;state.recordId=matches.length?matches[0].id:null;state.priority="all";state.search="";
     state.prefill=prefillFromWorkItem(module,activeWorkItem);state.linkSource=null;
     return true;
   }

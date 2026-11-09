@@ -46,3 +46,13 @@ Lalu buka http://localhost:8000/ . Untuk tes Node: `node --test tests/*.test.mjs
 > **Penting:** Ini hanya prototipe statis untuk menguji alur dan UI, bukan SIMRS yang siap dipakai di rumah sakit.
 
 **Role worklists v5 (9 November 2026):** tujuh peran prioritas (Pendaftaran, Dokter RJ, Perawat, Dokter IGD, Farmasis, Kasir, Bed Manager) mempunyai daftar kerja kontekstual, detail item, checklist, dan pencarian. Semua konteks kerja tetap sintetis; memilih item belum memprefill form klinis/keuangan. Berkas `public/ui-preview/role-worklist-detail-v5.js` dan `.css`, serta pengujian `tests/role-worklist-detail-v5.test.mjs`.
+
+## V9 — Kontinuitas daftar kerja dan draft (9 November 2026)
+
+- Pada 7 role prioritas, daftar kerja menampilkan indikator **Draft tersimpan** atau **Ditinjau (demo)** berdasarkan catatan `localStorage` untuk pekerjaan yang persis sama. Ini adalah status dokumentasi lokal, bukan perubahan status pelayanan atau penerbitan hasil.
+- Tombol tindakan mengikuti status: **Buka form**, **Lanjutkan draft**, atau **Lihat catatan**. Pembukaan kembali draft mensyaratkan kecocokan `work_item_id`, dan untuk modul berkonteks pasien juga `patient_id + encounter_id`.
+- Dari beranda role, tombol form pertama kini membawa konteks pekerjaan yang dipilih, sama seperti ketika masuk dari submenu. Jika konteks pekerjaan tidak valid, pembukaan form melalui worklist ditolak.
+- **Form baru** tetap dapat dipilih dari riwayat untuk memulai catatan berbeda; prefill terbatas pada data administrasi sintetis, tidak mengisi keputusan klinis.
+- Batas: belum ada API/backend, antrian realtime, persetujuan klinis, posting, dispensing, pembayaran, atau uji pengguna RS. Bed Manager / OPS-10 tetap dibatasi mengikuti matriks izin saat ini.
+
+Lihat: `design/ROLE_DRAFT_CONTINUITY_V9_2026-11-09.md`.

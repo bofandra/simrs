@@ -73,6 +73,27 @@ var specs={
  }
 };
 function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+/* Draft/review state is read-only from this browser's synthetic form storage.
+ * It never changes operational queue states or implies a real clinical action. */
+function localProgress(module,workItem,patientId,encounterId){
+ if(typeof localStorage==="undefined")return null;
+ try{
+  var payload=JSON.parse(localStorage.getItem("simrs-demo-p0-forms-v1")||"{}");
+  var records=payload&&payload.records&&payload.records[module];
+  if(!Array.isArray(records))return null;
+  var catalog=window.SIMRS_FORM_CATALOG||[];
+  var definition=Array.isArray(catalog)&&catalog.find(function(m){return m.code===module;});
+  var patientScoped=!definition||!!definition.patient_context;
+  if(patientScoped&&(!patientId||!encounterId))return null;
+  var relevant=records.filter(function(r){
+   return r&&r.work_item_id===workItem&&
+    (!patientScoped||(r.patient_id===patientId&&r.encounter_id===encounterId))&&
+    (r.status==="Draft"||r.status==="Reviewed (Demo)");
+  }).sort(function(a,b){return String(b.updated_at||"").localeCompare(String(a.updated_at||""));});
+  var match=relevant[0];
+  return match?{id:String(match.id),status:match.status,label:match.status==="Draft"?"Draft tersimpan":"Ditinjau (demo)"}:null;
+ }catch(_error){return null;}
+}
 function jobRows(role,section){
  var spec=specs[role],p=v4.getProfile(role);
  if(!spec||!p)return [];
@@ -95,6 +116,7 @@ function jobRows(role,section){
     role==="Pendaftaran"&&j===3?"ENC-RI-DEMO-04":patient.visit):null;
   return {
    id:row[0],title:title,scope:scope,patientId:patientId,encounterId:encounterId,
+   progress:role==="Bed Manager"?null:localProgress(feature.code,row[0],patientId,encounterId),
    kind:role==="Bed Manager"?"bed":"patient",
    status:(j===0?"Perlu ditinjau":j===1?"Menunggu":j===2?"Dalam proses":"Menunggu"),
    reason:stage[1][j],checks:stage[2],feature:feature,queue:stage[0]
@@ -121,26 +143,29 @@ function renderPage(ctx){
  var jobs=jobRows(ctx.role,ctx.section),index=Number(ctx.selectedJob);
  if(!Number.isInteger(index)||index<0||index>=jobs.length)index=0;
  var selected=jobs[index],canOpen=!!(ctx.canOpen&&ctx.canOpen(active.code));
+ var draftCount=jobs.filter(function(j){return j.progress&&j.progress.status==="Draft";}).length;
+ var reviewedCount=jobs.filter(function(j){return j.progress&&j.progress.status==="Reviewed (Demo)";}).length;
  var shell=window.__SIMRS_PREVIEW__;
  var selectedContext=selectionContext(ctx.role,ctx.section,index,shell&&shell.patients);
+ var actionLabel=selected.progress?(selected.progress.status==="Draft"?"Lanjutkan draft":"Lihat catatan"):"Buka "+active.label;
  var moduleAction=canOpen?
-   '<button type="button" class="btn btn-primary" data-demo-action="module:'+esc(active.code)+'">Buka '+esc(active.label)+'</button>':
+   '<button type="button" class="btn btn-primary" data-demo-action="module:'+esc(active.code)+'">'+esc(actionLabel)+'</button>':
    '<span class="uxv4-disabled" role="note">Form belum tersedia untuk akun demo ini</span>';
  var cards=isHome?'<section class="uxv4-panel"><div class="uxv4-panel-head"><div><h2>Area kerja saya</h2><p>Pilih pekerjaan sesuai kewenangan; tidak ada katalog modul global.</p></div></div><div class="uxv4-features">'+
   p.features.map(function(f){return '<button type="button" class="uxv4-feature" data-demo-action="section:'+esc(f.key)+'"><span class="uxv4-feature-code">'+esc(f.code)+'</span><strong>'+esc(f.label)+'</strong><small>'+esc(f.task)+'</small><span class="uxv4-feature-arrow">Lihat daftar kerja →</span></button>';}).join("")+'</div></section>':"";
- var rows=jobs.map(function(j,i){return '<tr class="'+(i===index?'uxv5-selected':'')+'" data-uxv5-row="'+i+'"><td class="uxv4-job-id">'+esc(j.id)+'</td><td><strong>'+esc(j.title)+'</strong><small>'+esc(j.scope)+'</small></td><td>'+esc(j.reason)+'</td><td><span class="uxv4-status '+(j.status==="Perlu ditinjau"?'uxv4-pending':'')+'">'+esc(j.status)+'</span></td><td><button class="btn btn-sm" type="button" data-demo-action="job:'+i+'" aria-pressed="'+(i===index?'true':'false')+'" aria-label="Lihat detail '+esc(j.id)+'">Lihat detail</button></td></tr>';}).join("");
+ var rows=jobs.map(function(j,i){return '<tr class="'+(i===index?'uxv5-selected':'')+'" data-uxv5-row="'+i+'"><td class="uxv4-job-id">'+esc(j.id)+'</td><td><strong>'+esc(j.title)+'</strong><small>'+esc(j.scope)+'</small></td><td>'+esc(j.reason)+'</td><td><span class="uxv4-status '+(j.status==="Perlu ditinjau"?'uxv4-pending':'')+'">'+esc(j.status)+'</span>'+(j.progress?'<span class="uxv5-progress '+(j.progress.status==="Draft"?'uxv5-progress-draft':'uxv5-progress-reviewed')+'">'+esc(j.progress.label)+'</span>':'')+'</td><td><button class="btn btn-sm" type="button" data-demo-action="job:'+i+'" aria-pressed="'+(i===index?'true':'false')+'" aria-label="Lihat detail '+esc(j.id)+'">Lihat detail</button></td></tr>';}).join("");
  var checks=selected.checks.map(function(line){return '<li>'+esc(line)+'</li>';}).join("");
  var trace='<div class="uxv4-trace">Acuan: <strong>PRD final 6 Nov 2026</strong> · '+esc(active.code)+' · '+esc(active.fr)+' · '+esc(active.wf)+
    ' · '+esc(v4.workflowNames[active.wf]||"Workflow terkait")+'</div>';
  return '<div class="uxv4 uxv5" data-uxv4-role="'+esc(ctx.role)+'" data-uxv4-section="'+esc(ctx.section||"home")+'">'+
   '<header class="uxv4-head"><div><span class="eyebrow">'+esc(p.unit)+' · AKUN DEMO</span><h1>'+esc(isHome?"Beranda "+ctx.role:feature.label)+'</h1><p>'+esc(isHome?p.focus:feature.task)+'</p></div><div class="uxv4-identity"><span>PENGGUNA</span><strong>'+esc(ctx.username)+'</strong><small>Hak akses mockup berdasarkan role</small></div></header>'+
-  '<section class="uxv5-summary" aria-label="Ringkasan pekerjaan"><div><span>Daftar kerja</span><strong>'+esc(selected.queue)+'</strong><small>'+esc(p.unit)+'</small></div><div><span>Perlu ditinjau</span><strong>01</strong><small>Data sintetis</small></div><div><span>Alur PRD</span><strong>'+esc(active.wf)+'</strong><small>'+esc(active.fr)+'</small></div></section>'+
+  '<section class="uxv5-summary" aria-label="Ringkasan pekerjaan"><div><span>Daftar kerja</span><strong>'+esc(selected.queue)+'</strong><small>'+esc(p.unit)+'</small></div><div><span>Draft tersimpan</span><strong>'+String(draftCount)+'</strong><small>Hanya browser ini</small></div><div><span>Ditinjau (demo)</span><strong>'+String(reviewedCount)+'</strong><small>'+esc(active.wf)+' · '+esc(active.fr)+'</small></div></section>'+
   cards+'<section class="uxv4-panel"><div class="uxv4-panel-head"><div><h2>'+esc(isHome?"Pekerjaan prioritas":active.label)+'</h2><p>Pilih baris untuk melihat konteks dan pemeriksaan sebelum membuka formulir.</p></div><label class="uxv5-search-label">Cari pekerjaan<input id="uxv5-search" type="search" autocomplete="off" placeholder="Cari nomor, pasien atau status" aria-label="Cari daftar pekerjaan"/></label></div>'+
   '<div class="uxv5-layout"><div class="uxv4-table-scroller"><table class="uxv4-table"><thead><tr><th>Nomor</th><th>Pasien / objek kerja</th><th>Perhatian</th><th>Status demo</th><th>Detail</th></tr></thead><tbody>'+rows+'</tbody></table><p id="uxv5-empty" class="uxv5-empty" hidden>Tidak ada pekerjaan yang cocok dengan pencarian.</p></div>'+
   '<aside class="uxv5-detail" aria-label="Detail pekerjaan yang dipilih"><div class="uxv5-detail-header"><span>RINCIAN PEKERJAAN · DEMO</span><strong>'+esc(selected.id)+'</strong><h3>'+esc(selected.title)+'</h3><p>'+esc(selected.scope)+'</p></div>'+
   '<dl><div><dt>Status</dt><dd>'+esc(selected.status)+'</dd></div><div><dt>Perlu diperiksa</dt><dd>'+esc(selected.reason)+'</dd></div>'+
   (selectedContext&&selectedContext.patient?'<div><dt>Konteks pasien</dt><dd>'+esc(selectedContext.patient.mrn)+' · '+esc(selectedContext.patient.visit)+'</dd></div>':'')+
-  '<div><dt>Form / modul</dt><dd>'+esc(active.code)+' · '+esc(active.fr)+'</dd></div></dl>'+
+  '<div><dt>Form / modul</dt><dd>'+esc(active.code)+' · '+esc(active.fr)+'</dd></div>'+  '<div><dt>Dokumentasi lokal</dt><dd>'+(selected.progress?esc(selected.progress.label+' · '+selected.progress.id):'Belum ada draft untuk pekerjaan ini')+'</dd></div></dl>'+
   '<h4>Checklist sebelum melanjutkan</h4><ul>'+checks+'</ul><div class="uxv5-detail-actions">'+moduleAction+'</div>'+
   '<p class="uxv5-context-note">'+(selectedContext&&selectedContext.patient?
    'Konteks pasien dan encounter sintetis dari pekerjaan '+esc(selected.id)+' akan diteruskan ke form. Verifikasi sebelum menyimpan draft.':
@@ -159,5 +184,5 @@ document.addEventListener("input",function(event){
  });
  if(empty)empty.hidden=count!==0;
 });
-window.SIMRSRoleUXV5={specs:specs,jobRows:jobRows,selectionContext:selectionContext,renderPage:renderPage};
+window.SIMRSRoleUXV5={specs:specs,jobRows:jobRows,selectionContext:selectionContext,localProgress:localProgress,renderPage:renderPage};
 })();

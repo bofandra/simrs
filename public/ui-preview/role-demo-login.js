@@ -62,7 +62,9 @@ function getCurrentSection(){return currentSection;}
 function selectionForModule(code){
  var shell=window.__SIMRS_PREVIEW__;
  if(!current||current.reviewer||!shell||shell.state.active!=="rolehome"||!window.SIMRSRoleUXV5||!window.SIMRSRoleUXV4)return null;
+ var profile=window.SIMRSRoleUXV4.getProfile(current.role);
  var feature=window.SIMRSRoleUXV4.getFeature(current.role,currentSection);
+ if(!feature&&currentSection==="home"&&profile)feature=profile.features[0];
  if(!feature||feature.code!==code)return null;
  return window.SIMRSRoleUXV5.selectionContext(current.role,currentSection,currentJob,shell.patients);
 }
@@ -326,7 +328,11 @@ function handleDemoCommand(command){
   if(!allowModule(code)){shell.toast("Form ini tidak tersedia untuk akun demo Anda.");return;}
   closeMobileNav();
   if(!isReviewer()){
-   if(!window.SIMRSFormEngine||!window.SIMRSFormEngine.openForRole(code,current.role,selectionForModule(code))){
+   var selectedJobContext=selectionForModule(code);
+   if(shell.state.active==="rolehome"&&window.SIMRSRoleUXV5&&window.SIMRSRoleUXV5.specs[current.role]&&!selectedJobContext){
+    shell.toast("Pilih pekerjaan dan pastikan konteks pasien / kunjungan valid.");return;
+   }
+   if(!window.SIMRSFormEngine||!window.SIMRSFormEngine.openForRole(code,current.role,selectedJobContext)){
     shell.toast("Form belum tersedia untuk pekerjaan Anda.");return;
    }
    var profile=window.SIMRSRoleUXV4&&window.SIMRSRoleUXV4.getProfile(current.role);
