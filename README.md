@@ -56,3 +56,15 @@ Lalu buka http://localhost:8000/ . Untuk tes Node: `node --test tests/*.test.mjs
 - Batas: belum ada API/backend, antrian realtime, persetujuan klinis, posting, dispensing, pembayaran, atau uji pengguna RS. Bed Manager / OPS-10 tetap dibatasi mengikuti matriks izin saat ini.
 
 Lihat: `design/ROLE_DRAFT_CONTINUITY_V9_2026-11-09.md`.
+
+## V10 — 12 role specialist & operasional (9 November 2026)
+
+Sebanyak **19 dari 44 role** memiliki worklist rinci: 7 role V5/V9 ditambah DPJP Rawat Inap, ATLM, Petugas MCU, Radiografer, Radiolog, Casemix, Koordinator OK, Dokter Anestesi, Tim Mutu, Admin Sistem, Integrasi, dan Gudang. Setiap area berisi empat tugas sintetis, pencarian, detail pekerjaan, checklist, dan traceability PRD.
+
+- ATLM dan MCU kini membuka beranda kerja role-native langsung setelah login.
+- Form hanya terbuka bila izin role–modul sudah ada dalam katalog. Radiologi, Casemix, dan beberapa area pendukung masih read-only karena mapping izin belum lengkap.
+- DPJP Rawat Inap menggunakan encounter RI sintetis; kerja nonpasien (misalnya Radiologi/Administrasi) tidak otomatis mengikat ID pasien/encounter.
+- Consent pasien pada Admin Sistem secara khusus menggunakan konteks pasien, berbeda dari manajemen akun dan unit.
+- Seluruh tindakan bersifat simulasi lokal tanpa backend, release hasil, dispensing, klaim, mutasi stok, DICOM atau integrasi eksternal.
+
+Dokumentasi: `design/ROLE_WORKLIST_COVERAGE_V10_2026-11-09.md`. Sisa 25 role masih menggunakan worklist V4 generik.
