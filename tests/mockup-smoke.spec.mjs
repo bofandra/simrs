@@ -891,3 +891,31 @@ test('V13 mobile form is one column and reviewer keeps the original 68-module ca
  await expect(page.locator('.v13-form-intro')).toHaveCount(0);
  expect(errors).toEqual([]);
 });
+
+
+test('V14 radiographer screenshot: action is visible above detail metadata and opens V13 study form', async ({page})=>{
+ const errors=[];page.on('pageerror',error=>errors.push(error.message));
+ await page.setViewportSize({width:1654,height:928});
+ await page.goto('/index.html');
+ await page.locator('[data-demo-account="akun.radiografer"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ await page.locator('#role-nav [data-demo-action="section:m2"]').click();
+ const detail=page.locator('.uxv5.v12-parity .uxv5-detail');
+ await expect(detail).toContainText('Rontgen thoraks');
+ const cta=detail.locator('.uxv14-primary-action [data-demo-action="module:MED-02"]');
+ await expect(cta).toBeVisible();
+ await expect(cta).toContainText('Buka form');
+ const order=await detail.evaluate(el=>{
+  const c=el.querySelector('.uxv14-primary-action');
+  const d=el.querySelector('dl');
+  return {cta:(c&&c.getBoundingClientRect().top),meta:(d&&d.getBoundingClientRect().top),bottom:c&&c.getBoundingClientRect().bottom};
+ });
+ expect(order.cta).toBeLessThan(order.meta);
+ expect(order.bottom).toBeLessThan(928);
+ await cta.click();
+ await expect(page.locator('.p0-operational[data-module="MED-02"]')).toBeVisible();
+ await expect(page.locator('#p0-editor')).toHaveAttribute('data-work-item','RAD-EX-001');
+ await expect(page.locator('.v13-form-intro')).toContainText('Pelaksanaan radiologi');
+ await expect(page.locator('.p0-patient-banner')).toContainText('Sari Amelia');
+ expect(errors).toEqual([]);
+});
