@@ -44,7 +44,8 @@
   }
   function matches(job,filter,query) {
     var statusOK = filter === "Semua" || job.status === filter;
-    var haystack = [job.id,job.title,job.scope,job.reason,job.status]
+    var haystack = [job.id,job.title,job.scope,job.reason,job.status,
+      job.progress && job.progress.label]
       .join(" ").toLocaleLowerCase("id-ID");
     return statusOK && haystack.includes(String(query||"").trim().toLocaleLowerCase("id-ID"));
   }
