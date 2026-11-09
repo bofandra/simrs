@@ -1,0 +1,160 @@
+/* SIMRS V13 high-fidelity form layout. Never changes field semantics or transactions. */
+body.demo-authenticated:not(.demo-reviewer) .p0-operational .p0-editor:has(.v13-form-intro){
+  background:#fff;
+  border-radius:16px;
+  overflow:hidden;
+  max-width:100%;
+}
+body.demo-authenticated:not(.demo-reviewer) .p0-operational .p0-editor:has(.v13-form-intro) .card-h{
+  background:#fff;
+  border-bottom:1px solid #e6edf4;
+}
+body.demo-authenticated:not(.demo-reviewer) .v13-form-intro{
+  background:linear-gradient(115deg,#f1f8fc,#fff 70%);
+  border:1px solid #dce9f1;
+  border-radius:13px;
+  padding:20px 23px 17px;
+  margin-bottom:20px;
+}
+.v13-intro-top{display:flex;justify-content:space-between;gap:26px;align-items:flex-start}
+.v13-overline{
+  color:#087f7b;
+  font-size:10px;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  font-weight:850;
+}
+.v13-intro-top h3{font-size:22px;line-height:1.25;letter-spacing:-.4px;color:#183956;margin:6px 0 5px}
+.v13-intro-top p{font-size:12px;color:#658096;line-height:1.65;max-width:670px;margin:0}
+.v13-completion{
+  min-width:183px;
+  flex:0 0 auto;
+  padding:12px 15px;
+  background:#fff;
+  border:1px solid #dce9f1;
+  border-radius:10px;
+  display:grid;
+  gap:6px;
+}
+.v13-completion small{font-size:10px;color:#667e96}
+.v13-completion strong{font-size:14px;line-height:1.35;font-variant-numeric:tabular-nums;color:#1c5366}
+.v13-completion progress{
+  width:100%;height:8px;accent-color:#098d84;
+  overflow:hidden;border-radius:8px;
+}
+.v13-flow{display:flex;flex-wrap:wrap;gap:7px;margin-top:18px;align-items:center}
+.v13-flow span{
+  display:flex;align-items:center;gap:7px;background:#fff;
+  padding:8px 12px 8px 8px;
+  border:1px solid #dce7ef;border-radius:999px;
+  color:#4d6b82;font-size:11px;font-weight:720;
+}
+.v13-flow b{
+  display:grid;place-items:center;
+  width:23px;height:23px;flex:none;
+  border-radius:50%;background:#e4f4f2;color:#087a76;
+  font-size:11px;
+}
+.v13-note{
+  border-left:3px solid #8dbec4;
+  background:#ecf6f8;
+  border-radius:0 8px 8px 0;
+  padding:10px 12px;
+  line-height:1.6;font-size:11px;
+  color:#416b7a;margin:16px 0 0;
+}
+body.demo-authenticated:not(.demo-reviewer) .p0-operational .p0-fields.v13-form-fields{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  gap:16px;
+  align-items:stretch;
+}
+.v13-form-section{
+  padding:0;
+  border:1px solid #dee8f2;
+  border-radius:13px;
+  min-width:0;
+  overflow:hidden;
+  background:#fff;
+}
+.v13-section-head{
+  display:flex;align-items:flex-start;gap:13px;
+  background:#f9fbfe;border-bottom:1px solid #e9eff6;
+  padding:16px 20px;
+}
+.v13-section-index{
+  display:grid;place-items:center;flex:none;
+  width:31px;height:31px;border-radius:9px;
+  background:#e7f5f3;color:#087e79;
+  font-size:12px;font-weight:800;
+}
+.v13-section-head h3{font-size:15px;letter-spacing:-.2px;color:#193b59;margin:0 0 4px}
+.v13-section-head p{font-size:11px;line-height:1.55;color:#6b8196;margin:0}
+body.demo-authenticated:not(.demo-reviewer) .p0-operational .p0-fields .v13-field-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  column-gap:20px;row-gap:16px;
+  padding:20px;
+  min-width:0;
+}
+.v13-field-grid .field{min-width:0}
+.v13-field-grid .field:has(textarea){grid-column:1/-1}
+.v13-field-grid .field textarea.forminput{
+  min-height:124px;line-height:1.6;resize:vertical;
+}
+.v13-field-grid .field label{display:block;line-height:1.5;margin-bottom:3px}
+.v13-field-grid .hint{display:block;line-height:1.5;margin-top:4px}
+.v13-field-grid .forminput{width:100%;box-sizing:border-box}
+.p0-fields.v13-form-fields[data-v13-module="RME-04"] .v13-form-section[data-v13-type] .v13-field-grid{
+  grid-template-columns:minmax(0,1fr);
+}
+.p0-fields.v13-form-fields[data-v13-module="RME-04"] .v13-form-section[data-v13-type="subjective"] .v13-section-index,
+.p0-fields.v13-form-fields[data-v13-module="RME-04"] .v13-form-section[data-v13-type="objective"] .v13-section-index,
+.p0-fields.v13-form-fields[data-v13-module="RME-04"] .v13-form-section[data-v13-type="assessment"] .v13-section-index,
+.p0-fields.v13-form-fields[data-v13-module="RME-04"] .v13-form-section[data-v13-type="plan"] .v13-section-index{
+  font-size:0;
+}
+.p0-fields.v13-form-fields[data-v13-module="RME-04"] .v13-form-section[data-v13-type="subjective"] .v13-section-index::after{content:"S";font-size:15px}
+.p0-fields.v13-form-fields[data-v13-module="RME-04"] .v13-form-section[data-v13-type="objective"] .v13-section-index::after{content:"O";font-size:15px}
+.p0-fields.v13-form-fields[data-v13-module="RME-04"] .v13-form-section[data-v13-type="assessment"] .v13-section-index::after{content:"A";font-size:15px}
+.p0-fields.v13-form-fields[data-v13-module="RME-04"] .v13-form-section[data-v13-type="plan"] .v13-section-index::after{content:"P";font-size:15px}
+.p0-fields.v13-form-fields[data-v13-module="RME-02"] .v13-form-section:first-child .v13-section-head{
+  background:#f9fafc;
+  border-left:4px solid #d89d49;
+}
+.p0-fields.v13-form-fields[data-v13-module="MED-05"] .v13-form-section:nth-child(2) .v13-section-head{
+  background:#f1f9f8;
+}
+body.demo-authenticated:not(.demo-reviewer) .p0-operational .p0-editor:has(.v13-form-intro) .p0-form-actions{
+  background:#f8fbfe;
+  border-top:1px solid #e1eaf3;
+  padding:18px 0 2px;
+}
+body.demo-authenticated:not(.demo-reviewer) .p0-operational .p0-editor:has(.v13-form-intro) .p0-safety-note{
+  line-height:1.7;
+  padding:13px 20px;
+}
+@media(max-width:850px){
+  .v13-intro-top{flex-wrap:wrap}
+  .v13-completion{width:100%;min-width:0}
+  .v13-flow{gap:7px}
+  .v13-flow span{flex:1 1 135px;border-radius:9px}
+}
+@media(max-width:560px){
+  body.demo-authenticated:not(.demo-reviewer) .v13-form-intro{padding:16px;margin-bottom:14px}
+  .v13-intro-top{gap:14px}
+  .v13-intro-top h3{font-size:19px}
+  .v13-section-head{padding:13px 14px;gap:10px}
+  .v13-section-head h3{font-size:14px}
+  body.demo-authenticated:not(.demo-reviewer) .p0-operational .p0-fields .v13-field-grid{
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:15px;padding:15px;
+  }
+  .v13-field-grid .field:has(textarea){grid-column:1}
+  .v13-completion{padding:12px}
+}
+@media print{
+  .v13-flow{display:none}
+  .v13-form-section{break-inside:avoid}
+  .v13-intro-top h3{color:#000}
+}
