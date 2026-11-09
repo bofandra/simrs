@@ -824,6 +824,8 @@ const openV13RoleForm=async (page,account,section,code)=>{
  }
  await page.locator('[data-demo-account="'+account+'"]').click();
  await page.locator('#demo-login-form button[type="submit"]').click();
+ const mobileToggle=page.locator('#demo-mobile-nav-toggle');
+ if(await mobileToggle.isVisible())await mobileToggle.click();
  await page.locator('#role-nav [data-demo-action="section:'+section+'"]').click();
  await page.locator('.uxv5-detail [data-demo-action="module:'+code+'"]').click();
  await expect(page.locator('.p0-operational[data-module="'+code+'"]')).toBeVisible();
@@ -857,7 +859,7 @@ test('V13 operational forms display distinct clinical and administrative workflo
   ['akun.dokter-igd','m0','RME-02','acuity','Triase dan asesmen IGD'],
   ['akun.atlm','m1','MED-01','accession','Penerimaan spesimen'],
   ['akun.farmasis','m2','MED-05','lot_number','Telaah dan penyiapan obat'],
-  ['akun.kasir','m1','FIN-03','invoice_ref','Pencatatan pembayaran'],
+  ['akun.kasir','m1','FIN-03','payment_method','Pencatatan pembayaran'],
   ['akun.radiografer','m1','MED-02','exam_code','Pelaksanaan radiologi'],
   ['akun.petugas-mcu','m1','MED-10','package_code','Medical Check Up']
  ];
