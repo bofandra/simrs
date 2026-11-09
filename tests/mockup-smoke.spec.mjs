@@ -814,3 +814,79 @@ test('V12 mobile worklist stays within viewport and opens only authorized contex
  await expect(page.locator('.p0-patient-banner')).toContainText('ENC-DEMO');
  expect(errors).toEqual([]);
 });
+
+
+const openV13RoleForm=async (page,account,section,code)=>{
+ await page.goto('/index.html');
+ if(!(await page.locator('#demo-login-form').isVisible())){
+   await page.evaluate(()=>sessionStorage.removeItem('simrs-demo-login-session-v1'));
+   await page.reload();
+ }
+ await page.locator('[data-demo-account="'+account+'"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ await page.locator('#role-nav [data-demo-action="section:'+section+'"]').click();
+ await page.locator('.uxv5-detail [data-demo-action="module:'+code+'"]').click();
+ await expect(page.locator('.p0-operational[data-module="'+code+'"]')).toBeVisible();
+ await expect(page.locator('#p0-editor .v13-form-intro')).toBeVisible();
+ await expect(page.locator('#p0-editor .p0-fields.v13-form-fields')).toBeVisible();
+};
+
+test('V13 clinical SOAP sections preserve draft values and reactively track required inputs',async ({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await openV13RoleForm(page,'akun.dokter-rj','m1','RME-04');
+ const form=page.locator('#p0-editor');
+ await expect(form.locator('.v13-form-section[data-v13-type="subjective"]')).toBeVisible();
+ await expect(form.locator('.v13-form-section[data-v13-type="objective"]')).toBeVisible();
+ await expect(form.locator('.v13-form-section[data-v13-type="assessment"]')).toBeVisible();
+ await expect(form.locator('.v13-form-section[data-v13-type="plan"]')).toBeVisible();
+ const before=await form.locator('#v13-progress').evaluate(el=>Number(el.value));
+ await form.locator('[name="subjective"]').fill('Contoh keluhan sintetis untuk latihan');
+ await expect(form.locator('#v13-progress')).toHaveJSProperty('value',before+1);
+ await form.locator('[data-p0-action="save"]').click();
+ await expect(page.locator('.p0-editor .card-h')).toContainText('Draft');
+ await expect(page.locator('#p0-editor [name="subjective"]')).toHaveValue('Contoh keluhan sintetis untuk latihan');
+ await expect(page.locator('.p0-patient-banner')).toContainText('ENC-DEMO');
+ expect(errors).toEqual([]);
+});
+
+test('V13 operational forms display distinct clinical and administrative workflows with unchanged fields',async ({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ const scenarios=[
+  ['akun.pendaftaran','m1','CORE-09','visit_type','Registrasi kunjungan'],
+  ['akun.perawat','m1','RME-05','systolic','Pencatatan tanda vital'],
+  ['akun.dokter-igd','m0','RME-02','acuity','Triase dan asesmen IGD'],
+  ['akun.atlm','m1','MED-01','accession','Penerimaan spesimen'],
+  ['akun.farmasis','m2','MED-05','lot_number','Telaah dan penyiapan obat'],
+  ['akun.kasir','m1','FIN-03','invoice_ref','Pencatatan pembayaran'],
+  ['akun.radiografer','m1','MED-02','exam_code','Pelaksanaan radiologi'],
+  ['akun.petugas-mcu','m1','MED-10','package_code','Medical Check Up']
+ ];
+ for(const [account,section,code,field,label] of scenarios){
+  await openV13RoleForm(page,account,section,code);
+  await expect(page.locator('.v13-form-intro')).toContainText(label);
+  await expect(page.locator('.v13-form-section')).toHaveCount(
+   await page.locator('.v13-form-section').count());
+  await expect(page.locator('#p0-editor [name="'+field+'"]')).toBeVisible();
+  await expect(page.locator('#p0-editor .v13-form-section').first()).toBeVisible();
+  await expect(page.locator('#p0-editor [data-p0-action="blocked"]')).toBeDisabled();
+ }
+ expect(errors).toEqual([]);
+});
+
+test('V13 mobile form is one column and reviewer keeps the original 68-module catalog',async ({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:390,height:844});
+ await openV13RoleForm(page,'akun.perawat','m1','RME-05');
+ await expect(page.locator('#p0-editor .v13-form-intro')).toBeVisible();
+ const cols=await page.locator('.v13-field-grid').first().evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').filter(Boolean).length);
+ expect(cols).toBe(1);
+ const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);
+ expect(overflow).toBeLessThanOrEqual(2);
+ await page.locator('#demo-logout').click();
+ await page.locator('[data-demo-account="reviewer.demo"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ await page.locator('[data-nav="forms"]').click();
+ await expect(page.locator('#p0-catalog-list')).toBeVisible();
+ await expect(page.locator('.v13-form-intro')).toHaveCount(0);
+ expect(errors).toEqual([]);
+});
