@@ -1,0 +1,5 @@
+/* V10 specialist worklists: states use text labels, not color alone. */
+.uxv5-detail dl dd{line-height:1.55;overflow-wrap:anywhere}
+.uxv5-detail .uxv4-disabled{display:inline-flex;padding:10px 13px;border-radius:9px;border:1px solid #f2d6aa;background:#fff9eb;color:#805820;font-size:12px;font-weight:650;line-height:1.5}
+body.demo-authenticated .uxv5 .uxv4-panel-head .uxv5-search-label input{min-width:180px}
+@media(max-width:700px){body.demo-authenticated .uxv5 .uxv4-panel-head .uxv5-search-label{width:100%}body.demo-authenticated .uxv5 .uxv4-panel-head .uxv5-search-label input{min-width:0;width:100%}}
