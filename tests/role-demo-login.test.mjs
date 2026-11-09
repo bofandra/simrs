@@ -67,8 +67,8 @@ test("every one of 44 roles has a unique demo account, plus isolated QA reviewer
   assert.ok(account.username.startsWith("akun."),role);
  }
  assert.ok(h.api.accounts.some(a=>a.username==="reviewer.demo"&&a.reviewer));
- assert.match(h.node.innerHTML,/Login Demo SIMRS/);
- assert.match(h.node.innerHTML,/Pilih akun berdasarkan role/);
+ assert.match(h.node.innerHTML,/Masuk ke SIMRS Baru/);
+ assert.match(h.node.innerHTML,/Akun demo untuk pengujian/);
  assert.doesNotMatch(h.node.innerHTML,/Masuk cepat sesuai profesi|data-demo-quick|demo-quick-roles/);
  assert.equal((h.node.innerHTML.match(/data-demo-account=/g)||[]).length,45);
 });
@@ -114,7 +114,7 @@ test("logout removes demo session and hides application",()=>{
  assert.equal(h.api.isAuthenticated(),false);
  assert.equal(h.node.hidden,false);
  assert.equal(h.classes.has("demo-authenticated"),false);
- assert.ok(h.node.innerHTML.includes("Login Demo SIMRS"));
+ assert.ok(h.node.innerHTML.includes("Masuk ke SIMRS Baru"));
  assert.equal(h.session.size,0);
 });
 

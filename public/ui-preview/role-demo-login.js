@@ -218,17 +218,17 @@ function renderLogin(){
  }).join("");
  loginRoot.innerHTML='<main class="demo-login-wrap"><section class="demo-login-intro">'+
  '<div class="demo-login-brand"><span>+</span><strong>SIMRS Baru</strong></div>'+
- '<span class="demo-eyebrow">MOCKUP UI/UX RUMAH SAKIT</span>'+
- '<h1>Masuk sesuai <em>peran Anda.</em></h1>'+
- '<p>Setiap peran memiliki akun demo dan akan melihat tugas, menu, serta formulir sesuai pekerjaan sehari-hari di rumah sakit.</p>'+
+ '<span class="demo-eyebrow">PLATFORM OPERASIONAL RUMAH SAKIT</span>'+
+ '<h1>Pelayanan rumah sakit,<br><em>lebih terintegrasi.</em></h1>'+
+ '<p>Gunakan satu akun untuk masuk. Ruang kerja, menu, dan daftar tugas ditentukan otomatis berdasarkan kewenangan pengguna.</p>'+
  '<div class="demo-login-points"><span>'+roleList.length+' akun role operasional</span><span>Workspace personal per peran</span><span>Semua data sintetis</span></div>'+
  '<div class="demo-login-disclaimer"><strong>Hanya prototipe.</strong> Akun dan kata sandi demo bersifat publik. Tidak ada autentikasi server, RBAC nyata, atau data pasien asli.</div></section>'+
- '<section class="demo-login-panel"><div class="demo-login-header"><div><h2>Login Demo SIMRS</h2><p>Pilih akun atau masukkan username demo.</p></div><span class="demo-online">Mode Demo</span></div>'+
+ '<section class="demo-login-panel"><div class="demo-login-header"><div><h2>Masuk ke SIMRS Baru</h2><p>Masukkan nama pengguna dan kata sandi demo.</p></div><span class="demo-online">Mode Demo</span></div>'+
  '<form id="demo-login-form" novalidate><div class="demo-login-fields"><label for="demo-username">Username demo</label><input id="demo-username" autocomplete="username" spellcheck="false" value="'+esc(selected.username)+'"/>'+
  '<label for="demo-password">Kata sandi demo</label><input id="demo-password" type="password" autocomplete="off" value="'+PASSWORD+'"/>'+
  '<p class="demo-pass-hint">Semua akun menggunakan kata sandi latihan: <strong>demo123</strong></p><div id="demo-login-error" role="alert" aria-live="polite" hidden></div>'+
- '<button class="demo-login-submit" type="submit">Masuk ke workspace</button></div></form>'+
- '<div class="demo-account-title"><div><h3>Pilih akun berdasarkan role</h3><p>Daftar akun demo tersedia untuk semua pengguna.</p></div><span>'+roleList.length+' Role</span></div>'+
+ '<button class="demo-login-submit" type="submit">Masuk</button></div></form>'+
+ '<div class="demo-account-title"><div><h3>Akun demo untuk pengujian</h3><p>Pilih akun simulasi untuk menguji pekerjaan sesuai profesi.</p></div><span>'+roleList.length+' Role</span></div>'+
  '<input id="demo-account-filter" aria-label="Cari akun demo" placeholder="Cari role atau username (mis. farmasi, dokter, kasir)"/>'+
  '<div id="demo-account-list" class="demo-account-scroll">'+byDept+
  '<div class="demo-account-group"><h3>Reviewer / QA <span>1</span></h3><div class="demo-accounts">'+

@@ -1,0 +1,180 @@
+/* SIMRS Baru — Visual Blueprint V8 (9 Nov 2026).
+ * Non-destructive visual layer for existing role-first / 44 demo accounts / 68 forms.
+ * Reference only: static prototype, no production authentication or real clinical actions.
+ */
+:root{
+ --navy:#122a47;--navy2:#203b5a;--teal:#078d88;--teal-soft:#e7f8f4;
+ --blue:#3368c4;--blue-soft:#edf3ff;--bg:#f3f7fc;--surface:#fff;
+ --ink:#20344e;--muted:#64788d;--border:#dce5f0;--border-soft:#edf1f7;
+ --shadow:0 4px 20px rgba(23,46,77,.045);--nav:254px;
+ --r-sm:8px;--r-md:12px;--r-lg:16px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font:13px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:0}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+:where(button,a,input,select,textarea):focus-visible{outline:3px solid rgba(0,150,141,.33)!important;outline-offset:2px}
+::selection{background:#bfece9;color:#123647}
+/* Official app shell — midnight navy navigation, compact neutral workspace. */
+#app{background:var(--bg)}
+#app>aside{width:var(--nav);background:linear-gradient(180deg,#112a47 0%,#122e4b 65%,#173655 100%);color:#e9f2ff;border-right:1px solid #244261;box-shadow:none}
+#app>aside .brand{padding:25px 17px 22px;border-bottom:1px solid rgba(255,255,255,.12)}
+#app>aside .brand-mark{background:linear-gradient(145deg,#09b4b3,#55d0cc);color:#fff;box-shadow:0 7px 21px #00172d40;border-radius:12px;font-size:28px}
+#app>aside .brand strong{color:#fff;font-size:19px;font-weight:800;letter-spacing:-.6px}
+#app>aside .brand small{color:#a9c2d7;letter-spacing:.8px}
+#app>aside .side-caption,#app>aside #role-nav .ux-nav-section{color:#91adc6;font-size:10px}
+#app>aside .ux-role-caption{color:#c1d9e9}
+#app>aside #role-nav .ux-role-unit{background:#1d4763;color:#d3f4ee;border:1px solid #35617a;border-radius:10px;margin:3px 9px 14px}
+#app>aside .navbtn,#app>aside .ux-nav-link,#app>aside #role-nav .ux-role-menu{color:#c9d7e7;border:1px solid transparent;background:transparent;border-radius:9px;font-weight:650;transition:background .15s,border .15s,color .15s;min-height:43px}
+#app>aside .navbtn:hover,#app>aside .ux-nav-link:hover,#app>aside #role-nav .ux-role-menu:hover{background:#224666;color:white}
+#app>aside .navbtn.active,#app>aside .ux-nav-link.active,#app>aside #role-nav .ux-role-menu.active{background:linear-gradient(90deg,#087e83,#0b9793);color:#fff;border-color:#1ea9a6;box-shadow:none}
+#app>aside #role-nav .ux-menu-index{background:#294b68;color:#c5deec}
+#app>aside #role-nav .ux-role-menu.active .ux-menu-index{background:#ffffff36;color:#fff}
+#app>aside .sidefoot{background:#203e59;color:#b6cbdf;border-color:#35526b}
+#app>aside .sidefoot strong{color:white}
+#app>aside .sidefoot button{color:#6df0db}
+#app>aside .navbtn .num{color:#8bcaca}
+#main{min-width:0;background:var(--bg)}
+.topbar{height:66px;background:#fff;border-bottom:1px solid #dde7f1;box-shadow:0 2px 6px rgba(20,54,87,.025);padding:0 clamp(16px,2vw,34px);gap:12px}
+.topbar .breadcrumbs{font-size:12px;color:#7890aa}
+.topbar .breadcrumbs b{color:#1a3552}
+.topbar select{background:#fff;border:1px solid #dce6f0;border-radius:8px;min-height:38px;color:#344d62}
+#demo-current-role{color:#086d74;background:#e6f7f5;border:1px solid #bee7e0;border-radius:8px}
+#demo-logout{color:#294563;border:1px solid #dce6f1;background:#fff}
+.topbar .demo{background:#eaf7f6;color:#067b78;border:1px solid #c8ece8;font-size:10px;letter-spacing:.25px}
+.avatar{background:#e1f6f3;color:#07827c;border:1px solid #afe2dd}
+.content{max-width:1800px;margin:0 auto;padding:28px clamp(16px,2.2vw,36px) 50px}
+.card{border:1px solid var(--border);border-radius:12px;background:#fff;box-shadow:var(--shadow)}
+.card-h{border-bottom:1px solid var(--border-soft);padding:16px 19px}
+.card-h h2,.card-h h3{color:#213b59}
+.page-head h1,.uxv4-head h1{color:#1b3452;letter-spacing:-.8px;font-weight:800}
+.page-head p,.uxv4-head p{color:#6c829a}
+.eyebrow{color:#087f83;font-weight:850}
+.btn{border-radius:8px;border-color:#d6e4ed;font-weight:750;min-height:38px}
+.btn-primary,.btn-blue{background:#008985;border-color:#008985;color:white}
+.btn-primary:hover,.btn-blue:hover{background:#00736f;border-color:#00736f}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.forminput{min-height:40px;border-radius:8px;border-color:#d6e2ee}
+th{background:#f5f8fd;color:#57708a;border-bottom-color:#e0e9f3;font-size:11px;font-weight:800}
+td{border-bottom-color:#edf1f6}
+tbody tr:hover{background:#f4fafb}
+.status,.p0-pill{border-radius:6px}
+/* Login: separate brand and credential card, demo account selector below — no job/role required at authentication. */
+#demo-login{background:linear-gradient(145deg,#eef5fc,#f9fcff);color:#243b57}
+.demo-login-wrap{max-width:none;grid-template-columns:minmax(350px,.83fr) minmax(520px,1.17fr)}
+.demo-login-intro{position:relative;overflow:hidden;background:linear-gradient(156deg,#0e2545 0%,#14385a 62%,#126877 100%);color:white;padding:clamp(34px,5vw,82px) clamp(28px,4.5vw,70px)}
+.demo-login-intro:after{content:"+";position:absolute;right:-9%;bottom:2%;font-size:380px;line-height:1;font-weight:900;color:#ffffff09;pointer-events:none}
+.demo-login-brand{position:relative;z-index:1;margin-bottom:clamp(45px,12vh,150px);font-size:22px}
+.demo-login-brand span{background:linear-gradient(145deg,#06aba9,#57d2cc);border-color:#ffffff50;border-radius:11px;font-weight:700}
+.demo-eyebrow{color:#7ce6e0}
+.demo-login-intro h1{font-size:clamp(34px,3.7vw,58px);letter-spacing:-1.6px;line-height:1.09}
+.demo-login-intro h1 em{color:#5fe4dd}
+.demo-login-intro>p{font-size:15px;color:#d8e9f9;max-width:490px;line-height:1.85}
+.demo-login-points{position:relative;z-index:1;color:#e3f2fa;margin-top:35px}
+.demo-login-points span::before{border-color:#7dd8d0;color:#91fff1}
+.demo-login-disclaimer{position:relative;z-index:1;color:#bad3e5;border-top-color:#ffffff2d}
+.demo-login-panel{background:linear-gradient(165deg,#f4f8fd,#fff);padding:clamp(22px,3.7vw,58px) clamp(22px,5vw,80px);gap:17px}
+.demo-login-header h2{color:#162f4e;font-size:27px;font-weight:800}
+.demo-login-header p,.demo-account-title p{color:#6e8298}
+.demo-online{background:#ddf6f0;color:#047e77;border-color:#b5e6dd}
+.demo-login-fields{background:#fff;padding:25px;border:1px solid #dce6f1;border-radius:15px;box-shadow:0 12px 32px rgba(22,54,93,.055)}
+.demo-login-fields label{color:#24415c}
+.demo-login-fields input,#demo-account-filter{border-color:#d4e0eb;border-radius:8px}
+.demo-login-fields input:focus,#demo-account-filter:focus{outline:3px solid #b9ebe7;border-color:#078d88}
+.demo-login-submit{background:#078e89;border-radius:9px;min-height:48px;font-size:14px}
+.demo-login-submit:hover{background:#087771}
+.demo-pass-hint strong{color:#067b75}
+.demo-account-title h3{color:#23405d;font-size:14px}
+.demo-account-title>span{background:#eaf5fc;color:#2d719c;border-color:#d1e6f4}
+.demo-account-scroll{max-height:315px;border-radius:12px}
+.demo-account-group h3{color:#668096}
+.demo-account{border-color:#dce6f0;color:#243a54;background:#fff;border-radius:10px}
+.demo-account:hover{background:#effaf8;border-color:#91cfc7}
+.demo-account.selected{background:#eaf8f5;border-color:#008f88;box-shadow:inset 3px 0 0 #079a91}
+.demo-account-symbol{background:#e8f1fa;color:#275d7a}
+.demo-account.selected .demo-account-symbol{background:#ccf3ea;color:#08736e}
+.demo-account small{color:#698197}
+.demo-login-foot{color:#70889e}
+#design-gallery-link{position:fixed;z-index:300;left:26px;bottom:14px;display:inline-flex;align-items:center;gap:7px;color:#e3f7ff;font-weight:750;background:#234f70e0;border:1px solid #5a7b94;padding:9px 13px;border-radius:8px;text-decoration:none;font-size:11px}
+body.demo-authenticated #design-gallery-link{display:none}
+#design-gallery-link:hover{background:#087f83}
+/* Worklists: large title, compact operational count cards, detail split. */
+.uxv4,.uxv5{color:#243b53}
+.uxv4-head{margin:0 0 20px}
+.uxv4-head h1{font-size:28px;color:#1d3857}
+.uxv4-head .eyebrow{color:#078782}
+.uxv4-identity{border-color:#dce6ef;border-radius:12px;box-shadow:var(--shadow)}
+.uxv4-identity span{color:#078781}
+.uxv4-identity strong{color:#1b3b58}
+.uxv5-summary{gap:13px}
+.uxv5-summary>div,.uxv4-metrics>div{border-color:#dce6f0;border-radius:12px;box-shadow:var(--shadow);min-height:95px;background:white}
+.uxv5-summary>div:first-child{background:linear-gradient(110deg,#eaf8f6,#fff);border-color:#c5e8e3}
+.uxv5-summary span,.uxv4-metrics span{color:#607b93}
+.uxv5-summary strong,.uxv4-metrics strong{color:#1b3c5c}
+.uxv5-summary>div:first-child strong{color:#087e7a}
+.uxv4-panel{border-color:#dce6f0;border-radius:12px;box-shadow:var(--shadow)}
+.uxv4-panel-head{padding:19px 21px}
+.uxv4-panel-head h2{color:#193957;font-size:16px}
+.uxv4-panel-head p{color:#778da0}
+.uxv4-features{grid-template-columns:repeat(3,minmax(0,1fr))}
+.uxv4-feature{border-color:#e1eaf2;background:#f8fbff;color:#25445f;border-radius:11px}
+.uxv4-feature:hover{border-color:#82c8c0;background:#eef9f7}
+.uxv4-feature-code{color:#087e7a;background:#e4f6f2}
+.uxv5-search-label{color:#315a72}
+.uxv5-search-label input{border-color:#d5e1eb;border-radius:8px}
+.uxv5-layout{border-top-color:#e8eef5;grid-template-columns:minmax(0,1.55fr) minmax(285px,.85fr)}
+.uxv5-layout .uxv4-table tr.uxv5-selected{background:#edf8f8}
+.uxv5-detail{background:#f8fbff;border-left-color:#e0e9f2;padding:22px}
+.uxv5-detail-header>span,.uxv5-detail-header>strong{color:#07827d}
+.uxv5-detail-header h3{color:#1c3b58}
+.uxv5-context-note{background:#eaf7f7;color:#51758b}
+.uxv4-safety{border-radius:9px}
+/* Focused clinical encounters and forms */
+.ux-patient-banner,.p0-operational-banner{background:#e7f7f5;border:1px solid #bfe6e1;color:#275a64;border-radius:10px}
+.ux-patient.active,.ux-patient:hover{background:#e9f8f5;border-color:#81c6bc}
+.ux-main-grid{grid-template-columns:minmax(220px,255px) minmax(0,1fr) minmax(220px,280px)}
+.p0-operational{max-width:1260px}
+.p0-operational .p0-editor{border-radius:12px}
+.p0-operational .p0-editor form{padding:22px}
+.p0-operational .p0-form-actions{border-top-color:#e4ebf2}
+.p0-record-item:hover{background:#f5fbfa}
+.p0-operational .p0-safety-note{color:#667f93}
+.uxv4-trace{font-size:10px;color:#8398aa}
+/* Mobile: retain the V6 drawer interaction, preserve form readability. */
+@media(max-width:1100px){
+ body.demo-authenticated:not(.demo-reviewer) #app>aside{background:linear-gradient(180deg,#112a47,#193c5d)!important;box-shadow:0 15px 45px #0c284870}
+ body.demo-authenticated:not(.demo-reviewer) #app>aside .brand{padding:20px 17px}
+ body.demo-authenticated:not(.demo-reviewer) #app>aside #role-nav .ux-role-menu.active{background:#0a8584;color:white}
+ .topbar{padding:0 16px}
+}
+@media(max-width:840px){
+ .demo-login-wrap{grid-template-columns:1fr}
+ .demo-login-intro{min-height:auto;padding:29px 22px}
+ .demo-login-brand{margin-bottom:26px}
+ .demo-login-intro h1{font-size:35px}
+ .demo-login-panel{padding:25px 20px}
+ .demo-account-scroll{max-height:240px}
+ #design-gallery-link{position:relative;left:auto;bottom:auto;z-index:5;margin:0 20px 17px;background:#0b6d73;color:#fff}
+ .uxv4-features{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .uxv5-layout{grid-template-columns:1fr}
+ .uxv5-detail{border-left:0;border-top:1px solid #e1ebf3}
+}
+@media(max-width:560px){
+ .demo-accounts{grid-template-columns:1fr 1fr}
+ .demo-account{min-height:67px;padding:9px 8px}
+ .demo-login-header h2{font-size:21px}
+ .demo-login-fields{padding:18px}
+ .content{padding:16px 12px 40px}
+ .uxv4-head h1{font-size:23px}
+ .uxv4-head{display:block}
+ .uxv4-identity{margin-top:12px;min-width:0}
+ .uxv5-summary{grid-template-columns:1fr 1fr;gap:8px}
+ .uxv5-summary>div:first-child{grid-column:1/-1}
+ .uxv5-summary>div{min-height:80px;padding:12px}
+ .uxv4-panel-head{padding:16px;display:block}
+ .uxv4-panel-head .uxv5-search-label{margin-top:14px;width:100%}
+ .uxv4-features{grid-template-columns:1fr;padding:0 14px 14px}
+ .uxv5-detail{padding:17px}
+ #app>aside{width:min(88vw,320px)}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}

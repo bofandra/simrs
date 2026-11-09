@@ -14,6 +14,13 @@ Repositori ini menyimpan prototype UI SIMRS Baru dengan **7 workspace, 68 modul/
 
 Kode HTML/CSS/JavaScript yang **diterbitkan GitHub Pages** ada di [`public/ui-preview/`](public/ui-preview/). Semua data pasien, jadwal, layanan, obat, tarif, catatan klinis, dan transaksi **sintetis**, disimpan hanya dalam `localStorage` browser. Tidak ada backend, autentikasi rumah sakit, FHIR/SATUSEHAT, pembayaran, dispensing, mutasi stok atau proses klinis sungguhan.
 
+## Visual Blueprint V8 — 13 Halaman (9 November 2026)
+
+- **Galeri desain:** https://bofandra.github.io/simrs/design-gallery.html — 13 tampilan referensi: login, pendaftaran, dokter, perawat, IGD, bed board, laboratorium, farmasi, kasir/klaim, manajemen, administrasi, radiologi, dan MCU.
+- **Situs operasional mockup:** https://bofandra.github.io/simrs/ — tetap mempertahankan 44 akun demo, 68 modul/form, menu per role, worklist → form serta alur RJ/IGD/RI.
+- Visual navy + teal V8 di `public/ui-preview/visual-blueprint-v8.css`. Galeri hanya referensi UI; bukan sistem aplikasi kedua atau autentikasi riil.
+- Matriks desain dan batasan: `design/VISUAL_BLUEPRINT_13_SCREEN_V8_2026-11-09.md`.
+
 ## Status situs
 
 GitHub Pages menerbitkan **hanya mockup terbaru sebagai halaman utama**. Halaman prototipe lama telah dihapus dari site dan source HTML/CSS/JS legacy. Folder `docs/simrs-baru/` sekarang menyimpan **dokumen referensi teknis saja**, bukan situs lain.
