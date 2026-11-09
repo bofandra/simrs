@@ -75,7 +75,7 @@ test('V12 enhancer adds patient context, numerical summary and status filter wit
 });
 
 test('V12 filtering respects both status and free-text and never mutates source jobs', () => {
-  const sample={id:'REG-D002',title:'Pasien Demo B',scope:'Poli Anak',status:'Menunggu',reason:'Cek unit'};
+  const sample={id:'REG-D002',title:'Pasien Demo B',scope:'Poli Anak',status:'Menunggu',reason:'Cek unit',progress:{label:'Draft tersimpan'}};
   const window={SIMRSRoleUXV5:{
     renderPage:()=>'',jobRows:()=>[sample],selectionContext:()=>null
   }};
@@ -84,6 +84,7 @@ test('V12 filtering respects both status and free-text and never mutates source 
   const match=window.SIMRSOperationalParityV12.matches;
   assert.equal(match(sample,'Semua','poli'),true);
   assert.equal(match(sample,'Menunggu','REG-D002'),true);
+  assert.equal(match(sample,'Menunggu','draft tersimpan'),true);
   assert.equal(match(sample,'Dalam proses','REG-D002'),false);
   assert.equal(match(sample,'Menunggu','tidak-ada'),false);
   assert.equal(sample.status,'Menunggu');
