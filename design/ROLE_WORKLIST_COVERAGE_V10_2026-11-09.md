@@ -8,15 +8,15 @@ Worklist detail V5 awalnya tersedia untuk 7 role. V10 menambah 12 role: DPJP Raw
 
 ## Aturan interaksi
 - Worklist menampilkan empat contoh tugas sintetis per area beserta sebab pekerjaan dan pemeriksaan yang perlu dilakukan.
-- Form tetap dibatasi sesuai izin role dalam katalog. Jika belum dipetakan, UI menampilkan keterangan "Belum diotorisasi bagi role ini" dan tidak membuka form.
+- Kewenangan form mengikuti gabungan katalog P0, P1 dan P2/P3. UI menolak modul yang tidak diizinkan; pengecekan tambahan mencegah konteks objek nonpasien dipakai untuk form pasien.
 - DPJP Rawat Inap memakai contoh encounter `ENC-RI-DEMO-xx`, bukan encounter RJ.
 - ATLM memakai contoh konteks pasien dan spesimen untuk modul MED-01.
-- Radiolog, Radiografer, MCU, Casemix, OK, Anestesi, Tim Mutu, Gudang, Integrasi, dan Admin Sistem memiliki pekerjaan berjenis objek nonpasien, kecuali CORE-12 pada Admin Sistem yang memang terkait consent pasien.
+- DPJP, ATLM, Radiolog, Radiografer, MCU, Casemix, OK, dan Anestesi menggunakan konteks pasien sintetis untuk form berkonteks pasien. Tim Mutu menggunakan konteks pasien hanya pada modul insiden ENT-06. Gudang, Integrasi, dan Admin Sistem bersifat objek nonpasien kecuali CORE-12 pada Admin Sistem.
 - Konteks objek tidak pernah otomatis ditautkan ke pasien/encounter dan tidak dapat dipakai untuk modul berkonteks pasien.
 - ATLM dan MCU diarahkan ke role-native beranda setelah login, bukan shell laboratorium generik.
 
 ## Validasi
-Unit tests meliputi kesesuaian jumlah fitur, role-permission denial, tenant-neutral task object, episode RI, serta konteks consent Admin. Browser smoke untuk ATLM, Radiolog, dan Admin Sistem melengkapi regresi 7 role sebelumnya.
+Unit tests memuat katalog P0+P1+P2/P3 lalu memeriksa seluruh area, izin efektif, keamanan konteks objek/pasien, episode RI, serta consent Admin. Browser smoke mencakup ATLM, Radiolog, Admin Sistem, dan MCU.
 
 ## Batasan dan backlog
-Belum ada backend RBAC, API/DB produksi, transaksi klinis, release hasil, PACS/DICOM, klaim atau mutasi stok. Perlu rekonsiliasi izin terhadap PRD final sebelum membuka form yang kini terkunci. Sisa 25 role masih memakai workspace V4 generik. Seluruh data selalu sintetis.
+Belum ada backend RBAC, API/DB produksi, transaksi klinis, release hasil, PACS/DICOM, klaim atau mutasi stok. Perlu rekonsiliasi setiap izin role–modul terhadap PRD final dan UAT petugas sebelum mengaktifkan aksi nyata. Sisa 25 role masih memakai workspace V4 generik. Seluruh data selalu sintetis.

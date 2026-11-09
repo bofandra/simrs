@@ -660,15 +660,18 @@ test('V10 ATLM worklist opens correct specimen and patient-context demo form',as
  expect(errors).toEqual([]);
 });
 
-test('V10 radiologist sees task review but cannot open ungranted report form',async ({page})=>{
+test('V10 radiologist opens permitted report form with synthetic study and patient context',async ({page})=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto('/index.html');
  await page.locator('[data-demo-account="akun.radiolog"]').click();
  await page.locator('#demo-login-form button[type="submit"]').click();
  await page.locator('#role-nav [data-demo-action="section:m2"]').click();
- await expect(page.locator('.uxv5-detail')).toContainText('Objek kerja nonpasien');
- await expect(page.locator('.uxv5-detail')).toContainText('Belum diotorisasi bagi role ini');
- await expect(page.locator('.uxv5-detail [data-demo-action="module:MED-02"]')).toHaveCount(0);
+ await expect(page.locator('.uxv5-detail')).toContainText('Konteks pasien');
+ await expect(page.locator('.uxv5-detail')).toContainText('Draft simulasi tersedia');
+ await page.locator('.uxv5-detail [data-demo-action="module:MED-02"]').click();
+ await expect(page.locator('#p0-editor')).toHaveAttribute('data-work-item','RAD-REP-001');
+ await expect(page.locator('.p0-patient-banner')).toContainText('Sari Amelia');
+ await expect(page.locator('.p0-patient-banner')).toContainText('ENC-IGD-DEMO-01');
  expect(errors).toEqual([]);
 });
 
@@ -686,5 +689,19 @@ test('V10 admin distinguishes access request objects and patient-specific consen
  await expect(page.locator('.uxv5-detail')).toContainText('Konteks pasien');
  await page.locator('.uxv5-detail [data-demo-action="module:CORE-12"]').click();
  await expect(page.locator('.p0-patient-banner')).toContainText('ENC-DEMO-247');
+ expect(errors).toEqual([]);
+});
+
+test('V10 MCU links authorized checkup form to a synthetic participant encounter',async ({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('/index.html');
+ await page.locator('[data-demo-account="akun.petugas-mcu"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ await expect(page.locator('#main-content h1')).toHaveText('Beranda Petugas MCU');
+ await page.locator('#role-nav [data-demo-action="section:m0"]').click();
+ await expect(page.locator('.uxv5-detail')).toContainText('Konteks pasien');
+ await page.locator('.uxv5-detail [data-demo-action="module:MED-10"]').click();
+ await expect(page.locator('#p0-editor')).toHaveAttribute('data-work-item','MCU-001');
+ await expect(page.locator('.p0-patient-banner')).toContainText('Sari Amelia');
  expect(errors).toEqual([]);
 });

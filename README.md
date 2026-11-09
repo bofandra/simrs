@@ -62,8 +62,8 @@ Lihat: `design/ROLE_DRAFT_CONTINUITY_V9_2026-11-09.md`.
 Sebanyak **19 dari 44 role** memiliki worklist rinci: 7 role V5/V9 ditambah DPJP Rawat Inap, ATLM, Petugas MCU, Radiografer, Radiolog, Casemix, Koordinator OK, Dokter Anestesi, Tim Mutu, Admin Sistem, Integrasi, dan Gudang. Setiap area berisi empat tugas sintetis, pencarian, detail pekerjaan, checklist, dan traceability PRD.
 
 - ATLM dan MCU kini membuka beranda kerja role-native langsung setelah login.
-- Form hanya terbuka bila izin role–modul sudah ada dalam katalog. Radiologi, Casemix, dan beberapa area pendukung masih read-only karena mapping izin belum lengkap.
-- DPJP Rawat Inap menggunakan encounter RI sintetis; kerja nonpasien (misalnya Radiologi/Administrasi) tidak otomatis mengikat ID pasien/encounter.
+- Izin form dihitung dari katalog efektif P0+P1+P2/P3. Radiolog, Radiografer, MCU, dan Casemix dapat membuka form draft yang sudah diizinkan; aksi klinis/keuangan resmi tetap tidak aktif.
+- DPJP Rawat Inap dan OK/Anestesi menggunakan encounter RI sintetis; pemeriksaan radiologi/MCU dan berkas klaim menggunakan konteks pasien saat form mensyaratkannya. Pekerjaan administratif dan logistik nonpasien tidak membuat tautan pasien.
 - Consent pasien pada Admin Sistem secara khusus menggunakan konteks pasien, berbeda dari manajemen akun dan unit.
 - Seluruh tindakan bersifat simulasi lokal tanpa backend, release hasil, dispensing, klaim, mutasi stok, DICOM atau integrasi eksternal.
 
