@@ -749,3 +749,68 @@ test('V11 demo patient portal remains bound to one synthetic patient through all
  await expect(page.locator('.uxv5-detail')).toContainText('ENC-DEMO-247');
  expect(errors).toEqual([]);
 });
+
+
+test('V12 role-first worklist has patient context, numeric summary, and combined filters',async ({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('/index.html');
+ await page.locator('[data-demo-account="akun.pendaftaran"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ await page.locator('#role-nav [data-demo-action="home"]').click();
+ const view=page.locator('.uxv5.v12-parity');
+ await expect(view).toBeVisible();
+ await expect(view.locator('.v12-context')).toContainText('ENC-DEMO');
+ await expect(view.locator('.v12-context')).toContainText('RM-');
+ await expect(view.locator('.uxv5-summary')).toContainText('Pekerjaan aktif');
+ await expect(view.locator('[data-v12-filter="Semua"]')).toHaveAttribute('aria-pressed','true');
+ await view.locator('[data-v12-filter="Menunggu"]').click();
+ await expect(view.locator('[data-v12-filter="Menunggu"]')).toHaveAttribute('aria-pressed','true');
+ await expect(view.locator('tbody tr:not([data-v12-hidden])')).toHaveCount(2);
+ await view.locator('#uxv5-search').fill('REG-D002');
+ await expect(view.locator('tbody tr:not([data-v12-hidden])')).toHaveCount(1);
+ await expect(view.locator('tbody tr:not([data-v12-hidden])')).toContainText('REG-D002');
+ await view.locator('#uxv5-search').fill('tidak-ditemukan-987');
+ await expect(view.locator('#uxv5-empty')).toBeVisible();
+ await view.locator('#uxv5-search').fill('');
+ await view.locator('[data-v12-filter="Semua"]').click();
+ await expect(view.locator('tbody tr:not([data-v12-hidden])')).toHaveCount(4);
+ expect(errors).toEqual([]);
+});
+
+test('V12 doctor, lab and cashier keep distinct contexts without unauthorized actions',async ({page})=>{
+ for(const [username,expected] of [
+  ['akun.dokter-rj','Konsultasi dan catatan klinis'],
+  ['akun.atlm','Spesimen dan hasil laboratorium'],
+  ['akun.kasir','Tagihan dan pembayaran']
+ ]){
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.goto('/index.html');
+  await page.evaluate(()=>sessionStorage.removeItem('simrs-demo-login-session-v1'));
+  await page.reload();
+  await page.locator('[data-demo-account="'+username+'"]').click();
+  await page.locator('#demo-login-form button[type="submit"]').click();
+  await page.locator('#role-nav [data-demo-action="home"]').click();
+  await expect(page.locator('.uxv5.v12-parity .v12-context-eyebrow')).toContainText(expected);
+  await expect(page.locator('.uxv5.v12-parity .v12-filterbar')).toBeVisible();
+  await expect(page.locator('.uxv5.v12-parity .uxv5-detail')).toBeVisible();
+  expect(errors).toEqual([]);
+ }
+});
+
+test('V12 mobile worklist stays within viewport and opens only authorized contextual form',async ({page})=>{
+ await page.setViewportSize({width:390,height:844});
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('/index.html');
+ await page.locator('[data-demo-account="akun.dokter-rj"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ await page.locator('#demo-mobile-nav-toggle').click();
+ await page.locator('#role-nav [data-demo-action="home"]').click();
+ await expect(page.locator('.uxv5.v12-parity .v12-context')).toBeVisible();
+ await expect(page.locator('.uxv5.v12-parity .v12-filterbar')).toBeVisible();
+ const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);
+ expect(overflow).toBeLessThanOrEqual(2);
+ await page.locator('.uxv5-detail [data-demo-action="module:RME-01"]').click();
+ await expect(page.locator('.p0-operational #p0-editor')).toBeVisible();
+ await expect(page.locator('.p0-patient-banner')).toContainText('ENC-DEMO');
+ expect(errors).toEqual([]);
+});

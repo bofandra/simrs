@@ -79,3 +79,10 @@ Lima kelompok pekerjaan tersisa yang dilengkapi: pelayanan penunjang (gizi, HD, 
 **Batasan:** penambahan worklist bukan berarti 68 modul sudah memiliki UI high-fidelity atau backend. Semua data tetap contoh; hak akses produksi, identitas pasien sesungguhnya, transaksi, integrasi, distribusi, release, klaim, dan posting tidak aktif. Untuk demo, akun Pasien Demo terbatas pada satu pasien sintetis, bukan login pasien sebenarnya.
 
 Dokumentasi: [V11 mapping worklist ke PRD](design/ROLE_WORKLIST_COVERAGE_V11_2026-11-09.md). Tes: tests/role-worklists-v11.test.mjs dan browser smoke di tests/mockup-smoke.spec.mjs.
+
+
+## V12 — Keselarasan desain dengan 13 layar acuan (9 November 2026)
+
+Situs utama kini memuat `operational-parity-v12.css` dan `operational-parity-v12.js`: lapisan tampilan role-native untuk 14 persona representatif dari 13 layar galeri, dengan panel konteks pasien/episode atau objek, jumlah pekerjaan, filter status gabungan pencarian, layout worklist → detail → form yang lebih konsisten, dan peningkatan tampilan desktop/mobile. Galeri tetap berfungsi sebagai referensi desain, bukan situs operasional kedua. Tidak menambah izin role atau transaksi riil.
+
+Lihat `design/OPERATIONAL_VISUAL_PARITY_V12_2026-11-09.md`. Unit tests dan browser smoke ditambahkan. Implementasi tidak berarti seluruh 68 form sudah high-fidelity atau telah menjalani UAT RS.
