@@ -256,6 +256,8 @@
     var section=roleUser&&window.SIMRSRoleDemo.getCurrentSection&&window.SIMRSRoleDemo.getCurrentSection();
     var task=profile&&(profile.features.find(function(f){return f.key===section&&f.code===m.code;})||profile.features.find(function(f){return f.code===m.code;}));
     var formTitle=roleUser?(task?task.label:m.name):"Form "+m.code;
+    var visibleFields=m.fields.filter(function(f){return (!window.SIMRSLineItems || window.SIMRSLineItems.skipFields(m.code).indexOf(f.key)<0) && (!window.SIMRSFinanceLines || window.SIMRSFinanceLines.skipFields(m.code).indexOf(f.key)<0);});
+    var blueprint=roleUser && window.SIMRSFormBlueprintsV13 && window.SIMRSFormBlueprintsV13.render(m,visibleFields,values,editable,renderField);
     return '<section class="card p0-editor"><div class="card-h"><h2>'+esc(formTitle)+'</h2>'+pill(r?r.status:"Belum disimpan",r&&r.status==="Reviewed (Demo)"?"good":"")+'</div>'+
       (m.patient_context?'<div class="p0-patient-banner"><strong>Pasien demo: '+esc(ctx.patient.name)+'</strong><span>MRN '+esc(ctx.patient.mrn)+' · Encounter '+esc(ctx.patient.visit)+'</span>'+
        (chosenItem?'<span>Dipilih dari pekerjaan '+esc(chosenItem.id)+' · '+esc(chosenItem.title)+'</span>':'<span>Konteks pasien demo dari workspace; belum berasal dari baris worklist.</span>')+
@@ -266,7 +268,8 @@
       (r&&r.status!=="Draft"?'<div class="p0-warning">Catatan telah ditinjau dan terkunci pada mode demonstrasi. Perubahan memerlukan alur koreksi/addendum terpisah yang belum dibuat.</div>':'')+
       ((r&&r.linked_source)||state.linkSource?'<div class="p0-provenance"><strong>Referensi catatan demo:</strong> '+esc(((r&&r.linked_source)||state.linkSource).module)+' / '+esc(((r&&r.linked_source)||state.linkSource).record_id)+' — hanya salin rujukan ke draft, tanpa membuat transaksi klinis/keuangan.</div>':'')+
       '<form id="p0-editor" data-form-module="'+esc(m.code)+'" data-work-item="'+esc(chosenItem?chosenItem.id:"")+'" novalidate><div class="p0-form-head"><div><span class="muted">Nomor catatan</span><strong>'+esc(id)+'</strong></div><div><span class="muted">Peran penginput</span><strong>'+esc(ctx.role)+'</strong></div></div>'+
-      '<div class="p0-fields">'+m.fields.filter(function(f){return (!window.SIMRSLineItems || window.SIMRSLineItems.skipFields(m.code).indexOf(f.key)<0) && (!window.SIMRSFinanceLines || window.SIMRSFinanceLines.skipFields(m.code).indexOf(f.key)<0);}).map(function(f){return renderField(f,values,editable);}).join("")+'</div>'+ (window.SIMRSLineItems ? window.SIMRSLineItems.render(m.code,values,editable) : "")+
+      (blueprint?blueprint.intro:"")+
+      '<div class="p0-fields'+(blueprint?' v13-form-fields':'')+'"'+(blueprint?' data-v13-module="'+esc(m.code)+'"':'')+'>'+(blueprint?blueprint.fields:visibleFields.map(function(f){return renderField(f,values,editable);}).join(""))+'</div>'+ (window.SIMRSLineItems ? window.SIMRSLineItems.render(m.code,values,editable) : "")+
       (window.SIMRSFinanceLines ? window.SIMRSFinanceLines.render(m.code,values,editable,demo.records,ctx) : "")+
       '<div id="p0-validation-summary" class="p0-validation-summary" role="alert" hidden></div>'+
       '<div class="p0-form-actions">'+button("Simpan draft (demo)","save","btn-primary","",!editable)+
