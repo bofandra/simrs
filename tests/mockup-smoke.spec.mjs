@@ -335,7 +335,7 @@ test('login-first entry exposes 44 demo roles and opens Front Office for Pendaft
   await expect(page.locator('#app')).toBeHidden();
   await expect(page.locator('[data-demo-account]')).toHaveCount(45);
   await expect(page.locator('[data-demo-quick], .demo-quick-head, .demo-quick-roles')).toHaveCount(0);
-  await expect(page.locator('.demo-account-title')).toContainText('Pilih akun berdasarkan role');
+  await expect(page.locator('.demo-account-title')).toContainText('Akun demo untuk pengujian');
   await page.locator('[data-demo-account="akun.pendaftaran"]').click();
   await expect(page.locator('#demo-username')).toHaveValue('akun.pendaftaran');
   await page.locator('#demo-login-form button[type="submit"]').click();
