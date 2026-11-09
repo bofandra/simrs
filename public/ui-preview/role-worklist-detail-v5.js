@@ -155,7 +155,7 @@ function renderPage(ctx){
  var reviewedCount=jobs.filter(function(j){return j.progress&&j.progress.status==="Reviewed (Demo)";}).length;
  var shell=window.__SIMRS_PREVIEW__;
  var selectedContext=selectionContext(ctx.role,ctx.section,index,shell&&shell.patients);
- var actionLabel=selected.progress?(selected.progress.status==="Draft"?"Lanjutkan draft":"Lihat catatan"):"Buka "+active.label;
+ var actionLabel=selected.progress?(selected.progress.status==="Draft"?"Lanjutkan draft":"Lihat catatan"):"Buka form "+active.label;
  var moduleAction=canOpen?
    '<button type="button" class="btn btn-primary" data-demo-action="module:'+esc(active.code)+'">'+esc(actionLabel)+'</button>':
    '<span class="uxv4-disabled" role="note">Form belum tersedia untuk akun demo ini</span>';
@@ -170,11 +170,12 @@ function renderPage(ctx){
   '<section class="uxv5-summary" aria-label="Ringkasan pekerjaan"><div><span>Daftar kerja</span><strong>'+esc(selected.queue)+'</strong><small>'+esc(p.unit)+'</small></div><div><span>Draft tersimpan</span><strong>'+String(draftCount)+'</strong><small>Hanya browser ini</small></div><div><span>Ditinjau (demo)</span><strong>'+String(reviewedCount)+'</strong><small>'+esc(active.wf)+' · '+esc(active.fr)+'</small></div></section>'+
   cards+'<section class="uxv4-panel"><div class="uxv4-panel-head"><div><h2>'+esc(isHome?"Pekerjaan prioritas":active.label)+'</h2><p>Pilih baris untuk melihat konteks dan pemeriksaan sebelum membuka formulir.</p></div><label class="uxv5-search-label">Cari pekerjaan<input id="uxv5-search" type="search" autocomplete="off" placeholder="Cari nomor, pasien atau status" aria-label="Cari daftar pekerjaan"/></label></div>'+
   '<div class="uxv5-layout"><div class="uxv4-table-scroller"><table class="uxv4-table"><thead><tr><th>Nomor</th><th>Pasien / objek kerja</th><th>Perhatian</th><th>Status demo</th><th>Detail</th></tr></thead><tbody>'+rows+'</tbody></table><p id="uxv5-empty" class="uxv5-empty" hidden>Tidak ada pekerjaan yang cocok dengan pencarian.</p></div>'+
-  '<aside class="uxv5-detail" aria-label="Detail pekerjaan yang dipilih"><div class="uxv5-detail-header"><span>RINCIAN PEKERJAAN · DEMO</span><strong>'+esc(selected.id)+'</strong><h3>'+esc(selected.title)+'</h3><p>'+esc(selected.scope)+'</p></div>'+
+  '<aside class="uxv5-detail" aria-label="Detail pekerjaan yang dipilih"><div class="uxv5-detail-header"><span>RINCIAN PEKERJAAN · DEMO</span><strong>'+esc(selected.id)+'</strong><h3>'+esc(selected.title)+'</h3><p>'+esc(selected.scope)+'</p></div>'+ 
+   '<div class="uxv5-detail-actions uxv14-primary-action"><span class="uxv14-action-label">LANJUTKAN PEKERJAAN</span>'+moduleAction+'</div>'+
   '<dl><div><dt>Status</dt><dd>'+esc(selected.status)+'</dd></div><div><dt>Perlu diperiksa</dt><dd>'+esc(selected.reason)+'</dd></div>'+
   (selectedContext&&selectedContext.patient?'<div><dt>Konteks pasien</dt><dd>'+esc(selectedContext.patient.mrn)+' · '+esc(selectedContext.patient.visit)+'</dd></div>':'')+
   '<div><dt>Form / modul</dt><dd>'+esc(active.code)+' · '+esc(active.fr)+'</dd></div>'+  '<div><dt>Akses form</dt><dd>'+(canOpen?'Draft simulasi tersedia':'Belum diotorisasi bagi role ini')+'</dd></div>'+  '<div><dt>Dokumentasi lokal</dt><dd>'+(selected.progress?esc(selected.progress.label+' · '+selected.progress.id):'Belum ada draft untuk pekerjaan ini')+'</dd></div></dl>'+
-  '<h4>Checklist sebelum melanjutkan</h4><ul>'+checks+'</ul><div class="uxv5-detail-actions">'+moduleAction+'</div>'+
+  '<h4>Checklist sebelum melanjutkan</h4><ul>'+checks+'</ul>'+
   '<p class="uxv5-context-note">'+(selectedContext&&selectedContext.patient?
    'Konteks pasien dan encounter sintetis dari pekerjaan '+esc(selected.id)+' akan diteruskan ke form. Verifikasi sebelum menyimpan draft.':
    selected.kind==="bed"?'Objek kerja adalah tempat tidur, bukan pasien. Tidak ada pasien yang ditautkan otomatis.':   selected.kind==="object"?'Objek kerja nonpasien. Tidak ada pasien atau encounter yang ditautkan otomatis.':
