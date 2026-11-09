@@ -705,3 +705,47 @@ test('V10 MCU links authorized checkup form to a synthetic participant encounter
  await expect(page.locator('.p0-patient-banner')).toContainText('Sari Amelia');
  expect(errors).toEqual([]);
 });
+
+
+test('V11 nutritionist uses a scoped clinical worklist and authorized patient draft',async ({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('/index.html');
+ await page.locator('[data-demo-account="akun.ahli-gizi"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ await expect(page.locator('#main-content h1')).toHaveText('Beranda Ahli Gizi');
+ await page.locator('#role-nav [data-demo-action="section:m1"]').click();
+ await expect(page.locator('.uxv5')).toBeVisible();
+ await expect(page.locator('.uxv5-detail')).toContainText('GIZ-0201');
+ await expect(page.locator('.uxv5-detail')).toContainText('Konteks pasien');
+ await page.locator('.uxv5 [data-demo-action="job:1"]').click();
+ await expect(page.locator('.uxv5-detail')).toContainText('GIZ-0202');
+ expect(errors).toEqual([]);
+});
+
+test('V11 CSSD worklist is object-scoped and never infers a patient encounter',async ({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('/index.html');
+ await page.locator('[data-demo-account="akun.petugas-cssd"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ await expect(page.locator('#main-content h1')).toHaveText('Beranda Petugas CSSD');
+ await page.locator('#role-nav [data-demo-action="section:m1"]').click();
+ await expect(page.locator('.uxv5-detail')).toContainText('CSS-0201');
+ await expect(page.locator('.uxv5-detail')).toContainText('Objek kerja nonpasien');
+ await expect(page.locator('.uxv5-detail')).not.toContainText('Konteks pasien');
+ expect(errors).toEqual([]);
+});
+
+test('V11 demo patient portal remains bound to one synthetic patient through all its work items',async ({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('/index.html');
+ await page.locator('[data-demo-account="akun.pasien-demo"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ await expect(page.locator('#main-content h1')).toHaveText('Beranda Pasien Demo');
+ await page.locator('#role-nav [data-demo-action="section:m1"]').click();
+ await expect(page.locator('.uxv5-detail')).toContainText('SELF-0201');
+ await expect(page.locator('.uxv5-detail')).toContainText('ENC-DEMO-247');
+ await page.locator('.uxv5 [data-demo-action="job:3"]').click();
+ await expect(page.locator('.uxv5-detail')).toContainText('SELF-0204');
+ await expect(page.locator('.uxv5-detail')).toContainText('ENC-DEMO-247');
+ expect(errors).toEqual([]);
+});
