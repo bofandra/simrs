@@ -118,7 +118,7 @@ var templates={
     ]
   },
   "Petugas MCU": {
-    "kind": "object",
+    "kind": "patient",
     "prefix": "MCU",
     "rows": [
       [
@@ -161,7 +161,7 @@ var templates={
     ]
   },
   "Radiografer": {
-    "kind": "object",
+    "kind": "patient",
     "prefix": "RAD-EX",
     "rows": [
       [
@@ -204,7 +204,7 @@ var templates={
     ]
   },
   "Radiolog": {
-    "kind": "object",
+    "kind": "patient",
     "prefix": "RAD-REP",
     "rows": [
       [
@@ -247,7 +247,7 @@ var templates={
     ]
   },
   "Casemix": {
-    "kind": "object",
+    "kind": "patient",
     "prefix": "CMX",
     "rows": [
       [
@@ -290,7 +290,7 @@ var templates={
     ]
   },
   "Koordinator OK": {
-    "kind": "object",
+    "kind": "patient",
     "prefix": "OK",
     "rows": [
       [
@@ -333,7 +333,7 @@ var templates={
     ]
   },
   "Dokter Anestesi": {
-    "kind": "object",
+    "kind": "patient",
     "prefix": "ANS",
     "rows": [
       [
@@ -377,6 +377,7 @@ var templates={
   },
   "Tim Mutu": {
     "kind": "object",
+    "kindBySection": {"m1":"patient"},
     "prefix": "QPS",
     "rows": [
       [

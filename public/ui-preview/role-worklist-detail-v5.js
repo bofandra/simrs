@@ -111,11 +111,16 @@ function jobRows(role,section){
   if(patient&&role==="Pendaftaran"){
     scope=j===2?"IGD · walk-in":j===3?"Rawat Inap · rencana admisi":"Rawat Jalan · "+patient.unit;
   }
-  if(patient&&(role==="Farmasis"||role==="Kasir"||role==="ATLM"||role==="Admin Sistem"))scope+=" · "+patient.name;
-  var encounterId=patient?(role==="Dokter IGD"?"ENC-IGD-DEMO-"+String(j+1).padStart(2,"0"):
-    (role==="Perawat"||role==="DPJP Rawat Inap")?"ENC-RI-DEMO-"+String(j+1).padStart(2,"0"):
+  if(patient&&!["Pendaftaran","Dokter RJ","Perawat","Dokter IGD","DPJP Rawat Inap"].includes(role))scope+=" · "+patient.name;
+  var suffix=String(j+1).padStart(2,"0"),workLabel=row[1]+" "+row[2];
+  var encounterId=patient?(
+    role==="Dokter IGD"?"ENC-IGD-DEMO-"+suffix:
+    ["Perawat","DPJP Rawat Inap","Koordinator OK","Dokter Anestesi"].includes(role)?"ENC-RI-DEMO-"+suffix:
     role==="Pendaftaran"&&j===2?"ENC-IGD-DEMO-03":
-    role==="Pendaftaran"&&j===3?"ENC-RI-DEMO-04":patient.visit):null;
+    role==="Pendaftaran"&&j===3?"ENC-RI-DEMO-04":
+    (role==="Radiolog"||role==="Radiografer")&&/\bIGD\b/.test(workLabel)?"ENC-IGD-DEMO-"+suffix:
+    role==="Casemix"&&/\bRI\b/.test(workLabel)?"ENC-RI-DEMO-"+suffix:
+    patient.visit):null;
   return {
    id:row[0],title:title,scope:scope,patientId:patientId,encounterId:encounterId,
    progress:role==="Bed Manager"?null:localProgress(feature.code,row[0],patientId,encounterId),

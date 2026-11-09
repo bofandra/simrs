@@ -13,7 +13,7 @@ function setup(){
  const store=new Map();
  const localStorage={getItem:key=>store.get(key)||null,setItem:(key,value)=>store.set(key,value),removeItem:key=>store.delete(key)};
  const ctx={window:{__SIMRS_PREVIEW__:{patients}},document:{addEventListener(){}},localStorage};
- for(const f of ["role-workspace-v4.js","p0-form-catalog.js","role-worklist-detail-v5.js","role-worklists-v10.js"])
+ for(const f of ["role-workspace-v4.js","p0-form-catalog.js","p1-form-definitions.js","p2-p3-form-definitions.js","role-worklist-detail-v5.js","role-worklists-v10.js"])
   runInNewContext(read(f),ctx,{timeout:3000});
  return {ctx,api:ctx.window.SIMRSRoleUXV5,extended:ctx.window.SIMRSRoleUXV10,localStorage};
 }
@@ -60,9 +60,15 @@ test("RI and lab patients use scoped encounters; nonpatient objects never invent
  assert.equal(admin.kind,"object");assert.equal(admin.patient,null);
  const consent=api.selectionContext("Admin Sistem","m5",0,patients);
  assert.equal(consent.kind,"patient");assert.equal(consent.patient.id,"p1");
- for(const role of ["Radiolog","Radiografer","Casemix","Tim Mutu","Gudang","Petugas MCU","Koordinator OK","Dokter Anestesi"]){
-  const ctx=api.selectionContext(role,"m0",0,patients);
-  assert.equal(ctx.kind,"object",role);assert.equal(ctx.patient,null,role);
+ for(const role of ["Radiolog","Radiografer","Casemix","Petugas MCU","Koordinator OK","Dokter Anestesi"]){
+  const selected=api.selectionContext(role,"m0",0,patients);
+  assert.equal(selected.kind,"patient",role);assert.equal(selected.patient.id,"p1",role);
+ }
+ const incident=api.selectionContext("Tim Mutu","m1",0,patients);
+ assert.equal(incident.kind,"patient");assert.equal(incident.patient.id,"p1");
+ for(const role of ["Tim Mutu","Gudang","Integrasi"]){
+  const selected=api.selectionContext(role,"m0",0,patients);
+  assert.equal(selected.kind,"object",role);assert.equal(selected.patient,null,role);
  }
 });
 test("form engine allows scoped admin object but rejects object for patient-context consent",()=>{
@@ -71,7 +77,8 @@ test("form engine allows scoped admin object but rejects object for patient-cont
  const e=ctx.window.SIMRSFormEngine;
  assert.equal(e.openForRole("CORE-02","Admin Sistem",api.selectionContext("Admin Sistem","m0",0,patients)),true);
  assert.equal(e.openForRole("CORE-12","Admin Sistem",api.selectionContext("Admin Sistem","m0",0,patients)),false);
- assert.equal(e.openForRole("MED-02","Radiolog",api.selectionContext("Radiolog","m0",0,patients)),false);
+ assert.equal(e.openForRole("MED-02","Radiolog",api.selectionContext("Radiolog","m0",0,patients)),true);
+ assert.equal(e.openForRole("MED-10","Petugas MCU",api.selectionContext("Petugas MCU","m0",0,patients)),true);
  assert.equal(e.openForRole("CORE-12","Admin Sistem",api.selectionContext("Admin Sistem","m5",0,patients)),true);
 });
 test("patient selection fails closed if synthetic patients are absent",()=>{
