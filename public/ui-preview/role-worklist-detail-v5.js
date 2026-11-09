@@ -104,7 +104,8 @@ function jobRows(role,section){
  var rows=(spec.rowsBySection&&spec.rowsBySection[feature.key])||spec.rows;
  var rowKind=(spec.kindBySection&&spec.kindBySection[feature.key])||spec.kind||(role==="Bed Manager"?"bed":"patient");
  return rows.map(function(row,j){
-  var patient=rowKind==="patient"?patients[j]:null;
+  var patientIndex=spec.patientIndexByRow&&Number.isInteger(spec.patientIndexByRow[j])?spec.patientIndexByRow[j]:j;
+  var patient=rowKind==="patient"?patients[patientIndex]:null;
   var patientId=patient?patient.id:null;
   var title=(patient&&["Pendaftaran","Dokter RJ","Perawat","Dokter IGD","DPJP Rawat Inap"].indexOf(role)>=0)?patient.name:row[1];
   var scope=patient&&role==="Dokter RJ"?patient.unit+" · "+row[0]:row[2];
