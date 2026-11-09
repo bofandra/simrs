@@ -68,3 +68,14 @@ Sebanyak **19 dari 44 role** memiliki worklist rinci: 7 role V5/V9 ditambah DPJP
 - Seluruh tindakan bersifat simulasi lokal tanpa backend, release hasil, dispensing, klaim, mutasi stok, DICOM atau integrasi eksternal.
 
 Dokumentasi: `design/ROLE_WORKLIST_COVERAGE_V10_2026-11-09.md`. Sisa 25 role masih menggunakan worklist V4 generik.
+
+
+## V11 — Role-native worklists untuk seluruh 44 role (9 November 2026)
+
+V11 melengkapi 25 role yang belum memiliki worklist spesifik, sehingga **44/44 role demo** memiliki antrean pekerjaan per area, empat kasus/objek sintetis per area, alasan tindakan, checklist, panel detail, pencarian dan konteks tugas. Semua navigasi tetap mengikuti modul/FR/WF dari PRD final 6 November 2026; form tetap dibuka hanya jika izin katalog role mengizinkan.
+
+Lima kelompok pekerjaan tersisa yang dilengkapi: pelayanan penunjang (gizi, HD, rehab, bank darah, koordinator MCU), operasional/logistik (CSSD, dapur, laundry, pengadaan, aset, maintenance, fasilitas, transport), administrasi/keuangan (BPJS, coder, billing, akuntansi, budget, costing), organisasi (manajemen, HR, payroll, rekrutmen, PPI), dan portal Pasien Demo.
+
+**Batasan:** penambahan worklist bukan berarti 68 modul sudah memiliki UI high-fidelity atau backend. Semua data tetap contoh; hak akses produksi, identitas pasien sesungguhnya, transaksi, integrasi, distribusi, release, klaim, dan posting tidak aktif. Untuk demo, akun Pasien Demo terbatas pada satu pasien sintetis, bukan login pasien sebenarnya.
+
+Dokumentasi: [V11 mapping worklist ke PRD](design/ROLE_WORKLIST_COVERAGE_V11_2026-11-09.md). Tes: tests/role-worklists-v11.test.mjs dan browser smoke di tests/mockup-smoke.spec.mjs.
