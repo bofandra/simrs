@@ -785,6 +785,8 @@ test('V12 doctor, lab and cashier keep distinct contexts without unauthorized ac
  ]){
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto('/index.html');
+  await page.evaluate(()=>sessionStorage.removeItem('simrs-demo-login-session-v1'));
+  await page.reload();
   await page.locator('[data-demo-account="'+username+'"]').click();
   await page.locator('#demo-login-form button[type="submit"]').click();
   await page.locator('#role-nav [data-demo-action="home"]').click();
