@@ -41,7 +41,7 @@ test('V13 defines explicit sections for every selected clinical and operational 
    assert.ok(!used.has(k),'Duplicate section field '+code+': '+k);used.add(k);
    assert.ok(module.fields.some(f=>f.key===k),'Missing schema field '+code+': '+k);
   });
-  assert.deepEqual([...used].sort(),module.fields.map(f=>f.key).sort(),
+  assert.deepEqual([...used].sort(),Array.from(module.fields,f=>f.key).sort(),
    'All form fields must be placed in V13 sections: '+code);
  });
  for(const c of ['CORE-09','RME-02','RME-04','RME-05','RME-07','RME-08',
