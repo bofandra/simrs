@@ -524,7 +524,7 @@
     if(!module||!Array.isArray(module.roles)||!module.roles.includes(role)||!module.fields||!module.fields.length)return false;
     var shell=window.__SIMRS_PREVIEW__;
     var selectionValid=!!(selected&&selected.role===role&&selected.workItem&&selected.workItem.id&&
-      (selected.kind==="bed"||(selected.kind==="patient"&&selected.patient&&selected.patient.visit&&selected.patient.mrn&&shell&&Array.isArray(shell.patients)&&
+      ((selected.kind==="bed"||selected.kind==="object")&&!selected.patient||(selected.kind==="patient"&&selected.patient&&selected.patient.visit&&selected.patient.mrn&&shell&&Array.isArray(shell.patients)&&
        shell.patients.some(function(p){return p.id===selected.patient.id;}))));
     if(selected&&!selectionValid)return false;
     if(selected&&module.patient_context&&!selected.patient)return false;
