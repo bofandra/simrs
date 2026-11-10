@@ -587,7 +587,10 @@ test('V7 registration work item opens the matching synthetic patient encounter a
  await expect(page.locator('#p0-editor [name="payer"]')).toHaveValue('Umum');
  await expect(page.locator('#p0-editor [name="visit_type"]')).toHaveValue('Rawat Jalan');
  await page.locator('#p0-editor [name="visit_date"]').fill('2026-11-09');
- await page.locator('#p0-editor [name="checkin_state"]').selectOption('Terdaftar');
+ const checkin=page.locator('#p0-editor [name="checkin_state"]');
+ const checkinStep=await checkin.evaluate(el=>Array.from(el.closest('.v13-form-section').parentElement.children).indexOf(el.closest('.v13-form-section')));
+ await page.locator('#p0-editor [data-v15-go="'+checkinStep+'"]').click();
+ await checkin.selectOption('Terdaftar');
  await page.locator('[data-p0-action="save"]').click();
  const records=await page.evaluate(()=>window.SIMRSFormEngine.getRecords()['CORE-09']||[]);
  expect(records.some(r=>r.patient_id==='p2'&&r.encounter_id==='ENC-DEMO-248'&&r.work_item_id==='REG-D002')).toBeTruthy();
@@ -871,9 +874,9 @@ test('V13 operational forms display distinct clinical and administrative workflo
   await expect(page.locator('.v13-form-intro')).toContainText(label);
   expect(await page.locator('#p0-editor .v13-form-section').count()).toBeGreaterThanOrEqual(2);
   const input=page.locator('#p0-editor [name="'+field+'"]');
-  const idx=await input.locator('xpath=ancestor::section[contains(@class,"v13-form-section")]').getAttribute('data-v13-section');
+  const idx=await input.evaluate(el=>Array.from(el.closest('.v13-form-section').parentElement.children).indexOf(el.closest('.v13-form-section')));
   const form=page.locator('#p0-editor');
-  await form.locator('[data-v15-go="'+String(Number(idx)-1)+'"]').click();
+  await form.locator('[data-v15-go="'+idx+'"]').click();
   await expect(input).toBeVisible();
   await expect(form.locator('.v13-form-section:visible')).toHaveCount(1);
   await expect(page.locator('#p0-editor [data-p0-action="blocked"]')).toBeDisabled();
