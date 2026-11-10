@@ -998,3 +998,28 @@ test('V16 nursing assessment and NCP are accessible, while PRMRJ and partograph 
  await expect(risks.locator('[data-v16-action="save"]')).toHaveCount(0);
  expect(errors).toEqual([]);
 });
+
+
+test('V17 reference-inspired role worklist cards and HR directory remain contextual',async ({page}) => {
+  const errors=[];
+  page.on('pageerror',error=>errors.push(error.message));
+  await page.goto('/index.html');
+  await page.locator('[data-demo-account="akun.hr-admin"]').click();
+  await page.locator('#demo-login-form button[type="submit"]').click();
+  await expect(page.locator('.v17-staff-card')).toHaveCount(6);
+  await expect(page.locator('.v17-job-card')).toHaveCount(4);
+  await expect(page.locator('.v17-job-grid')).toBeHidden();
+  await page.locator('[data-v17-view="grid"]').click();
+  await expect(page.locator('.v17-job-grid')).toBeVisible();
+  await page.locator('.v17-job-card').nth(1).click();
+  await expect(page.locator('.v17-job-card').nth(1)).toHaveAttribute('aria-pressed','true');
+  await page.locator('#uxv5-search').fill('tidak ada hasil yang cocok');
+  await expect(page.locator('.v17-grid-empty')).toBeVisible();
+  await page.locator('#uxv5-search').fill('');
+  await expect(page.locator('.v17-grid-empty')).toBeHidden();
+  await page.locator('[data-v17-view="table"]').click();
+  await expect(page.locator('.uxv4-table-scroller')).toBeVisible();
+  await page.setViewportSize({width:390,height:844});
+  await expect(page.locator('#main-content .uxv4-head')).toBeVisible();
+  expect(errors).toEqual([]);
+});
