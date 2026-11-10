@@ -106,3 +106,9 @@ V13 melengkapi mockup operasional dengan **22 desain form terkelompok** untuk pe
 Implementasi: `public/ui-preview/role-form-blueprints-v13.js`, `.css`; pengujian: `tests/role-form-blueprints-v13.test.mjs` dan `tests/mockup-smoke.spec.mjs`. Penjelasan lengkap: [V13 form per profesi](design/ROLE_NATIVE_FORMS_V13_2026-11-09.md).
 
 **Batasan:** tidak mengubah kontrak field, role, draft per pasien/encounter, validasi, dan tidak mengaktifkan backend, signing, dispensing, stock mutation, billing, klaim, serta sistem klinis sungguhan. Sisa 46 form belum mendapat layout V13 unik.
+
+## V17 — Adopsi referensi UI klinis (10 November 2026)
+
+Gaya dashboard dan worklist diadaptasi dari tiga gambar rujukan yang disediakan pengguna: sidebar terang, KPI card yang rapi, worklist tabel, serta alternatif kartu. Seluruh 44 role demo dapat berpindah antara **Tabel / Kartu** dengan pekerjaan dan izin yang sama; akun **HR Admin** menampilkan enam kartu direktori personel **sintetis dan read-only** pada Beranda. Seluruh layar klinis, finansial, dan operasional tetap mengikuti role → pekerjaan → pasien/encounter → form.
+
+Berkas: `public/ui-preview/reference-clinical-v17.css`, `reference-clinical-v17.js`. Rincian traceability dan keselamatan: [Adopsi Referensi UI Klinis V17](design/REFERENCE_CLINICAL_UI_V17_2026-11-10.md). Angka dan status pada mockup bukan metrik rumah sakit, dan belum ada backend atau autentikasi produksi.
