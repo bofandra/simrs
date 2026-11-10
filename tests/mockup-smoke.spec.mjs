@@ -928,7 +928,7 @@ test('V14 radiographer screenshot: action is visible above detail metadata and o
 test('V15 keeps one task form section visible while preserving values across steps',async ({page})=>{
  const errors=[],apiRequests=[];
  page.on('pageerror',error=>errors.push(error.message));
- page.on('request',request=>{if(/\\/api\\/v1\\//.test(request.url()))apiRequests.push(request.url());});
+ page.on('request',request=>{if(request.url().includes('/api/v1/'))apiRequests.push(request.url());});
  await openV13RoleForm(page,'akun.dokter-rj','m1','RME-04');
  const form=page.locator('#p0-editor');
  await expect(form.locator('.v15-section-tabs')).toBeVisible();
