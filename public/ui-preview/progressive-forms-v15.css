@@ -1,0 +1,97 @@
+/* V15 — one form section visible at a time, without removing any fields. */
+body.demo-authenticated:not(.demo-reviewer) #p0-editor .v15-section-tabs{
+ display:flex;gap:7px;overflow-x:auto;max-width:100%;padding:3px 0 15px;
+ margin:1px 0 14px;border-bottom:1px solid #e0eaf0;scrollbar-width:thin;
+}
+body.demo-authenticated:not(.demo-reviewer) #p0-editor .v15-tab{
+ display:inline-flex;align-items:center;gap:8px;min-height:42px;
+ padding:8px 13px;border:1px solid #dbe6ef;border-radius:10px;
+ background:#fff;color:#50677c;font-weight:650;font-size:12px;
+ flex:0 0 auto;max-width:250px;text-align:left;
+}
+body.demo-authenticated:not(.demo-reviewer) #p0-editor .v15-tab:hover{
+ background:#eff8f7;border-color:#92ccc2;
+}
+body.demo-authenticated:not(.demo-reviewer) #p0-editor .v15-tab.active{
+ color:#066e69;background:#eaf8f5;border-color:#82c8be;
+ box-shadow:inset 0 -2px 0 #0c9488;
+}
+body.demo-authenticated:not(.demo-reviewer) #p0-editor .v15-tab-number,
+body.demo-authenticated:not(.demo-reviewer) #p0-editor .v15-index{
+ display:inline-grid;place-items:center;flex:0 0 auto;width:25px;height:25px;
+ border-radius:8px;background:#e9f1f5;color:#42627a;font-weight:800;
+}
+body.demo-authenticated:not(.demo-reviewer) #p0-editor .v15-tab.active .v15-tab-number{
+ color:#fff;background:#07867e;
+}
+#p0-editor .p0-fields > .v13-form-section[hidden],
+#p0-editor .p0-fields > .v15-generated-section[hidden]{display:none!important}
+body.demo-authenticated:not(.demo-reviewer) #p0-editor .p0-fields.v15-chunked{
+ display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:0;
+}
+body.demo-authenticated:not(.demo-reviewer) #p0-editor .v15-generated-section{
+ border:1px solid #dfe8f1;border-radius:12px;background:#fff;overflow:hidden;
+}
+body.demo-authenticated:not(.demo-reviewer) #p0-editor .v15-generated-head{
+ display:flex;align-items:center;gap:10px;padding:14px 18px;
+ border-bottom:1px solid #e9eff5;background:#f8fbfe;
+}
+body.demo-authenticated:not(.demo-reviewer) #p0-editor .v15-generated-head h3{
+ margin:0;color:#193b59;font-size:15px;
+}
+body.demo-authenticated:not(.demo-reviewer) #p0-editor .v15-generated-head p{
+ margin:3px 0 0;color:#6a8298;font-size:11px;
+}
+body.demo-authenticated:not(.demo-reviewer) #p0-editor .v15-grid{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;padding:20px;
+}
+body.demo-authenticated:not(.demo-reviewer) #p0-editor .v15-grid>.field{
+ min-width:0;width:100%;
+}
+body.demo-authenticated:not(.demo-reviewer) #p0-editor .v15-grid>.field:has(textarea){
+ grid-column:1/-1;
+}
+body.demo-authenticated:not(.demo-reviewer) #p0-editor .v15-grid .forminput{width:100%}
+body.demo-authenticated:not(.demo-reviewer) #p0-editor .v15-step-controls{
+ display:flex;align-items:center;justify-content:space-between;gap:10px;
+ flex-wrap:wrap;padding:14px 0 6px;
+}
+body.demo-authenticated:not(.demo-reviewer) #p0-editor .v15-step-controls button{
+ border:1px solid #bdd4e0;background:#fff;color:#1b5970;
+ border-radius:9px;min-height:43px;padding:9px 16px;font-weight:750;
+}
+body.demo-authenticated:not(.demo-reviewer) #p0-editor .v15-step-controls .v15-step-next{
+ background:#087f78;color:#fff;border-color:#087f78;margin-left:auto;
+}
+body.demo-authenticated:not(.demo-reviewer) #p0-editor .v15-step-controls button:disabled{
+ opacity:.4;cursor:not-allowed;
+}
+body.demo-authenticated:not(.demo-reviewer) #p0-editor .v15-step-label{
+ color:#526c81;font-size:12px;font-weight:650;text-align:center;
+}
+body.demo-authenticated:not(.demo-reviewer) #p0-editor .v15-draft-note{
+ color:#657b8c;margin:2px 0 18px;font-size:11px;line-height:1.6;
+}
+@media(max-width:680px){
+ body.demo-authenticated:not(.demo-reviewer) #p0-editor .v15-grid{
+  grid-template-columns:minmax(0,1fr);padding:15px;
+ }
+ body.demo-authenticated:not(.demo-reviewer) #p0-editor .v15-grid>.field:has(textarea){grid-column:1}
+ body.demo-authenticated:not(.demo-reviewer) #p0-editor .v15-tab{
+  max-width:190px;min-height:45px;white-space:normal;
+ }
+ body.demo-authenticated:not(.demo-reviewer) #p0-editor .v15-step-controls{
+  display:grid;grid-template-columns:1fr 1fr;
+ }
+ body.demo-authenticated:not(.demo-reviewer) #p0-editor .v15-step-label{
+  grid-column:1/-1;grid-row:1;text-align:left;
+ }
+ body.demo-authenticated:not(.demo-reviewer) #p0-editor .v15-step-controls button{
+  width:100%;min-height:46px;
+ }
+}
+@media print{
+ #p0-editor .v15-section-tabs,#p0-editor .v15-step-controls,#p0-editor .v15-draft-note{display:none!important}
+ #p0-editor .p0-fields > .v13-form-section[hidden],
+ #p0-editor .p0-fields > .v15-generated-section[hidden]{display:block!important}
+}
