@@ -1,0 +1,285 @@
+/* V17 — visual adoption from supplied clinical UI reference images.
+ * Preserves 44-role navigation, patient/work-item context and V16 forms.
+ * Prototype only: visual styles do not make clinical/finance actions operational.
+ */
+:root{
+  --v17-ink:#203044;--v17-muted:#6f8093;--v17-blue:#2f61bf;
+  --v17-teal:#0f9a95;--v17-bg:#f4f7fb;--v17-line:#e5ebf3;
+  --v17-shadow:0 8px 30px rgba(30,55,93,.035);
+}
+body.demo-authenticated:not(.demo-reviewer){background:var(--v17-bg);color:var(--v17-ink)}
+body.demo-authenticated:not(.demo-reviewer) #app{background:var(--v17-bg)}
+body.demo-authenticated:not(.demo-reviewer) #app>aside{
+  width:250px;background:#fff;color:#26374b;border-right:1px solid #e8edf4;
+  box-shadow:2px 0 18px rgba(37,65,95,.025);
+}
+body.demo-authenticated:not(.demo-reviewer) #app>aside .brand{
+  padding:23px 19px 21px;border-bottom:1px solid #eef2f6;
+}
+body.demo-authenticated:not(.demo-reviewer) #app>aside .brand-mark{
+  background:linear-gradient(135deg,#177bc1,#11aaa1);color:white;
+  box-shadow:0 6px 14px rgba(19,150,167,.15);border-radius:10px;
+  width:38px;height:38px;font-size:25px;
+}
+body.demo-authenticated:not(.demo-reviewer) #app>aside .brand strong{color:#152a3b;font-size:17px}
+body.demo-authenticated:not(.demo-reviewer) #app>aside .brand small{color:#92a2b1;font-size:9px}
+body.demo-authenticated:not(.demo-reviewer) #app>aside .ux-role-caption,
+body.demo-authenticated:not(.demo-reviewer) #app>aside #role-nav .ux-nav-section{
+  color:#9ba8b5;font-size:10px;letter-spacing:1.1px;
+}
+body.demo-authenticated:not(.demo-reviewer) #app>aside #role-nav{padding:3px 8px 16px}
+body.demo-authenticated:not(.demo-reviewer) #app>aside #role-nav .ux-role-unit{
+  background:#f1f8f8;color:#438179;border:1px solid #e1eeec;
+  font-size:11px;border-radius:9px;padding:10px 12px;
+}
+body.demo-authenticated:not(.demo-reviewer) #app>aside #role-nav .ux-role-menu{
+  min-height:44px;padding:10px 12px;color:#5a6b7d;
+  background:transparent;border:1px solid transparent;font-size:12px;
+  font-weight:620;border-radius:9px;transition:background .16s,color .16s;
+}
+body.demo-authenticated:not(.demo-reviewer) #app>aside #role-nav .ux-role-menu:hover{
+  background:#f3f7fb;color:#1e5078;
+}
+body.demo-authenticated:not(.demo-reviewer) #app>aside #role-nav .ux-role-menu.active{
+  background:#eaf4ff;border-color:#e5f0ff;box-shadow:none;color:#1c61b3;font-weight:780;
+}
+body.demo-authenticated:not(.demo-reviewer) #app>aside #role-nav .ux-menu-index{
+  width:25px;height:25px;background:#f3f6fa;color:#8392a4;border-radius:7px;font-size:10px;
+}
+body.demo-authenticated:not(.demo-reviewer) #app>aside #role-nav .ux-role-menu.active .ux-menu-index{
+  background:#dceafe;color:#2566b9;
+}
+body.demo-authenticated:not(.demo-reviewer) #main{background:var(--v17-bg)}
+body.demo-authenticated:not(.demo-reviewer) #main .topbar{
+  height:70px;background:rgba(255,255,255,.97);border-bottom:1px solid #e8edf3;
+  box-shadow:none;gap:13px;
+}
+body.demo-authenticated:not(.demo-reviewer) .topbar .breadcrumbs{color:#8795a4;font-size:11px}
+body.demo-authenticated:not(.demo-reviewer) .topbar .breadcrumbs b{color:#2f4256}
+body.demo-authenticated:not(.demo-reviewer) #demo-current-role{
+  background:#eff9f8;color:#137b75;border:1px solid #d6eeeb;
+  border-radius:999px;padding:7px 11px;font-size:11px;font-weight:730;
+}
+body.demo-authenticated:not(.demo-reviewer) .topbar #hospital{
+  min-height:36px;border-color:#e5ecf3;background:#fbfcfe;color:#526679;
+}
+body.demo-authenticated:not(.demo-reviewer) .topbar #demo-logout{
+  border:1px solid #e0e7ee;background:#fff;color:#566b81;border-radius:8px;
+  min-height:36px;padding:7px 12px;
+}
+body.demo-authenticated:not(.demo-reviewer) .topbar .avatar{
+  border-radius:50%;background:#deecfc;color:#2f62ae;
+}
+body.demo-authenticated:not(.demo-reviewer) #main .content{
+  max-width:1560px;padding:30px clamp(20px,2.4vw,40px) 55px;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv4.uxv5{max-width:1480px;color:#26384b}
+body.demo-authenticated:not(.demo-reviewer) .uxv4-head{margin-bottom:22px;gap:16px}
+body.demo-authenticated:not(.demo-reviewer) .uxv4-head .eyebrow{
+  font-weight:780;color:#278b93;font-size:10px;letter-spacing:.8px;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv4-head h1{
+  color:#1f2d3c;font-size:26px;font-weight:790;letter-spacing:-.6px;
+  margin:6px 0;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv4-head p{
+  color:#7a8997;font-size:12px;line-height:1.6;max-width:760px;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv4-identity{
+  background:#fff;border:1px solid var(--v17-line);padding:11px 15px;
+  box-shadow:none;border-radius:11px;min-width:190px;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv4-identity>span{color:#778fa9}
+body.demo-authenticated:not(.demo-reviewer) .uxv4-identity strong{color:#2b425a}
+body.demo-authenticated:not(.demo-reviewer) .uxv5-summary{grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin-bottom:16px}
+body.demo-authenticated:not(.demo-reviewer) .uxv5-summary>div{
+  min-height:118px;border:1px solid #e8edf3;border-radius:16px;
+  padding:18px 20px;box-shadow:var(--v17-shadow);background:#fff;
+  position:relative;overflow:hidden;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv5-summary>div:before{
+  content:"";position:absolute;top:20px;right:20px;width:34px;height:34px;
+  border-radius:10px;background:#eaf6f7;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv5-summary>div:nth-child(2):before{background:#eaf1fe}
+body.demo-authenticated:not(.demo-reviewer) .uxv5-summary>div:nth-child(3):before{background:#eef6ed}
+body.demo-authenticated:not(.demo-reviewer) .uxv5-summary>div span{
+  color:#7d8b99;font-size:11px;font-weight:660;letter-spacing:0;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv5-summary>div strong{
+  color:#202f40;font-size:24px;font-weight:800;letter-spacing:-.55px;
+  padding-right:20px;line-height:1.2;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv5-summary>div small{
+  color:#94a2b0;font-size:11px;line-height:1.4;
+}
+body.demo-authenticated:not(.demo-reviewer) .v12-context{
+  background:linear-gradient(110deg,#eaf9f7,#f6fbff 75%,#fff);
+  border:1px solid #d9ecec;border-radius:14px;padding:15px 19px;margin-bottom:18px;
+}
+body.demo-authenticated:not(.demo-reviewer) .v12-context-title strong{font-size:15px;color:#234455}
+body.demo-authenticated:not(.demo-reviewer) .v12-context-chips span{
+  border-radius:999px;background:#fff;border:1px solid #dbeaec;color:#59768b;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv4-panel{
+  box-shadow:var(--v17-shadow);border-color:var(--v17-line);border-radius:16px;
+  background:white;margin-bottom:18px;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv4-panel-head{padding:20px 22px;gap:16px}
+body.demo-authenticated:not(.demo-reviewer) .uxv4-panel-head h2{
+  font-size:16px;font-weight:780;color:#253345;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv4-panel-head p{color:#8995a4}
+body.demo-authenticated:not(.demo-reviewer) .uxv4-features{gap:12px;padding:0 20px 20px}
+body.demo-authenticated:not(.demo-reviewer) .uxv4-feature{
+  background:#fcfdff;border-color:#e8eef5;border-radius:13px;padding:17px;min-height:144px;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv4-feature:hover{
+  background:#f4f9ff;border-color:#c7d9f4;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv4-feature strong{font-size:13px;color:#28415b}
+body.demo-authenticated:not(.demo-reviewer) .uxv4-feature-code{
+  background:#e7f4fa;color:#27848d;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv4-feature-arrow{color:#2c68b8}
+body.demo-authenticated:not(.demo-reviewer) .uxv5-search-label input,
+body.demo-authenticated:not(.demo-reviewer) .p0-operational .forminput{
+  border:1px solid #e0e8f0;background:#fff;border-radius:9px;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv5.v12-parity .uxv5-layout{
+  grid-template-columns:minmax(0,1.5fr) minmax(320px,.87fr);
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv5 .uxv4-table th{
+  background:#f9fbfd;color:#8391a0;font-size:11px;font-weight:700;
+  padding:15px;border-color:#edf1f6;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv5 .uxv4-table td{
+  padding:15px;color:#556b7f;font-size:12px;border-color:#eff3f7;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv5 .uxv4-table td strong{color:#32465b;font-size:12px}
+body.demo-authenticated:not(.demo-reviewer) .uxv5 .uxv4-table td small{color:#94a3b1}
+body.demo-authenticated:not(.demo-reviewer) .uxv5 .uxv4-table .uxv4-job-id{
+  color:#27828a;font-variant-numeric:tabular-nums;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv5 .uxv4-table tr.uxv5-selected{
+  background:#eef8fa;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv5 .uxv4-table tr.uxv5-selected td:first-child{
+  box-shadow:inset 3px 0 0 #17a2ab;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv5-detail{
+  background:#fbfdff;border-left:1px solid #e9eff5;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv5-detail-header h3{color:#283c53}
+body.demo-authenticated:not(.demo-reviewer) .uxv5-detail-header>span,
+body.demo-authenticated:not(.demo-reviewer) .uxv5-detail-header>strong{color:#2c8e93}
+body.demo-authenticated:not(.demo-reviewer) .uxv5-detail-actions .btn-primary,
+body.demo-authenticated:not(.demo-reviewer) .p0-operational .btn-primary{
+  background:#315fc0;border-color:#315fc0;color:white;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv5-detail-actions .btn-primary:hover,
+body.demo-authenticated:not(.demo-reviewer) .p0-operational .btn-primary:hover{
+  background:#244ea6;border-color:#244ea6;
+}
+body.demo-authenticated:not(.demo-reviewer) .v12-filterbar{background:#fff;border-color:#eef1f6;padding:13px 20px}
+body.demo-authenticated:not(.demo-reviewer) .v12-filter{
+  border-radius:8px;color:#748495;border-color:#e2e9f1;background:#fff;
+}
+body.demo-authenticated:not(.demo-reviewer) .v12-filter[aria-pressed="true"]{
+  background:#e9f2ff;color:#2d65b7;border-color:#c5dcf9;
+}
+body.demo-authenticated:not(.demo-reviewer) .p0-operational .p0-editor,
+body.demo-authenticated:not(.demo-reviewer) .card{
+  border-color:#e4ebf3;border-radius:15px;
+}
+/* Grid/list switch applies to worklists for any demo role. */
+.v17-switchbar{
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+  padding:0 20px 14px;flex-wrap:wrap;
+}
+.v17-switchbar>span{font-size:11px;color:#8a99a9}
+.v17-view-switch{display:inline-flex;align-items:center;gap:3px;background:#f3f6fa;
+  border-radius:9px;padding:4px;border:1px solid #e9eef4}
+.v17-view-switch button{
+  min-height:34px;min-width:70px;border:0;background:transparent;
+  color:#78889a;border-radius:7px;padding:6px 11px;font-size:12px;font-weight:760;
+}
+.v17-view-switch button[aria-pressed="true"]{
+  background:#fff;color:#2c60b0;box-shadow:0 1px 6px #24466f17;
+}
+.v17-job-grid{display:none;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;padding:0 20px 18px}
+.v17-grid-mode .v17-job-grid{display:grid}
+.v17-grid-mode .uxv5-layout .uxv4-table-scroller{display:none}
+body.demo-authenticated:not(.demo-reviewer) .uxv5.v12-parity.v17-grid-mode .uxv5-layout,
+body.demo-authenticated:not(.demo-reviewer) .uxv5.v17-grid-mode .uxv5-layout{display:block}
+.v17-grid-mode .uxv5-detail{border-left:0;border-top:1px solid #e5edf4}
+.v17-job-card{
+  padding:17px 17px 14px;text-align:left;background:#fff;
+  border:1px solid #e8eef5;border-radius:14px;display:grid;
+  align-content:start;gap:10px;color:#34465a;min-width:0;cursor:pointer;
+  transition:transform .15s,border-color .15s,box-shadow .15s;
+}
+.v17-job-card:hover{transform:translateY(-2px);border-color:#bfd5ef;box-shadow:0 9px 26px #1c406712}
+.v17-job-card[aria-pressed="true"]{border-color:#7ec4cb;background:#f4fbfc;box-shadow:0 0 0 2px #b5e3e634}
+.v17-job-card-head{display:flex;align-items:center;gap:11px;min-width:0}
+.v17-job-avatar{display:grid;place-items:center;width:42px;height:42px;flex:none;
+  border-radius:50%;background:linear-gradient(135deg,#dbf7f5,#e6edff);color:#276db7;font-size:13px;font-weight:850}
+.v17-job-card-head strong{display:block;font-size:13px;line-height:1.45;color:#243c52;overflow-wrap:anywhere}
+.v17-job-card-head small{display:block;font-size:11px;color:#8c9bac;overflow-wrap:anywhere;margin-top:3px}
+.v17-job-card dl{margin:0;border-top:1px solid #edf1f6;padding-top:9px}
+.v17-job-card dl>div{display:flex;justify-content:space-between;gap:10px;padding:4px 0}
+.v17-job-card dt{color:#8c9ba9;font-size:11px}
+.v17-job-card dd{margin:0;color:#50677a;font-size:11px;text-align:right;max-width:60%;overflow-wrap:anywhere}
+.v17-job-card-foot{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.v17-job-card-foot>span{font-size:10px;color:#298289;font-weight:740}
+.v17-job-card[hidden]{display:none!important}
+.v17-job-card .uxv4-status{font-size:10px;border-radius:6px}
+.v17-job-card .uxv4-status.uxv4-pending{color:#8a661f;background:#fff5df}
+.v17-grid-empty{font-size:12px;color:#8195a5;padding:12px 20px}
+.v17-grid-empty[hidden]{display:none!important}
+/* Staff directory pattern from the reference: read-only example data for HR only. */
+.v17-staff-directory{padding:0 20px 20px}
+.v17-staff-note{margin:0 0 13px;color:#8a9aab;font-size:11px;line-height:1.55}
+.v17-staff-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.v17-staff-card{border:1px solid #e8edf5;border-radius:13px;padding:16px;background:#fff;min-width:0}
+.v17-staff-card header{display:flex;gap:10px;align-items:center;padding-bottom:12px;border-bottom:1px solid #edf1f6}
+.v17-staff-card .v17-staff-avatar{width:40px;height:40px;display:grid;place-items:center;flex:none;border-radius:50%;background:#eaf2fe;color:#315fba;font-weight:850}
+.v17-staff-card h3{font-size:13px;font-weight:780;color:#243b51;margin:0}
+.v17-staff-card header p{margin:2px 0 0;font-size:11px;color:#8b9aaa}
+.v17-staff-card dl{margin:11px 0 0;display:grid;gap:6px}
+.v17-staff-card dl>div{display:flex;justify-content:space-between;gap:10px;font-size:11px}
+.v17-staff-card dt{color:#8294a6}.v17-staff-card dd{color:#435b70;margin:0;text-align:right}
+.v17-staff-card .v17-status{font-weight:750;color:#208b69}
+.v17-staff-card .v17-status.off{color:#936235}
+/* Preserve a single-column form on phones and make controls tappable. */
+@media(max-width:1250px){
+  .v17-job-grid,.v17-staff-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:1100px){
+  body.demo-authenticated:not(.demo-reviewer) #app>aside{
+    position:fixed;top:0;bottom:0;left:0;z-index:1301;width:min(84vw,320px);
+    height:100dvh;transform:translateX(-105%);visibility:hidden;
+  }
+  body.demo-authenticated:not(.demo-reviewer).demo-mobile-nav-open #app>aside{
+    transform:translateX(0);visibility:visible;
+  }
+  body.demo-authenticated:not(.demo-reviewer) #app>aside #role-nav{padding:3px 12px 20px}
+  body.demo-authenticated:not(.demo-reviewer) #main .content{padding:21px 18px 42px}
+  body.demo-authenticated:not(.demo-reviewer) .uxv5.v12-parity .uxv5-layout{grid-template-columns:1fr}
+  body.demo-authenticated:not(.demo-reviewer) .uxv5-detail{border-left:0;border-top:1px solid #e5edf4}
+}
+@media(max-width:700px){
+  body.demo-authenticated:not(.demo-reviewer) .uxv5-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
+  body.demo-authenticated:not(.demo-reviewer) .uxv5-summary>div:first-child{grid-column:1 / -1}
+  body.demo-authenticated:not(.demo-reviewer) .uxv4-head h1{font-size:22px}
+  body.demo-authenticated:not(.demo-reviewer) .uxv4-head p{font-size:12px}
+  .v17-job-grid,.v17-staff-grid{grid-template-columns:minmax(0,1fr)}
+  .v17-switchbar{padding:0 14px 12px}
+  .v17-job-grid{padding:0 14px 16px}
+  body.demo-authenticated:not(.demo-reviewer) #main .content{padding:15px 12px 36px}
+  body.demo-authenticated:not(.demo-reviewer) .uxv4-panel-head{padding:15px}
+  .v17-staff-directory{padding:0 14px 14px}
+  .v17-view-switch button{min-height:41px}
+}
+@media(prefers-reduced-motion:reduce){.v17-job-card{transition:none}}
+@media print{.v17-switchbar{display:none}.v17-grid-mode .uxv5-layout .uxv4-table-scroller{display:block}.v17-job-grid{display:none!important}}
