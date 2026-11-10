@@ -16,17 +16,21 @@ function avatar(name){
  var parts=String(name||"").replace(/\b(dr\.|Dr\.|Pasien|Demo)\b/g,"").trim().split(/\s+/).filter(Boolean);
  return esc((parts.length>1?parts[0][0]+parts[1][0]:(parts[0]||"?").slice(0,2)).toUpperCase());
 }
-function cardsHtml(jobs,selected){
+function cardsHtml(jobs,selected,filter,query){
+ var visible=0;
  return '<div class="v17-job-grid" aria-label="Pekerjaan dalam tampilan kartu">'+jobs.map(function(job,index){
   var active=index===selected,waiting=job.status==="Perlu ditinjau";
-  return '<button type="button" class="v17-job-card" data-demo-action="job:'+index+'" data-v17-card="'+index+
+  var haystack=[job.id,job.title,job.scope,job.reason,job.status,job.progress&&job.progress.label].join(" ").toLocaleLowerCase("id-ID");
+  var shown=(filter==="Semua"||job.status===filter)&&haystack.includes(query);
+  if(shown)visible++;
+  return '<button type="button" class="v17-job-card" data-v17-job="'+index+'" data-v17-card="'+index+'"' +(shown?'':' hidden')+
    '" aria-pressed="'+String(active)+'" aria-label="Lihat detail pekerjaan '+esc(job.id)+'">'+
    '<span class="v17-job-card-head"><span class="v17-job-avatar" aria-hidden="true">'+avatar(job.title)+'</span>'+
    '<span><strong>'+esc(job.title)+'</strong><small>'+esc(job.scope)+'</small></span></span>'+
    '<span class="v17-job-card-foot"><span>'+esc(job.id)+'</span><span class="uxv4-status'+(waiting?' uxv4-pending':'')+'">'+esc(job.status)+'</span></span>'+
    '<dl><div><dt>Perlu diperiksa</dt><dd>'+esc(job.reason)+'</dd></div>'+
    '<div><dt>Dokumentasi</dt><dd>'+esc(job.progress?job.progress.label:"Belum ada draft")+'</dd></div></dl></button>';
- }).join("")+'</div><p class="v17-grid-empty" hidden>Tidak ada pekerjaan yang cocok dengan filter atau pencarian.</p>';
+ }).join("")+'</div><p class="v17-grid-empty"'+(visible?' hidden':'')+'>Tidak ada pekerjaan yang cocok dengan filter atau pencarian.</p>';
 }
 var demoStaff=[
  ["DA","Dokter Demo Anggrek","Dokter · Poli Penyakit Dalam","Poli Dalam","Bertugas","Pagi"],
@@ -87,13 +91,25 @@ worklists.renderPage=function(ctx){
   '</div></div>';
  var index=Number(ctx.selectedJob);
  if(!Number.isInteger(index)||index<0||index>=jobs.length)index=0;
- html=html.replace('<div class="uxv5-layout">',control+cardsHtml(jobs,index)+'<div class="uxv5-layout">');
+ var activeStatus=(html.match(/data-v12-filter="([^"]+)" aria-pressed="true"/)||[])[1]||"Semua";
+ var encodedQuery=(html.match(/id="uxv5-search" type="search" value="([^"]*)"/)||[])[1]||"";
+ var query=encodedQuery.replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&").trim().toLocaleLowerCase("id-ID");
+ html=html.replace('<div class="uxv5-layout">',control+cardsHtml(jobs,index,activeStatus,query)+'<div class="uxv5-layout">');
  if(ctx.role==="HR Admin"&&(ctx.section==="home"||!ctx.section)){
   html=html.replace('</section>', '</section>'+staffDirectory());
  }
  return html;
 };
 document.addEventListener("click",function(event){
+ var card=event.target.closest("[data-v17-job]");
+ if(card){
+  event.preventDefault();
+  var root=card.closest(".uxv4.uxv5");
+  var index=Number(card.getAttribute("data-v17-job"));
+  var existing=root&&root.querySelector('.uxv4-table [data-demo-action="job:'+index+'"]');
+  if(existing)existing.click(); // Existing handler enforces role + patient/encounter context.
+  return;
+ }
  var toggle=event.target.closest("[data-v17-view]");
  if(toggle){
   var root=toggle.closest(".uxv4.uxv5");
@@ -110,7 +126,7 @@ document.addEventListener("click",function(event){
   return;
  }
  if(event.target.closest("[data-v12-filter]")){
-  var root=event.target.closest(".uxv4.uxv5");
+  var root=document.querySelector(".uxv4.uxv5")||event.target.closest(".uxv4.uxv5");
   if(root)syncGrid(root);
  }
 });
