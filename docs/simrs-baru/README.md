@@ -1,4 +1,12 @@
-# Dokumen Teknis SIMRS Baru (arsip referensi)
+# Dokumen dan PRD SIMRS Baru
+
+## Spesifikasi utama saat ini
+
+- **[PRD SIMRS Baru v1.1 — lengkap (Markdown)](PRD_SIMRS_Baru_v1.1_Ekstensi_Form_Klinis_2026-11-10.md)** — full Bab 1–13, termasuk 43 tabel, diagram arsitektur, FR/US/AC, workflow, kamus data dan Bab 13 ekstensi form klinis.
+- [Panduan implementasi mockup berdasarkan PRD](PANDUAN_PENGEMBANGAN_MOCKUP_BERDASARKAN_PRD.md).
+- [Diagram arsitektur asli](assets/diagram-arsitektur-simrs-baru-v1.1.png).
+
+## Referensi teknis tambahan
 
 Folder ini **bukan lagi sumber halaman GitHub Pages**. HTML/CSS/JavaScript prototipe lama sudah dihapus; situs mockup terbaru diterbitkan dari `public/ui-preview/` langsung sebagai halaman utama.
 
