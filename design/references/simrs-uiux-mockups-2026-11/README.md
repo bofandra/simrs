@@ -6,6 +6,13 @@ Kumpulan gambar mockup sebagai **acuan pengembangan** SIMRS Baru. Inspirasi visu
 
 ![Lembar ringkasan 13 layar SIMRS](./role-screens/contact_sheet.png)
 
+## Masterplan dan benchmark terkait
+
+- **[Masterplan UI/UX SIMRS Baru](../../UIUX_MASTERPLAN_SIMRS_BARU_2026-11-11.md)** — arah UX per role, 13 screen specifications, component patterns, safety gates, roadmap, acceptance dan 15 epic backlog.
+- **[Komparasi kompetitor & best practice](../../UIUX_BENCHMARK_KOMPETITOR_2026-11-11.md)** — global/lokal/Dribbble dan adaptasi untuk tenaga RS Indonesia.
+
+Gambar di bawah berfungsi sebagai acuan visual, sedangkan kelengkapan fungsi dan ketentuan klinis tetap mengikuti PRD dan SOP.
+
 ## 13 layar operasional per peran
 
 | No | Gambar | Halaman | Target pengguna | Modul / workflow |

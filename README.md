@@ -11,6 +11,12 @@
 PRD v1.1 adalah **edisi turunan** dari baseline final 6 November 2026, bukan penggantian sepihak baseline. Semua tindakan klinis, stok, finansial dan integrasi pada situs tetap simulasi sampai SOP/UAT/otorisasi produksi disetujui.
 
 
+## Masterplan UI/UX SIMRS Baru — 11 November 2026
+
+**[Baca Masterplan UI/UX berbasis 13 mockup](design/UIUX_MASTERPLAN_SIMRS_BARU_2026-11-11.md)** — spesifikasi layar berdasarkan role dan pekerjaan, peta 68 modul/12 workflow, keselamatan pasien, design system, aksesibilitas, tahapan F0–F4, backlog UX-001–UX-015, dan kriteria UAT. **[Baca komparasi kompetitor](design/UIUX_BENCHMARK_KOMPETITOR_2026-11-11.md)** — Epic, Oracle Health, TrakCare, MEDITECH, Dedalus ORBIS U, SIMGOS, Khanza, SIMRS.ID dan Dribbble, dengan rujukan standar W3C/ONC/SATUSEHAT.
+
+Keduanya adalah **rencana dan referensi pengembangan**, bukan perubahan kode operasional, bukan klaim UAT selesai, dan bukan penggantian baseline PRD final 6 November 2026. Gambar-gambarnya tersedia di [folder referensi UI/UX](design/references/simrs-uiux-mockups-2026-11/README.md).
+
 **Situs resmi mockup saat ini:** https://bofandra.github.io/simrs/
 
 **LOGIN DEMO (44 ROLE):** Pengguna pertama kali masuk melalui layar login, memilih akun demo per role (contoh `akun.pendaftaran`, `akun.dokter-rj`, `akun.farmasis`) dengan password demo `demo123`. Setelah login, layar awal dan menu hanya menampilkan pekerjaan sesuai role. `reviewer.demo` adalah akun khusus QA/peninjau untuk menjelajahi seluruh workspace dan katalog, bukan akun pengguna RS. Semua akun ini hanya simulasi front-end dan **bukan autentikasi keamanan**.
