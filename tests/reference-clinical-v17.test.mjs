@@ -24,7 +24,8 @@ test("V17 renders card/table toggle with escaped job content",()=>{
   const html=window.SIMRSRoleUXV5.renderPage({role:"Dokter RJ",section:"home",selectedJob:0,username:"akun.dokter-rj"});
   assert.match(html,/data-v17-view="table"/);
   assert.match(html,/data-v17-view="grid"/);
-  assert.match(html,/data-demo-action="job:0"/);
+  assert.match(html,/data-v17-job="0"/);
+  assert.doesNotMatch(html,/data-demo-action="job:0"/);
   assert.match(html,/&lt;img src=x onerror=alert\(1\)&gt;/);
   assert.doesNotMatch(html,/<img src=x/);
   assert.doesNotMatch(html,/v17-staff-panel/);
