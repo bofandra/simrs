@@ -24,7 +24,7 @@ function cardsHtml(jobs,selected,filter,query){
   var shown=(filter==="Semua"||job.status===filter)&&haystack.includes(query);
   if(shown)visible++;
   return '<button type="button" class="v17-job-card" data-v17-job="'+index+'" data-v17-card="'+index+'"' +(shown?'':' hidden')+
-   '" aria-pressed="'+String(active)+'" aria-label="Lihat detail pekerjaan '+esc(job.id)+'">'+
+   ' aria-pressed="'+String(active)+'" aria-label="Lihat detail pekerjaan '+esc(job.id)+'">'+
    '<span class="v17-job-card-head"><span class="v17-job-avatar" aria-hidden="true">'+avatar(job.title)+'</span>'+
    '<span><strong>'+esc(job.title)+'</strong><small>'+esc(job.scope)+'</small></span></span>'+
    '<span class="v17-job-card-foot"><span>'+esc(job.id)+'</span><span class="uxv4-status'+(waiting?' uxv4-pending':'')+'">'+esc(job.status)+'</span></span>'+
