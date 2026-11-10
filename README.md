@@ -1,5 +1,16 @@
 # SIMRS Baru — Mockup Interaktif
 
+## Acuan resmi pengembangan mockup — PRD lengkap (10 November 2026)
+
+**[Baca PRD SIMRS Baru v1.1 (Markdown lengkap, Bab 1–13)](docs/simrs-baru/PRD_SIMRS_Baru_v1.1_Ekstensi_Form_Klinis_2026-11-10.md)** — mencakup 68 modul, 7 PIC, 66 FR, user stories, acceptance criteria, 12 workflow, 23 schema PostgreSQL, 211 tabel target, kontrak integrasi, keamanan, UAT, dan penajaman 14 komponen form/riwayat klinis pada Bab 13.
+
+- **[Panduan implementasi mockup menurut PRD](docs/simrs-baru/PANDUAN_PENGEMBANGAN_MOCKUP_BERDASARKAN_PRD.md)** — pola role-first, worklist → detail → form, traceability FR/US/AC, prioritas pengerjaan dan batas tindakan demo.
+- **[Instruksi untuk coding agent/pengembang](AGENTS.md)** — aturan sumber spesifikasi, keselamatan, dan review per perubahan.
+- **[Diagram arsitektur PRD](docs/simrs-baru/assets/diagram-arsitektur-simrs-baru-v1.1.png)** — aset asli yang digunakan pada PRD.
+
+PRD v1.1 adalah **edisi turunan** dari baseline final 6 November 2026, bukan penggantian sepihak baseline. Semua tindakan klinis, stok, finansial dan integrasi pada situs tetap simulasi sampai SOP/UAT/otorisasi produksi disetujui.
+
+
 **Situs resmi mockup saat ini:** https://bofandra.github.io/simrs/
 
 **LOGIN DEMO (44 ROLE):** Pengguna pertama kali masuk melalui layar login, memilih akun demo per role (contoh `akun.pendaftaran`, `akun.dokter-rj`, `akun.farmasis`) dengan password demo `demo123`. Setelah login, layar awal dan menu hanya menampilkan pekerjaan sesuai role. `reviewer.demo` adalah akun khusus QA/peninjau untuk menjelajahi seluruh workspace dan katalog, bukan akun pengguna RS. Semua akun ini hanya simulasi front-end dan **bukan autentikasi keamanan**.
