@@ -41,6 +41,7 @@ function setStep(form,index,scroll){
  if(scroll){var intro=form.querySelector(".v15-section-tabs");if(intro&&typeof intro.scrollIntoView==="function")intro.scrollIntoView({block:"nearest",behavior:"smooth"});}
 }
 function decorate(){
+ if(!document.body.classList.contains("demo-authenticated")||document.body.classList.contains("demo-reviewer"))return;
  var form=document.getElementById("p0-editor");
  if(!form||form.dataset.v15Ready==="true")return;
  var fields=form.querySelector(".p0-fields");if(!fields)return;
