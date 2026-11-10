@@ -587,7 +587,10 @@ test('V7 registration work item opens the matching synthetic patient encounter a
  await expect(page.locator('#p0-editor [name="payer"]')).toHaveValue('Umum');
  await expect(page.locator('#p0-editor [name="visit_type"]')).toHaveValue('Rawat Jalan');
  await page.locator('#p0-editor [name="visit_date"]').fill('2026-11-09');
- await page.locator('#p0-editor [name="checkin_state"]').selectOption('Terdaftar');
+ const checkin=page.locator('#p0-editor [name="checkin_state"]');
+ const checkinStep=await checkin.evaluate(el=>Array.from(el.closest('.v13-form-section').parentElement.children).indexOf(el.closest('.v13-form-section')));
+ await page.locator('#p0-editor [data-v15-go="'+checkinStep+'"]').click();
+ await checkin.selectOption('Terdaftar');
  await page.locator('[data-p0-action="save"]').click();
  const records=await page.evaluate(()=>window.SIMRSFormEngine.getRecords()['CORE-09']||[]);
  expect(records.some(r=>r.patient_id==='p2'&&r.encounter_id==='ENC-DEMO-248'&&r.work_item_id==='REG-D002')).toBeTruthy();
@@ -837,10 +840,13 @@ test('V13 clinical SOAP sections preserve draft values and reactively track requ
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await openV13RoleForm(page,'akun.dokter-rj','m1','RME-04');
  const form=page.locator('#p0-editor');
- await expect(form.locator('.v13-form-section[data-v13-type="subjective"]')).toBeVisible();
- await expect(form.locator('.v13-form-section[data-v13-type="objective"]')).toBeVisible();
- await expect(form.locator('.v13-form-section[data-v13-type="assessment"]')).toBeVisible();
- await expect(form.locator('.v13-form-section[data-v13-type="plan"]')).toBeVisible();
+ await expect(form.locator('.v13-form-section').first()).toBeVisible();
+ await expect(form.locator('.v13-form-section[data-v13-type="subjective"]')).toBeHidden();
+ await expect(form.locator('.v13-form-section[data-v13-type="objective"]')).toBeHidden();
+ await expect(form.locator('.v13-form-section[data-v13-type="assessment"]')).toBeHidden();
+ await expect(form.locator('.v13-form-section[data-v13-type="plan"]')).toBeHidden();
+ await expect(form.locator('.v15-tab')).toHaveCount(5);
+ await form.locator('[data-v15-go="1"]').click();
  const before=await form.locator('#v13-progress').evaluate(el=>Number(el.value));
  await form.locator('[name="subjective"]').fill('Contoh keluhan sintetis untuk latihan');
  await expect(form.locator('#v13-progress')).toHaveJSProperty('value',before+1);
@@ -867,8 +873,12 @@ test('V13 operational forms display distinct clinical and administrative workflo
   await openV13RoleForm(page,account,section,code);
   await expect(page.locator('.v13-form-intro')).toContainText(label);
   expect(await page.locator('#p0-editor .v13-form-section').count()).toBeGreaterThanOrEqual(2);
-  await expect(page.locator('#p0-editor [name="'+field+'"]')).toBeVisible();
-  await expect(page.locator('#p0-editor .v13-form-section').first()).toBeVisible();
+  const input=page.locator('#p0-editor [name="'+field+'"]');
+  const idx=await input.evaluate(el=>Array.from(el.closest('.v13-form-section').parentElement.children).indexOf(el.closest('.v13-form-section')));
+  const form=page.locator('#p0-editor');
+  await form.locator('[data-v15-go="'+idx+'"]').click();
+  await expect(input).toBeVisible();
+  await expect(form.locator('.v13-form-section:visible')).toHaveCount(1);
   await expect(page.locator('#p0-editor [data-p0-action="blocked"]')).toBeDisabled();
  }
  expect(errors).toEqual([]);
@@ -918,4 +928,25 @@ test('V14 radiographer screenshot: action is visible above detail metadata and o
  await expect(page.locator('.v13-form-intro')).toContainText('Pelaksanaan radiologi');
  await expect(page.locator('.p0-patient-banner')).toContainText('Sari Amelia');
  expect(errors).toEqual([]);
+});
+
+test('V15 keeps one task form section visible while preserving values across steps',async ({page})=>{
+ const errors=[],apiRequests=[];
+ page.on('pageerror',error=>errors.push(error.message));
+ page.on('request',request=>{if(request.url().includes('/api/v1/'))apiRequests.push(request.url());});
+ await openV13RoleForm(page,'akun.dokter-rj','m1','RME-04');
+ const form=page.locator('#p0-editor');
+ await expect(form.locator('.v15-section-tabs')).toBeVisible();
+ await expect(form.locator('.v13-form-section:visible')).toHaveCount(1);
+ await form.locator('[data-v15-go="1"]').click();
+ await form.locator('[name="subjective"]').fill('Nyeri perut demo sejak kemarin');
+ await form.locator('[data-v15-move="next"]').click();
+ await expect(form.locator('.v13-form-section[data-v13-type="objective"]')).toBeVisible();
+ await expect(form.locator('[name="subjective"]')).toBeHidden();
+ await form.locator('[data-v15-go="1"]').click();
+ await expect(form.locator('[name="subjective"]')).toHaveValue('Nyeri perut demo sejak kemarin');
+ await form.locator('[data-p0-action="save"]').click();
+ await expect(page.locator('.p0-editor .card-h')).toContainText('Draft');
+ await expect(form.locator('.v13-form-section:visible')).toHaveCount(1);
+ expect(errors).toEqual([]);expect(apiRequests).toEqual([]);
 });
