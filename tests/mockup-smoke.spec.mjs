@@ -950,3 +950,51 @@ test('V15 keeps one task form section visible while preserving values across ste
  await expect(form.locator('.v13-form-section:visible')).toHaveCount(1);
  expect(errors).toEqual([]);expect(apiRequests).toEqual([]);
 });
+
+
+test('V16 IGD clinical benchmark opens only one subform section, saves scoped demo draft and shows read-only history',async ({page})=>{
+ const errors=[],requests=[];
+ page.on('pageerror',e=>errors.push(e.message));
+ page.on('request',r=>{if(r.url().includes('/api/v1/'))requests.push(r.url());});
+ await openV13RoleForm(page,'akun.dokter-igd','m0','RME-02');
+ const panel=page.locator('#benchmark-v16');
+ await expect(panel).toBeVisible();
+ await panel.locator('summary').click();
+ await panel.locator('[data-v16-action="choose"][data-id="CF-01"]').click();
+ await expect(panel.locator('#v16-active')).toContainText('Triase terstruktur ABCDE');
+ await expect(panel.locator('.v16-fields')).toBeVisible();
+ await expect(panel.locator('[data-v16-field="chief_complaint"]')).toBeVisible();
+ await panel.locator('[data-v16-field="chief_complaint"]').fill('Keluhan pasien demo saja');
+ await panel.locator('[data-v16-action="next"]').click();
+ await expect(panel.locator('[data-v16-field="airway"]')).toBeVisible();
+ await expect(panel.locator('[data-v16-field="chief_complaint"]')).toHaveCount(0);
+ await panel.locator('[data-v16-action="back"]').click();
+ await expect(panel.locator('[data-v16-field="chief_complaint"]')).toHaveValue('Keluhan pasien demo saja');
+ await panel.locator('[data-v16-action="save"]').click();
+ await expect(panel.locator('#v16-feedback')).toContainText('Draft simulasi tersimpan');
+ await panel.locator('[data-v16-action="history"]').click();
+ await expect(panel.locator('.v16-history')).toBeVisible();
+ await expect(panel.locator('.v16-history')).toContainText('CF-01');
+ await expect(panel.locator('.v16-history')).toContainText('Draft (demo)');
+ expect(requests).toEqual([]);expect(errors).toEqual([]);
+});
+test('V16 nursing assessment and NCP are accessible, while PRMRJ and partograph remain gated',async ({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await openV13RoleForm(page,'akun.perawat','m2','RME-07');
+ const panel=page.locator('#benchmark-v16');
+ await panel.locator('summary').click();
+ await expect(panel.locator('[data-v16-action="choose"][data-id="CF-02"]')).toBeVisible();
+ await expect(panel.locator('[data-v16-action="choose"][data-id="CF-03"]')).toBeVisible();
+ await panel.locator('[data-v16-action="choose"][data-id="CF-02"]').click();
+ await expect(panel.locator('[data-v16-field="assessment_type"]')).toBeVisible();
+ await panel.locator('[data-v16-field="assessment_type"]').selectOption('ulang');
+ await panel.locator('[data-v16-action="save"]').click();
+ await expect(panel.locator('#v16-feedback')).toContainText('Draft simulasi tersimpan');
+ await openV13RoleForm(page,'akun.perawat','m1','RME-05');
+ const risks=page.locator('#benchmark-v16');
+ await risks.locator('summary').click();
+ await risks.locator('[data-v16-action="choose"][data-id="CF-06"]').click();
+ await expect(risks.locator('.v16-gated')).toContainText('Belum diaktifkan');
+ await expect(risks.locator('[data-v16-action="save"]')).toHaveCount(0);
+ expect(errors).toEqual([]);
+});
