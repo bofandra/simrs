@@ -1,0 +1,27 @@
+/* V23 — context/action bar stays non-sticky to avoid overlapping clinical CTAs. */
+body.demo-authenticated:not(.demo-reviewer) .v23-returnbar{
+ display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:13px;
+ padding:14px 18px;margin:0 0 16px;min-width:0;
+ border:1px solid #c9e2dd;border-radius:13px;background:linear-gradient(100deg,#f2faf7,#fff);
+ color:#20475a;box-shadow:0 4px 14px #173d4409;
+}
+.v23-returnbar-info{display:flex;flex-direction:column;gap:2px;min-width:0}
+.v23-overline{font-size:10px;letter-spacing:.8px;font-weight:800;color:#08776c}
+.v23-context-title{font-size:14px;font-weight:790;color:#16394f;line-height:1.4;overflow-wrap:anywhere}
+.v23-context-meta{font-size:11px;color:#476a7b;line-height:1.5;overflow-wrap:anywhere}
+.v23-returnbar-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.v23-back-button,.v23-form-button{
+ min-height:44px;border-radius:9px;padding:9px 14px;
+ font-size:12px;font-weight:760;cursor:pointer;
+}
+.v23-back-button{background:#087f79;color:white;border:1px solid #087f79}
+.v23-back-button:hover{background:#076961}
+.v23-form-button{color:#165e78;background:white;border:1px solid #b6d4dd}
+.v23-form-button:hover{background:#eff8f9}
+@media(max-width:650px){
+ body.demo-authenticated:not(.demo-reviewer) .v23-returnbar{align-items:stretch;padding:13px}
+ .v23-returnbar-actions{display:grid;grid-template-columns:1fr 1fr;width:100%}
+ .v23-back-button,.v23-form-button{white-space:normal;padding:10px}
+}
+@media(max-width:375px){.v23-returnbar-actions{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.v23-returnbar *{scroll-behavior:auto}}

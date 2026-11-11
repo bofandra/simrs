@@ -11,6 +11,10 @@
 PRD v1.1 adalah **edisi turunan** dari baseline final 6 November 2026, bukan penggantian sepihak baseline. Semua tindakan klinis, stok, finansial dan integrasi pada situs tetap simulasi sampai SOP/UAT/otorisasi produksi disetujui.
 
 
+## Implementasi UI/UX V22–V24 — 11 November 2026
+
+**[Dokumentasi implementasi V22–V24](design/UIUX_IMPLEMENTATION_V22_V24_2026-11-11.md)** — semua 44 staf demo masuk ke beranda pekerjaan per role; form memiliki tombol **Kembali ke daftar kerja** yang mempertahankan pekerjaan sebelumnya dan tombol **Ke isian form**; pengujian regresi desktop/mobile dan isolasi reviewer. Tetap prototipe statis, tidak mengaktifkan layanan atau transaksi nyata.
+
 ## Implementasi UI/UX V18–V21 — 11 November 2026
 
 **[Catatan implementasi V18–V21](design/UIUX_IMPLEMENTATION_V18_V21_2026-11-11.md)** — V18 layer visual konsisten dan responsif, V19 panel keselamatan/pekerjaan klinis, V20 tahapan operasional, V21 tes regresi Node/Playwright. Seluruh panel read-only, memakai data sintetis, tidak mengubah izin akses atau membuat transaksi sungguhan. Urutan proses hanya ilustrasi dan status UAT pengguna **belum selesai**. Baseline spesifikasi tetap PRD final 6 November 2026.
