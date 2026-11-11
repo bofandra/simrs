@@ -1027,7 +1027,7 @@ test('V17 reference-inspired role worklist cards and HR directory remain context
 test('V19 clinical workflow guidance respects selected patient work context',async ({page})=>{
  const errors=[],apiRequests=[];
  page.on('pageerror',e=>errors.push(e.message));
- page.on('request',r=>{if(/\\/api\\/v1\\//.test(r.url()))apiRequests.push(r.url());});
+ page.on('request',r=>{if(r.url().includes('/api/v1/'))apiRequests.push(r.url());});
  await page.goto('/index.html');
  await page.locator('[data-demo-account="akun.dokter-rj"]').click();
  await page.locator('#demo-login-form button[type="submit"]').click();
