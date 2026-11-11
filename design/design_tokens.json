@@ -1,35 +1,36 @@
 {
   "meta": {
     "name": "SIMRS Baru UI Design System",
-    "version": "1.1.0-provisional",
-    "baseline_prd": "2026-11-08",
+    "version": "1.2.0-active-mockup",
+    "baseline_prd": "PRD_SIMRS_Baru_Final_User_Stories_Acceptance_Technical_7PIC_2026-11-06",
     "type": "design guidance only",
     "theme_reference_url": "https://satusehat-stg.dto.kemkes.go.id/design-system",
-    "theme_verification": "Pending: staging reference was not accessible on 2026-11-08; values are provisional, not official SATUSEHAT tokens",
-    "css_theme_path": "public/ui-preview/satusehat-theme.css"
+    "theme_verification": "Provisional mockup tokens; not verified as official SATUSEHAT design system values",
+    "css_theme_path": "public/ui-preview/unified-workspaces-v18.css",
+    "implementation": "V18 canonical cascade loaded after V17; V19/V20 guidance remains read-only synthetic UI"
   },
   "color": {
-    "navy": "#114C4D",
-    "navy_alt": "#1C6565",
-    "primary_action": "#087E79",
-    "information": "#177C8D",
+    "navy": "#17344B",
+    "navy_alt": "#254D63",
+    "primary_action": "#087F79",
+    "information": "#2D62B3",
     "success": "#217A5B",
-    "warning": "#926200",
-    "danger": "#B53C47",
-    "canvas": "#F5FAF9",
+    "warning": "#956016",
+    "danger": "#A83D4E",
+    "canvas": "#F4F7FA",
     "surface": "#FFFFFF",
-    "text": "#273B40",
-    "text_muted": "#61767B",
-    "border": "#DCE9E7"
+    "text": "#223648",
+    "text_muted": "#526B80",
+    "border": "#DCE7ED"
   },
   "font": {
-    "family": "Segoe UI, Inter, ui-sans-serif, system-ui, Roboto, Arial, sans-serif",
+    "family": "Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif",
     "base_px": 13,
-    "label_px": 11,
-    "table_px": 11,
-    "metadata_px": 10,
-    "title_px": 28,
-    "panel_title_px": 14
+    "label_px": 12,
+    "table_px": 12,
+    "metadata_px": 11,
+    "title_px": 26,
+    "panel_title_px": 16
   },
   "spacing_px": [
     4,
@@ -48,13 +49,18 @@
     "card": "0 3px 14px rgba(22,83,78,.055)"
   },
   "layout": {
-    "desktop_sidebar_px": 252,
-    "desktop_topbar_px": 62,
-    "content_max_width_px": 1640,
+    "desktop_sidebar_px": 250,
+    "desktop_topbar_px": 70,
+    "content_max_width_px": 1560,
     "breakpoints_px": {
-      "tablet": 840,
-      "mobile": 530
-    }
+      "sidebar_drawer": 1100,
+      "mobile": 700
+    },
+    "viewport_test_px": [
+      390,
+      980,
+      1440
+    ]
   },
   "semantic_statuses": {
     "draft": "warning",
@@ -86,6 +92,10 @@
     "bed_board",
     "payment_summary",
     "KPI_snapshot",
-    "FR_US_AC_trace"
+    "FR_US_AC_trace",
+    "role_workflow_guide",
+    "role_safety_strip",
+    "progressive_form_section",
+    "read_only_demo_status"
   ]
 }
