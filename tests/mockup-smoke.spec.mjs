@@ -1031,6 +1031,7 @@ test('V19 clinical workflow guidance respects selected patient work context',asy
  await page.goto('/index.html');
  await page.locator('[data-demo-account="akun.dokter-rj"]').click();
  await page.locator('#demo-login-form button[type="submit"]').click();
+ await page.locator('#role-nav [data-demo-action="home"]').click();
  const guide=page.locator('[data-v18-screen="S03"]');
  await expect(guide).toBeVisible();
  await expect(guide).toContainText('Periksa dua identitas');
