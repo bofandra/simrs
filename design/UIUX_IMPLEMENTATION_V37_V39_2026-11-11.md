@@ -15,7 +15,7 @@ Kolom US merupakan *identitas user story* yang sudah ada di Bab 3, bukan require
 
 | Role | PIC domain | Modul existing | User story existing | FR / WF existing |
 |---|---|---|---|---|
-| DPJP Rawat Inap | PIC3 | RME-03, RME-04, RME-06 dst. sesuai profile | US-RME-03/04/06 | Sesuai profile V4; WF-04 |
+| DPJP Rawat Inap | PIC3 (+ PIC4 untuk order) | RME-03/04/09/08/11, ENT-04 | US-RME-03/04/09/08/11, US-ENT-04 | FR-011/009/012/016/013/015; WF-04/05/12 |
 | Petugas Bank Darah | PIC4 | MED-12 | US-MED-12 | FR-019 / WF-05 |
 | Gudang | PIC5 | OPS-01 | US-OPS-01 | FR-022/036 / WF-07 |
 | Pengadaan | PIC5 | OPS-02 | US-OPS-02 | FR-022/045 / WF-07 |
