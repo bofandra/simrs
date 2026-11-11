@@ -11,6 +11,10 @@
 PRD v1.1 adalah **edisi turunan** dari baseline final 6 November 2026, bukan penggantian sepihak baseline. Semua tindakan klinis, stok, finansial dan integrasi pada situs tetap simulasi sampai SOP/UAT/otorisasi produksi disetujui.
 
 
+## Implementasi UI/UX V40–V42 — 11 November 2026
+
+**[Audit visual 13 layar, konsistensi tema, dan skenario usability](design/UIUX_VISUAL_PARITY_AUDIT_V40_V42_2026-11-11.md)** — menyelaraskan kembali sidebar navy dan menu aktif teal dengan 13 gambar acuan; menambah keterbacaan tabel dan state form, pemulihan empty/search, tombol menuju field error di form bertahap (tanpa mengubah validator dan izin), serta screenshot otomatis untuk 13 screen family pada Actions. Ini **pembandingan komposisi awal**, bukan klaim pixel parity atau UAT klinis sudah lulus.
+
 ## Implementasi UI/UX V37–V39 — 11 November 2026
 
 **[Implementasi F4 role coverage 44/44 dan state operasional](design/UIUX_IMPLEMENTATION_V37_V39_2026-11-11.md)** — melengkapi 16 role yang sebelumnya baru memiliki worklist: DPJP Rawat Inap, Bank Darah, Gudang, Pengadaan, Aset, Teknisi, Fasilitas, Transport, BPJS, Coder, Akuntan, Budget Owner, Analis Biaya, Payroll Admin, Rekruter, dan Tim PPI. Role-first context mengikuti status pasien/objek pada pekerjaan existing. State UI baru: pencarian/filter tanpa hasil dan reset, form denied, konteks pasien hilang, hanya draft demo. Coverage 44/44 mencakup **landing/worklist UI saja**, bukan implementasi penuh 68 modul atau sign-off UAT.
