@@ -1,0 +1,169 @@
+/* SIMRS UI/UX V40: visual-alignment pass for 13 reference screen families.
+ * Scoped to the actual static demo; does not change rights or transactions.
+ * The navy/teal reference shell is preferred to the later white sidebar.
+ */
+body.demo-authenticated:not(.demo-reviewer){
+ --v40-navy:#122a47;--v40-navy-mid:#183754;--v40-teal:#078d88;
+ --v40-surface:#fff;--v40-canvas:#f3f7fb;--v40-border:#d9e6ed;
+ background:var(--v40-canvas);
+}
+body.demo-authenticated:not(.demo-reviewer) #app>aside{
+ background:linear-gradient(180deg,var(--v40-navy) 0%,#153351 72%,var(--v40-navy-mid) 100%);
+ color:#ebf3fa;border-right:1px solid #264661;box-shadow:none;
+}
+body.demo-authenticated:not(.demo-reviewer) #app>aside .brand{
+ background:transparent;border-bottom-color:#ffffff29;
+}
+body.demo-authenticated:not(.demo-reviewer) #app>aside .brand strong{color:#fff}
+body.demo-authenticated:not(.demo-reviewer) #app>aside .brand small{color:#b4cbdc}
+body.demo-authenticated:not(.demo-reviewer) #app>aside .brand-mark{
+ background:linear-gradient(145deg,#05b2ae,#2eaeac);box-shadow:0 5px 14px #0c26394d;
+}
+body.demo-authenticated:not(.demo-reviewer) #app>aside #role-nav .ux-role-unit{
+ color:#d7eee7;background:#224761;border:1px solid #376078;line-height:1.5;
+}
+body.demo-authenticated:not(.demo-reviewer) #app>aside #role-nav .ux-nav-section,
+body.demo-authenticated:not(.demo-reviewer) #app>aside .ux-role-caption{color:#a7bed0}
+body.demo-authenticated:not(.demo-reviewer) #app>aside #role-nav .ux-role-menu{
+ background:transparent;color:#d4e1ec;border:1px solid transparent;
+ min-height:44px;text-align:left;
+}
+body.demo-authenticated:not(.demo-reviewer) #app>aside #role-nav .ux-role-menu:hover{
+ color:#fff;background:#285371;border-color:#36607c;
+}
+body.demo-authenticated:not(.demo-reviewer) #app>aside #role-nav .ux-role-menu.active{
+ color:#fff;background:linear-gradient(90deg,#067f83,#06958e);
+ border-color:#22a6a0;box-shadow:none;
+}
+body.demo-authenticated:not(.demo-reviewer) #app>aside #role-nav .ux-role-menu .ux-menu-index{
+ background:#31516b;color:#c0d7e6;
+}
+body.demo-authenticated:not(.demo-reviewer) #app>aside #role-nav .ux-role-menu.active .ux-menu-index{
+ background:#ffffff32;color:#fff;
+}
+body.demo-authenticated:not(.demo-reviewer) #main .topbar{
+ background:#fffffffa;border-bottom:1px solid #d9e5ee;
+}
+body.demo-authenticated:not(.demo-reviewer) #main .content{
+ max-width:1680px;min-width:0;padding:23px clamp(16px,2.3vw,36px) 44px;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv5{
+ min-width:0;max-width:1600px;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv5 .uxv4-head h1{
+ color:#173a53;font-weight:800;letter-spacing:-.55px;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv5 .uxv5-summary>div{
+ border-color:var(--v40-border);box-shadow:0 3px 15px rgba(23,52,79,.035);
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv5 .uxv4-panel{
+ border-color:var(--v40-border);background:var(--v40-surface);
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv5 .uxv4-panel-head h2{
+ font-weight:790;color:#193a54;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv5 .uxv4-table th{
+ color:#365975;font-size:11px;background:#f5f8fc;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv5 .uxv4-table td{
+ font-size:12px;color:#38586e;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv5 .uxv4-table td small{
+ font-size:11px;color:#59758c;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv5 .uxv5-detail{
+ min-width:0;background:#f9fbfd;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv5 :where(.uxv5-search-label input,[data-demo-action^="job:"]){
+ min-height:44px;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv5 .uxv5-search-label input:focus-visible,
+body.demo-authenticated:not(.demo-reviewer) #role-nav .ux-role-menu:focus-visible{
+ outline:3px solid #34b1b0;outline-offset:3px;
+}
+/* V41 — recoverable no-results state; existing worklist search/filter is authoritative. */
+.v41-empty-panel{
+ margin:11px 17px 17px;padding:16px 18px;
+ background:#f3f8fb;border:1px dashed #bdd6df;border-radius:11px;
+ color:#315a6c;line-height:1.55;min-width:0;
+}
+.v41-empty-panel[hidden]{display:none}
+.v41-empty-panel strong{display:block;color:#205168;font-size:13px}
+.v41-empty-panel p{margin:6px 0 11px;font-size:12px;color:#526b7b}
+.v41-empty-reset{
+ min-height:44px;padding:9px 14px;background:#fff;border:1px solid #397e91;
+ border-radius:9px;color:#205d6e;font-size:12px;font-weight:750;
+}
+.v41-empty-reset:hover{background:#e7f3f5}
+.v41-empty-reset:focus-visible{outline:3px solid #176fa5;outline-offset:3px}
+/* V41 — progressive form recovery; errors are links to the actual field. */
+body.demo-authenticated:not(.demo-reviewer) .p0-operational .p0-editor{
+ border:1px solid #d4e4eb;border-radius:14px;
+}
+.v41-form-state{
+ display:flex;flex-wrap:wrap;align-items:center;gap:9px;
+ padding:11px 14px;margin-bottom:15px;
+ border:1px solid #cde6df;border-left:4px solid #087e79;
+ border-radius:10px;background:#f2faf7;color:#33586b;
+ font-size:12px;line-height:1.5;
+}
+.v41-form-state strong{color:#145c5b;font-size:12px}
+.v41-form-state[data-v41-state="read-only"]{
+ background:#f4f7fb;border-color:#dce4ed;border-left-color:#6d859e;
+}
+.v41-form-state[data-v41-state="denied"]{
+ background:#fff7ed;border-color:#ebd7bf;border-left-color:#b17b34;
+}
+.v41-form-state[data-v41-state="denied"] strong{color:#805326}
+.v41-error-navigation{
+ margin-top:12px;padding:14px 15px;border:1px solid #ebbec3;
+ border-radius:11px;background:#fff8f8;
+}
+.v41-error-navigation[hidden]{display:none}
+.v41-error-navigation>strong{display:block;color:#943d48;font-size:13px}
+.v41-error-navigation>p{font-size:11px;color:#7c515b;margin:5px 0 11px}
+.v41-error-links{display:flex;flex-wrap:wrap;gap:8px}
+.v41-error-jump{
+ min-height:44px;border:1px solid #d79ca5;background:#fff;border-radius:9px;
+ padding:10px 13px;color:#853440;text-align:left;font-size:12px;line-height:1.4;
+ cursor:pointer;
+}
+.v41-error-jump:hover{background:#ffeded}
+.v41-error-jump:focus-visible{outline:3px solid #176fa5;outline-offset:3px}
+.p0-editor .p0-field.invalid .forminput{
+ border-color:#ad4554;background:#fffafb;box-shadow:0 0 0 2px #b3475314;
+}
+.p0-editor .p0-error:not(:empty){font-size:11px;line-height:1.5;color:#923c49}
+body.demo-authenticated:not(.demo-reviewer) .p0-editor .v15-tab{
+ min-height:44px;
+}
+body.demo-authenticated:not(.demo-reviewer) .p0-editor .p0-form-actions .btn{
+ min-height:44px;
+}
+/* Controlled layout is intentionally one-column on tablets/mobile,
+ * while wide worklist tables scroll within their own container. */
+@media(max-width:980px){
+ body.demo-authenticated:not(.demo-reviewer) #main .content{padding:17px 16px 40px}
+ body.demo-authenticated:not(.demo-reviewer) .uxv5 .uxv5-layout{
+  grid-template-columns:minmax(0,1fr);
+ }
+ body.demo-authenticated:not(.demo-reviewer) .uxv5 .uxv5-detail{
+  border-left:0;border-top:1px solid #dbe8ee;
+ }
+}
+@media(max-width:700px){
+ body.demo-authenticated:not(.demo-reviewer) #main .content{padding:14px 12px 30px}
+ body.demo-authenticated:not(.demo-reviewer) .uxv5 .uxv4-table-scroller{
+  max-width:100%;width:100%;overflow-x:auto;
+ }
+ body.demo-authenticated:not(.demo-reviewer) .uxv5 .uxv4-table{min-width:640px}
+ body.demo-authenticated:not(.demo-reviewer) .uxv5 .uxv4-head{
+  grid-template-columns:minmax(0,1fr);min-width:0;
+ }
+ .v41-error-links{display:grid;grid-template-columns:minmax(0,1fr)}
+ .v41-error-jump,.v41-empty-reset{width:100%}
+ .v41-form-state{align-items:flex-start;flex-direction:column}
+}
+@media(prefers-reduced-motion:reduce){
+ .v41-error-jump,.v41-empty-reset{transition:none}
+}
