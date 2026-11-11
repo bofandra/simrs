@@ -11,6 +11,10 @@
 PRD v1.1 adalah **edisi turunan** dari baseline final 6 November 2026, bukan penggantian sepihak baseline. Semua tindakan klinis, stok, finansial dan integrasi pada situs tetap simulasi sampai SOP/UAT/otorisasi produksi disetujui.
 
 
+## Implementasi UI/UX V34–V36 — 11 November 2026
+
+**[Dokumentasi F4 Advanced Services & Portal Pasien](design/UIUX_IMPLEMENTATION_V34_V36_2026-11-11.md)** — gelombang pertama F4 memoles tampilan 9 akun: Koordinator OK, Dokter Anestesi, Perawat HD, Terapis Rehabilitasi, Ahli Gizi, Petugas Dapur, Petugas CSSD, Petugas Laundry, dan Pasien Demo. Worklist berdasarkan tugas; konteks pasien/episode atau objek sesuai role; panduan tiga cek dan kontrol fokus; portal pasien khusus satu identitas demo dengan navigasi janji temu dan dokumen. Akses dan transaksi riil tetap nonaktif. Node contract serta Chromium UI regression menguji role, patient/object isolation, reviewer, dan mobile.
+
 ## Implementasi UI/UX V31–V33 — 11 November 2026
 
 **[Dokumentasi Finance & Enterprise F3](design/UIUX_IMPLEMENTATION_V31_V33_2026-11-11.md)** — sepuluh akun profesi pada layar **S09 Finance, S10 Management & Integrasi, S11 Admin, dan S13 MCU** memiliki beranda berbasis tugas, konteks objek terpilih, panduan pemeriksaan sebelum tindakan, dan akses cepat ke worklist. Responsif, fokus keyboard, reviewer terisolasi, serta tes Node dan Chromium. Semua hanya mockup sintetis, tanpa pembayaran, klaim, approval hak akses, penerbitan MCU, atau pengiriman API nyata.
