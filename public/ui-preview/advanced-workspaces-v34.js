@@ -167,7 +167,7 @@ function decorate(){
    var opt=make("button","v34-portal-link",i===0?"Janji temu saya":"Dokumen saya");
    opt.type="button";
    opt.setAttribute("data-demo-action","section:m"+i);
-   if(section==="m"+i)opt.setAttribute("aria-current","page");
+   if((section==="home"?"m0":section)==="m"+i)opt.setAttribute("aria-current","page");
    portals.appendChild(opt);
   }
   heroCopy.appendChild(portals);
