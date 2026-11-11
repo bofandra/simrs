@@ -8,16 +8,16 @@ body.demo-authenticated:not(.demo-reviewer) .uxv5.v28-support{
  --support-border:#cee2ec;
  display:flex;flex-direction:column;min-width:0;
 }
-.uxv5.v28-support[data-v28-kind="bed"]{
+body.demo-authenticated:not(.demo-reviewer) .uxv5.v28-support[data-v28-kind="bed"]{
  --support-accent:#61749c;--support-accent-strong:#3c5079;--support-tint:#f1f5fb;--support-border:#d7e0ed;
 }
-.uxv5.v28-support[data-v28-kind="lab"]{
+body.demo-authenticated:not(.demo-reviewer) .uxv5.v28-support[data-v28-kind="lab"]{
  --support-accent:#187b81;--support-accent-strong:#14636a;--support-tint:#eef9f8;--support-border:#cce6e3;
 }
-.uxv5.v28-support[data-v28-kind="pharmacy"]{
+body.demo-authenticated:not(.demo-reviewer) .uxv5.v28-support[data-v28-kind="pharmacy"]{
  --support-accent:#397c67;--support-accent-strong:#245f4d;--support-tint:#eef8f2;--support-border:#d0e7d8;
 }
-.uxv5.v28-support[data-v28-kind="imaging"]{
+body.demo-authenticated:not(.demo-reviewer) .uxv5.v28-support[data-v28-kind="imaging"]{
  --support-accent:#526b9f;--support-accent-strong:#344d7d;--support-tint:#f0f4fb;--support-border:#d6dfef;
 }
 body.demo-authenticated:not(.demo-reviewer) .uxv5.v28-support .uxv4-head{
