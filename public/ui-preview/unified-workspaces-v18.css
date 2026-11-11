@@ -183,3 +183,20 @@ body.demo-authenticated:not(.demo-reviewer) .v18-workflow{
  .v18-workflow-details summary{display:none}
  .v18-safety-strip{border:1px solid #cddfe5}
 }
+
+
+/* Override the V17 high-specificity blue primary action and V15 active step.
+   A single action colour applies across clinical and operational workflows. */
+body.demo-authenticated:not(.demo-reviewer) .uxv5-detail-actions .btn-primary,
+body.demo-authenticated:not(.demo-reviewer) .p0-operational .btn-primary{
+ background:var(--simrs-primary);border-color:var(--simrs-primary);color:#fff;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv5-detail-actions .btn-primary:hover,
+body.demo-authenticated:not(.demo-reviewer) .p0-operational .btn-primary:hover{
+ background:var(--simrs-primary-strong);border-color:var(--simrs-primary-strong);
+}
+body.demo-authenticated:not(.demo-reviewer) #p0-editor .v15-tab.active{
+ background:var(--simrs-primary-soft);border-color:var(--simrs-primary);
+ color:var(--simrs-primary-strong);
+ box-shadow:inset 0 -2px 0 var(--simrs-primary);
+}
