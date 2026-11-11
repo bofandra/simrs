@@ -1023,3 +1023,53 @@ test('V17 reference-inspired role worklist cards and HR directory remain context
   await expect(page.locator('#main-content .uxv4-head')).toBeVisible();
   expect(errors).toEqual([]);
 });
+
+test('V19 clinical workflow guidance respects selected patient work context',async ({page})=>{
+ const errors=[],apiRequests=[];
+ page.on('pageerror',e=>errors.push(e.message));
+ page.on('request',r=>{if(/\\/api\\/v1\\//.test(r.url()))apiRequests.push(r.url());});
+ await page.goto('/index.html');
+ await page.locator('[data-demo-account="akun.dokter-rj"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ const guide=page.locator('[data-v18-screen="S03"]');
+ await expect(guide).toBeVisible();
+ await expect(guide).toContainText('Periksa dua identitas');
+ await guide.locator('summary').click();
+ await expect(guide.locator('.v18-flow-steps li')).toHaveCount(5);
+ await expect(guide).toContainText('Urutan ini adalah panduan desain');
+ await page.locator('.uxv4-table [data-demo-action="job:1"]').click();
+ await expect(page.locator('.v18-workflow-overview')).toContainText('ENC-RJ02');
+ await expect(page.locator('.uxv5-detail')).toContainText('ENC-RJ02');
+ expect(errors).toEqual([]);expect(apiRequests).toEqual([]);
+});
+
+test('V20 operational workspace has read-only stage guidance and fits mobile viewport',async ({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:390,height:844});
+ await page.goto('/index.html');
+ await page.locator('[data-demo-account="akun.farmasis"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ const guide=page.locator('[data-v18-screen="S08"]');
+ await expect(guide).toBeVisible();
+ await expect(guide).toContainText('tidak ada dispensing atau mutasi stok aktual');
+ await guide.locator('summary').click();
+ await expect(guide.locator('.v18-flow-steps li')).toHaveCount(5);
+ const viewport=await page.evaluate(()=>({
+  body:document.documentElement.scrollWidth,
+  viewport:window.innerWidth,
+  cards:document.querySelector('.v18-workflow').getBoundingClientRect().width
+ }));
+ expect(viewport.body).toBeLessThanOrEqual(viewport.viewport+2);
+ expect(viewport.cards).toBeLessThanOrEqual(viewport.viewport);
+ expect(errors).toEqual([]);
+});
+
+test('V21 reviewer retains original QA catalog without role-specific workflow strip',async ({page})=>{
+ await page.goto('/index.html');
+ await page.locator('[data-demo-account="reviewer.demo"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ await expect(page.locator('.v18-workflow')).toHaveCount(0);
+ await page.locator('[data-nav="forms"]').click();
+ await expect(page.getByText('68/68 modul memiliki form demo')).toBeVisible();
+ await expect(page.locator('.v18-workflow')).toHaveCount(0);
+});
