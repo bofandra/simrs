@@ -85,10 +85,10 @@ ux.renderPage=function(ctx){
     !flows[ctx.role]||typeof html!=="string"||html.indexOf('class="uxv4 uxv5')<0)return html;
  var insertion=guidance(ctx,flows[ctx.role]);
  if(!insertion)return html;
- // Keep the worklist's primary "Buka form" action above the fold; V14 asserts
- // this on radiology. Place guidance immediately AFTER that action, before metadata.
- var detailMarker='</div><dl><div><dt>Status</dt>';
- if(html.includes(detailMarker))return html.replace(detailMarker,'</div>'+insertion+'<dl><div><dt>Status</dt>');
+ // Preserve the V14 above-the-fold primary action and avoid pointer interception
+ // from its sticky position. Guidance belongs AFTER the entire worklist, before trace.
+ var worklistEnd='</aside></div><div class="uxv4-trace">';
+ if(html.includes(worklistEnd))return html.replace(worklistEnd,'</aside></div>'+insertion+'<div class="uxv4-trace">');
  var safetyMarker='<p class="uxv4-safety">';
  return html.includes(safetyMarker)?html.replace(safetyMarker,insertion+safetyMarker):
    html.replace("</header>","</header>"+insertion);
