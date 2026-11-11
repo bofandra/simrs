@@ -84,6 +84,14 @@
   var safety=guide.querySelector(".v18-safety-strip");
   if(safety)safety.appendChild(el("span","v31-safe-note"," Tidak ada transaksi atau approval nyata."));
   var ctx=root.querySelector(".v12-context");
+  if(!ctx&&(spec.kind==="admin"||spec.kind==="management")){
+   // Tim Mutu, Integrasi and HR Admin did not receive V12's context banner.
+   // Add an object-only context consistently rather than implying a patient.
+   ctx=el("div","v12-context");
+   ctx.appendChild(el("div","v12-context-title"));
+   ctx.appendChild(el("div","v12-context-chips"));
+   summary.insertAdjacentElement("beforebegin",ctx);
+  }
   if(ctx){
    ctx.classList.add("v31-context");
    ctx.setAttribute("data-v31-context",patient?"patient":"object");
