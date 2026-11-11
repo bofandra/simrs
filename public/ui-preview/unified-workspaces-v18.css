@@ -202,3 +202,13 @@ body.demo-authenticated:not(.demo-reviewer) #p0-editor .v15-tab.active{
  color:var(--simrs-primary-strong);
  box-shadow:inset 0 -2px 0 var(--simrs-primary);
 }
+
+
+/* V14's role-specific specificity overrides generic padding; explicitly compact
+   the detail header/action enough to keep the primary radiology CTA above 928px. */
+body.demo-authenticated:not(.demo-reviewer) .uxv5.v12-parity .uxv5-detail{
+ padding-top:16px;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv5.v12-parity .uxv14-primary-action{
+ margin-top:9px;
+}
