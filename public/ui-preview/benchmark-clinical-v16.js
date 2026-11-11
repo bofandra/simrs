@@ -55,71 +55,143 @@ var defs=[
 ["Informasi obstetri",["observed_at|Tanggal/waktu|datetime-local","gravida_para|Gravida/para|text","gestational_age|Usia kehamilan|text","phase|Fase persalinan|text"]],
 ["Perkembangan dan kondisi",["fhr|DJJ|number","contraction|Kontraksi|text","dilation|Pembukaan|number","head_descent|Penurunan kepala|text","membrane|Ketuban/warna cairan|text","maternal_vitals|TD/nadi/suhu|textarea","urine|Urine|text","medication_fluids|Obat/cairan|textarea","interventions|Tindakan dan kondisi ibu/janin|textarea","clinician|Petugas|text"]]]}
 ];
-var live={id:"",group:0,mode:"form",docKey:""};
-var raw={};try{raw=JSON.parse(localStorage.getItem(KEY)||"{}");}catch(e){raw={};}
+var live={id:"",group:0,mode:"form",errors:[],historyIndex:-1};
+var edits=Object.create(null),badInputs=Object.create(null),historyItems=[];
+var raw={};try{raw=readDrafts();}catch(e){}
+function readDrafts(){
+ var value=localStorage.getItem(KEY),stored;
+ try{stored=JSON.parse(value||"{}");}catch(e){return {};}
+ return stored&&typeof stored==="object"&&!Array.isArray(stored)?stored:{};
+}
+function clone(value){return JSON.parse(JSON.stringify(value));}
 function esc(x){return String(x==null?"":x).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
 function account(){return window.SIMRSRoleDemo&&window.SIMRSRoleDemo.getAccount&&window.SIMRSRoleDemo.getAccount();}
 function context(){
- var acc=account(),shell=window.__SIMRS_PREVIEW__,form=document.getElementById("p0-editor");
- if(!acc||!shell||!form||!document.body.classList.contains("demo-authenticated")||document.body.classList.contains("demo-reviewer"))return null;
- var patient=(shell.patients||[]).find(function(p){return p.id===shell.state.patient;});
- var work=form.getAttribute("data-work-item")||"";
- if(!patient||!patient.id||!patient.visit||!work)return null;
- return {role:acc.role,module:form.getAttribute("data-form-module")||"",patientId:patient.id,encounterId:patient.visit,patientName:patient.name,workItem:work};
+ var acc=account(),engine=window.SIMRSFormEngine,form=document.getElementById("p0-editor");
+ if(!acc||!engine||!engine.getWorkItemContext||!form||!document.body.classList.contains("demo-authenticated")||document.body.classList.contains("demo-reviewer"))return null;
+ var selected=engine.getWorkItemContext(),patient=selected&&selected.patient;
+ if(!selected||selected.role!==acc.role||!patient||!patient.id||!patient.visit||
+   selected.module!==form.getAttribute("data-form-module")||!selected.workItem||selected.workItem.id!==form.getAttribute("data-work-item"))return null;
+ return {role:acc.role,module:selected.module,patientId:patient.id,encounterId:patient.visit,patientName:patient.name,workItem:selected.workItem.id};
 }
 function available(ctx){return defs.filter(function(f){return f.modules.includes(ctx.module)&&f.roles.includes(ctx.role);});}
 function recordKey(ctx,id){return [ctx.role,ctx.patientId,ctx.encounterId,ctx.workItem,ctx.module,id].join("|");}
-function fields(group){return group[1].map(function(s){var a=s.split("|");var x={key:a[0],label:a[1],type:a[2]||"text",required:a[3]==="1"};if(x.type.startsWith("select:")){x.options=x.type.slice(7).split(",");x.type="select";}return x;});}
+/* Input guards for the demo, not normal ranges, triage scores or clinical alerts.
+ * Vitals reuse the existing RME-02/RME-05 catalog constraints. */
+function numericRule(key){
+ var fixed={pain_score:{min:0,max:10,step:1},pain:{min:0,max:10,step:1},gcs:{min:3,max:15,step:1},spo2:{min:0,max:100,step:1},quantity:{min:1,step:1},qty:{positive:true,step:"any"}};
+ if(fixed[key])return fixed[key];
+ var module={heart_rate:"RME-05",temperature:"RME-05",respiratory_rate:"RME-02"}[key];
+ var spec=(window.SIMRS_FORM_CATALOG||[]).find(function(m){return m.code===module;});
+ var field=spec&&(spec.fields||[]).find(function(f){return f.key===key;});
+ return field?{min:field.min,max:field.max,step:field.step||1}:{positive:true,step:"any"};
+}
+function fields(group){return group[1].map(function(s){var a=s.split("|");var x={key:a[0],label:a[1],type:a[2]||"text",required:a[3]==="1"};if(x.type.startsWith("select:")){x.options=x.type.slice(7).split(",");x.type="select";}if(x.type==="number")x.rule=numericRule(x.key);return x;});}
+function validate(id,values,review){
+ var d=defs.find(function(f){return f.id===id;}),errors=[];
+ if(!d||d.gated)return [{key:"",group:0,message:"Form ini belum diaktifkan."}];
+ d.groups.forEach(function(group,index){fields(group).forEach(function(f){
+  var value=String(values[f.key]==null?"":values[f.key]).trim(),message="";
+  if(!value){if(review&&f.required)message=f.label+" wajib diisi.";}
+  else if(f.type==="number"){
+   var n=Number(value),rule=f.rule;
+   if(!/^[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?$/.test(value)||!Number.isFinite(n))message=f.label+" harus berupa angka yang valid.";
+   else if(rule.positive&&n<=0)message=f.label+" harus lebih dari 0.";
+   else if((rule.min!==undefined&&n<rule.min)||(rule.max!==undefined&&n>rule.max))message=f.label+" harus "+(rule.min!==undefined&&rule.max!==undefined?"antara "+rule.min+"–"+rule.max:rule.min!==undefined?"minimal "+rule.min:"maksimal "+rule.max)+".";
+   else if(rule.step===1&&!Number.isInteger(n))message=f.label+" harus berupa bilangan bulat.";
+   else if(typeof rule.step==="number"&&Math.abs(n/rule.step-Math.round(n/rule.step))>0.0000001)message=f.label+" harus menggunakan kelipatan "+rule.step+".";
+  }else if(f.type==="select"&&!f.options.includes(value))message=f.label+" harus dipilih dari pilihan yang tersedia.";
+  else if((f.type==="date"||f.type==="datetime-local")&&!Number.isFinite(Date.parse(value)))message=f.label+" harus berupa tanggal/waktu yang valid.";
+  if(message)errors.push({key:f.key,group:index,message:message});
+ });});
+ var pairs={"CF-05":["started_at","ended_at"],"CF-07":["admitted_at","discharged_at"],"CF-10":["start_at","end_at"]},pair=pairs[id];
+ if(pair&&values[pair[0]]&&values[pair[1]]&&Date.parse(values[pair[1]])<Date.parse(values[pair[0]])){
+  d.groups.forEach(function(group,index){var end=fields(group).find(function(f){return f.key===pair[1];});if(end)errors.push({key:end.key,group:index,message:end.label+" tidak boleh sebelum waktu mulai/masuk."});});
+ }
+ return errors;
+}
 function note(ctx){return "Contoh pasien "+ctx.patientName+" · encounter "+ctx.encounterId+" · pekerjaan "+ctx.workItem;}
 function header(ctx,items){return '<header class="v16-h"><div><span>FORM KLINIS TAMBAHAN · MATRIKS BENCHMARK</span><h3>Aktivitas klinis terkait</h3><p>Hanya satu subform aktif. '+esc(note(ctx))+'.</p></div><span class="v16-count">'+items.length+' subform</span></header>';}
 function info(d){return '<p class="v16-fhir">FHIR R4 kandidat: '+esc(d.fhir)+'. Pemetaan final mengikuti profil SATUSEHAT per use case.</p>';}
 function choices(items){return '<div class="v16-choices" role="group" aria-label="Pilih subform klinis">'+items.map(function(x){return '<button type="button" class="v16-choice'+(live.id===x.id?' active':'')+'" data-v16-action="choose" data-id="'+esc(x.id)+'"><span>'+esc(x.id)+'</span><strong>'+esc(x.title)+'</strong>'+(x.gated?'<small>Menunggu instrumen/SOP</small>':'<small>Buka form kontekstual</small>')+'</button>';}).join("")+'</div>';}
 function renderField(f,values){
  var v=values[f.key]==null?"":values[f.key];
+ var error=live.errors.find(function(e){return e.key===f.key;}),id="v16-field-"+f.key;
  var s='<label class="v16-field"><span>'+esc(f.label)+(f.required?' <em>*</em>':'')+'</span>';
- var attrs=' data-v16-field="'+esc(f.key)+'" value="'+esc(v)+'"';
- if(f.type==="textarea")s+='<textarea data-v16-field="'+esc(f.key)+'" rows="3" placeholder="'+esc(f.label)+'">'+esc(v)+'</textarea>';
- else if(f.type==="select")s+='<select data-v16-field="'+esc(f.key)+'"><option value="">— Pilih —</option>'+f.options.map(function(opt){return '<option value="'+esc(opt)+'"'+(opt===v?' selected':'')+'>'+esc(opt)+'</option>';}).join("")+'</select>';
- else s+='<input type="'+esc(f.type)+'"'+attrs+(f.type==="number"?' step="any"':'')+' />';
- return s+'</label>';
+ var attrs=' id="'+esc(id)+'" data-v16-field="'+esc(f.key)+'"'+(f.required?' required':'')+(error?' aria-invalid="true" aria-describedby="'+esc(id)+'-error"':'');
+ if(f.type==="textarea")s+='<textarea'+attrs+' rows="3" placeholder="'+esc(f.label)+'">'+esc(v)+'</textarea>';
+ else if(f.type==="select")s+='<select'+attrs+'><option value="">— Pilih —</option>'+f.options.map(function(opt){return '<option value="'+esc(opt)+'"'+(opt===v?' selected':'')+'>'+esc(opt)+'</option>';}).join("")+'</select>';
+ else s+='<input type="'+esc(f.type)+'"'+attrs+' value="'+esc(v)+'"'+(f.rule?' step="'+esc(f.rule.step)+'"'+(f.rule.min!==undefined?' min="'+esc(f.rule.min)+'"':'')+(f.rule.max!==undefined?' max="'+esc(f.rule.max)+'"':''):'')+' />';
+ return s+(error?'<small class="v16-field-error" id="'+esc(id)+'-error">'+esc(error.message)+'</small>':'')+'</label>';
+}
+function working(ctx,d){var k=recordKey(ctx,d.id);if(!edits[k])edits[k]=clone(raw[k]&&raw[k].values||{});return edits[k];}
+function sameValues(left,right){
+ left=left||{};right=right||{};
+ return Object.keys(Object.assign({},left,right)).every(function(key){return String(left[key]==null?"":left[key])===String(right[key]==null?"":right[key]);});
 }
 function collectInto(ctx){
- var d=defs.find(function(x){return x.id===live.id;});if(!d)return;
- var k=recordKey(ctx,d.id),r=raw[k]||{values:{},createdAt:new Date().toISOString()};
- document.querySelectorAll("#v16-active [data-v16-field]").forEach(function(el){r.values[el.getAttribute("data-v16-field")]=String(el.value||"");});
- r.id=d.id;r.module=ctx.module;r.role=ctx.role;r.patientId=ctx.patientId;r.encounterId=ctx.encounterId;r.workItem=ctx.workItem;
- r.status="Draft (demo)";r.updatedAt=new Date().toISOString();raw[k]=r;
- return r;
+ var d=available(ctx).find(function(x){return x.id===live.id;});if(!d||d.gated||live.mode!=="form")return;
+ var k=recordKey(ctx,d.id),values=working(ctx,d),bad=badInputs[k]||(badInputs[k]=Object.create(null));
+ document.querySelectorAll("#v16-active [data-v16-field]").forEach(function(el){
+  var key=el.getAttribute("data-v16-field");values[key]=String(el.value||"");
+  if(el.validity&&el.validity.badInput)bad[key]=true;
+ });
+ return values;
+}
+function versionsOf(record){
+ if(Array.isArray(record.revisions)&&record.revisions.length)return record.revisions;
+ return [{version:1,values:clone(record.values||{}),recordedAt:record.updatedAt||record.createdAt||"",author:record.role||"",legacy:true}];
+}
+function saveRevision(ctx,d,values){
+ var next=readDrafts(),k=recordKey(ctx,d.id),old=next[k],at=new Date().toISOString(),revisions=old?clone(versionsOf(old)):[];
+ if(!old||!sameValues(old.values,values))revisions.push({version:revisions.length+1,values:clone(values),recordedAt:at,author:ctx.role});
+ next[k]={id:d.id,module:ctx.module,role:ctx.role,patientId:ctx.patientId,encounterId:ctx.encounterId,workItem:ctx.workItem,
+  status:"Draft (demo)",schemaVersion:2,createdAt:old&&old.createdAt||at,updatedAt:revisions[revisions.length-1].recordedAt,values:clone(values),revisions:revisions};
+ localStorage.setItem(KEY,JSON.stringify(next));
+ raw=next;
 }
 function drawActive(ctx,d){
- var k=recordKey(ctx,d.id),r=raw[k]||{values:{}};
+ var k=recordKey(ctx,d.id),r=raw[k];
  if(d.gated)return '<section class="v16-active v16-gated" id="v16-active"><h4>'+esc(d.title)+'</h4><p>Belum diaktifkan: instrumen/cut-off PRMRJ atau SOP, profesi dan konfigurasi partograf belum disahkan. Tidak ada input maupun perhitungan klinis otomatis.</p>'+info(d)+'</section>';
- var step=Math.min(live.group,d.groups.length-1),group=d.groups[step],parts=fields(group),values=r.values||{};
- return '<section class="v16-active" id="v16-active"><div class="v16-active-head"><div><span>'+esc(d.id)+' · '+esc(ctx.module)+'</span><h4>'+esc(d.title)+'</h4></div><span class="v16-state">'+esc(r.status||"Belum ada draft")+'</span></div>'+
+ var step=Math.min(live.group,d.groups.length-1),group=d.groups[step],parts=fields(group),values=working(ctx,d);
+ var status=r?"Draft (demo) · versi "+versionsOf(r).length:"Belum ada draft";
+ if(r&&!sameValues(values,r.values))status+=" · perubahan belum disimpan";
+ return '<section class="v16-active" id="v16-active"><div class="v16-active-head"><div><span>'+esc(d.id)+' · '+esc(ctx.module)+'</span><h4>'+esc(d.title)+'</h4></div><span class="v16-state">'+esc(status)+'</span></div>'+
   '<div class="v16-tabs">'+d.groups.map(function(g,i){return '<button type="button" data-v16-action="step" data-step="'+i+'" class="'+(i===step?'active':'')+'">'+String(i+1)+'. '+esc(g[0])+'</button>';}).join("")+'</div>'+
   '<div class="v16-fields">'+parts.map(function(f){return renderField(f,values);}).join("")+'</div>'+
-  '<div id="v16-feedback" aria-live="polite"></div>'+
+  '<div id="v16-feedback" role="status" aria-live="polite"></div>'+
   '<div class="v16-controls"><button type="button" data-v16-action="back"'+(step===0?' disabled':'')+'>Sebelumnya</button><span>Bagian '+(step+1)+' dari '+d.groups.length+'</span><button type="button" data-v16-action="next"'+(step===d.groups.length-1?' disabled':'')+'>Selanjutnya</button><button class="v16-save" type="button" data-v16-action="save">Simpan draft (demo)</button><button type="button" data-v16-action="review">Tinjau kelengkapan</button></div>'+info(d)+'<p class="v16-caution">Draft tersimpan hanya pada browser untuk data sintetis. Tidak ada tanda tangan, order aktif, tindakan, mutasi stok, atau pengiriman FHIR.</p></section>';
 }
 function history(ctx){
+ try{raw=readDrafts();}catch(e){}
  var records=window.SIMRSFormEngine&&window.SIMRSFormEngine.getRecords&&window.SIMRSFormEngine.getRecords()||{};
  var items=[];
- Object.keys(records).forEach(function(code){(records[code]||[]).forEach(function(r){if(r.patient_id!==ctx.patientId)return;items.push({date:r.updated_at||r.created_at||"",type:code,encounter:r.encounter_id||"",status:r.status||"",source:"Form operasional",author:r.actor||ctx.role,id:r.id||""});});});
- Object.keys(raw).forEach(function(key){var r=raw[key];if(r.patientId!==ctx.patientId)return;items.push({date:r.updatedAt||"",type:r.id,encounter:r.encounterId||"",status:r.status||"",source:"Subform tambahan",author:r.role||"",id:r.workItem||""});});
- items.sort(function(a,b){return String(b.date).localeCompare(String(a.date));});
+ Object.keys(records).forEach(function(code){(records[code]||[]).forEach(function(r){if(r.patient_id!==ctx.patientId)return;items.push({date:r.updated_at||r.created_at||"",type:code,encounter:r.encounter_id||"",status:r.status||"",source:"Form operasional",author:r.actor||(r.history||[]).slice(-1)[0]?.actor||"Tidak tercatat",version:r.version||"—"});});});
+ Object.keys(raw).forEach(function(key){var r=raw[key];if(!r||r.patientId!==ctx.patientId)return;
+  versionsOf(r).forEach(function(version){items.push({date:version.recordedAt,type:r.id,encounter:r.encounterId||"",status:r.status||"Draft (demo)",source:version.legacy?"Subform V16 lama · konteks belum diverifikasi":"Subform tambahan",author:version.author||r.role||"",version:version.version,values:version.values,assessment:version.values.assessment_type||"",workItem:r.workItem||"",module:r.module||"",patientId:r.patientId});});
+ });
+ items.sort(function(a,b){return String(b.date).localeCompare(String(a.date))||(Number(b.version)||0)-(Number(a.version)||0);});
+ historyItems=items;
  var allowed=["Semua","Klinis","Keperawatan","Obat/BMHP","Penunjang","Prosedur"];
  var kind=function(code){if(/^CF-0[23]|^RME-0[57]/.test(code))return "Keperawatan";if(/^CF-10|^CF-12|^MED-0[45]/.test(code))return "Obat/BMHP";if(/^CF-09|^MED-0[123]/.test(code))return "Penunjang";if(/^CF-05|^CF-13|^MED-0[67]/.test(code))return "Prosedur";return "Klinis";};
- var rows=items.map(function(r){return '<tr data-history-kind="'+esc(kind(r.type))+'"><td>'+esc(r.date.slice(0,16).replace("T"," "))+'</td><td><strong>'+esc(r.type)+'</strong><small>'+esc(r.source)+'</small></td><td>'+esc(r.encounter)+'</td><td>'+esc(r.status)+'</td><td>'+esc(r.author)+'</td></tr>';}).join("");
+ var rows=items.map(function(r,index){return '<tr data-history-kind="'+esc(kind(r.type))+'"><td>'+esc(r.date.slice(0,16).replace("T"," "))+'</td><td><strong>'+esc(r.type)+(r.assessment?' · '+esc(r.assessment):'')+'</strong><small>'+esc(r.source)+'</small></td><td>'+esc(r.encounter)+'</td><td>'+esc(r.status)+'</td><td>'+esc(r.author)+'</td><td>'+esc(r.version)+'</td><td>'+(r.values?'<button type="button" data-v16-action="view-version" data-index="'+index+'">Lihat versi '+esc(r.version)+'</button>':'—')+'</td></tr>';}).join("");
  return '<section class="v16-history"><h4>Riwayat Klinis Pasien · baca saja</h4><p>Hanya catatan sintetis pasien '+esc(ctx.patientName)+' dari form yang telah dibuat. Filter lintas kunjungan dalam tenant simulasi; produksi tetap membutuhkan otorisasi dan audit akses.</p><div class="v16-filter">'+allowed.map(function(x){return '<button type="button" data-v16-action="filter" data-filter="'+esc(x)+'">'+esc(x)+'</button>';}).join("")+'</div>'+
-  '<div class="v16-scroll"><table><thead><tr><th>Waktu</th><th>Catatan</th><th>Encounter</th><th>Status</th><th>Profesi</th></tr></thead><tbody>'+ (rows||'<tr><td colspan="5">Belum ada catatan sintetis tersimpan untuk pasien ini.</td></tr>')+'</tbody></table></div></section>';
+  '<div class="v16-scroll"><table><thead><tr><th>Waktu</th><th>Catatan</th><th>Encounter</th><th>Status</th><th>Profesi</th><th>Versi</th><th>Isi catatan</th></tr></thead><tbody>'+ (rows||'<tr><td colspan="7">Belum ada catatan sintetis tersimpan untuk pasien ini.</td></tr>')+'</tbody></table></div><p>Riwayat berisi versi yang berhasil disimpan. Perubahan yang belum disimpan tidak ditambahkan. Catatan V16 lama tetap pada encounter asalnya.</p></section>';
+}
+function viewVersion(ctx){
+ var r=historyItems[live.historyIndex],d=r&&defs.find(function(f){return f.id===r.type;});
+ if(!r||r.patientId!==ctx.patientId||!d)return '<p>Versi catatan tidak tersedia untuk pasien ini.</p>';
+ return '<section class="v16-history v16-version"><h4>'+esc(d.title)+' · versi '+esc(r.version)+'</h4><p>Baca saja · '+esc(r.encounter)+' · '+esc(r.author)+' · '+esc(r.date)+'</p>'+
+  d.groups.map(function(group){return '<details><summary>'+esc(group[0])+'</summary><dl>'+fields(group).map(function(f){return '<dt>'+esc(f.label)+'</dt><dd>'+esc(r.values[f.key]||"—")+'</dd>';}).join("")+'</dl></details>';}).join("")+'</section>';
 }
 function mount(){
  var base=document.getElementById("p0-editor");if(!base)return;
- var ctx=context();if(!ctx)return;
+ var ctx=context();if(!ctx){var stale=document.getElementById("benchmark-v16");if(stale)stale.remove();return;}
  var items=available(ctx);if(!items.length&&!/^(RME|MED)-/.test(ctx.module))return;
  var prev=document.getElementById("benchmark-v16");
  if(prev&&prev.dataset.ctx===recordKey(ctx,"screen"))return;
  if(prev)prev.remove();
+ live={id:"",group:0,mode:"form",errors:[],historyIndex:-1};historyItems=[];
  var el=document.createElement("section");el.className="v16-root";el.id="benchmark-v16";el.dataset.ctx=recordKey(ctx,"screen");
  el.innerHTML=header(ctx,items)+
   '<details class="v16-details"><summary>Form klinis khusus dan histori pasien <span>▾</span></summary>'+
@@ -132,23 +204,53 @@ function mount(){
 function refresh(ctx){
  var items=available(ctx),d=items.find(function(x){return x.id===live.id;});
  var panel=document.getElementById("v16-detail");
- if(panel)panel.innerHTML=live.mode==="history"?history(ctx):(d?drawActive(ctx,d):'<div class="v16-empty">Pilih subform sesuai pekerjaan.</div>');
+ if(panel)panel.innerHTML=live.mode==="history"?history(ctx):live.mode==="version"?viewVersion(ctx):(d?drawActive(ctx,d):'<div class="v16-empty">Pilih subform sesuai pekerjaan.</div>');
  var list=document.querySelector(".v16-choices");if(list)list.outerHTML=choices(items);
 }
-document.addEventListener("click",function(e){
+function feedback(message,ok){var notice=document.getElementById("v16-feedback");if(notice){notice.textContent=message;notice.className=ok?"v16-ok":"v16-warning";}}
+document.addEventListener("input",function(e){
+ var field=e.target.closest("#v16-active [data-v16-field]");
+ if(!field||!field.validity||field.validity.badInput)return;
+ var ctx=context(),bad=ctx&&badInputs[recordKey(ctx,live.id)];
+ if(bad)delete bad[field.dataset.v16Field];
+});
+document.addEventListener("click",async function(e){
  var b=e.target.closest("#benchmark-v16 [data-v16-action]");if(!b)return;
- var ctx=context();if(!ctx)return;e.preventDefault();
+ var ctx=context(),root=document.getElementById("benchmark-v16");if(!ctx||!root||root.dataset.ctx!==recordKey(ctx,"screen"))return;e.preventDefault();
  var action=b.dataset.v16Action,items=available(ctx),d=items.find(function(x){return x.id===live.id;});
- if(action==="choose"){live.id=b.dataset.id;live.group=0;live.mode="form";refresh(ctx);return;}
+ if(action==="choose"){if(!items.some(function(x){return x.id===b.dataset.id;}))return;collectInto(ctx);live.id=b.dataset.id;live.group=0;live.mode="form";live.errors=[];refresh(ctx);return;}
  if(action==="history"){if(d&&!d.gated)collectInto(ctx);live.mode="history";refresh(ctx);return;}
+ if(action==="view-version"){if(live.mode!=="history")return;live.historyIndex=Number(b.dataset.index);live.mode="version";refresh(ctx);return;}
  if(action==="filter"){var f=b.dataset.filter;document.querySelectorAll("#benchmark-v16 [data-history-kind]").forEach(function(tr){tr.hidden=f!=="Semua"&&tr.dataset.historyKind!==f;});return;}
- if(!d||d.gated)return;
- if(action==="save"){collectInto(ctx);try{localStorage.setItem(KEY,JSON.stringify(raw));}catch(err){}refresh(ctx);var notice=document.getElementById("v16-feedback");if(notice)notice.textContent="Draft simulasi tersimpan untuk encounter "+ctx.encounterId;return;}
- if(action==="review"){var r=collectInto(ctx),missing=[];d.groups.forEach(function(group){fields(group).forEach(function(f){if(f.required&&!String(r.values[f.key]||"").trim())missing.push(f.label);});});var notice=document.getElementById("v16-feedback");if(notice){notice.textContent=missing.length?"Belum lengkap: "+missing.slice(0,7).join(", ")+(missing.length>7?" …":""):"Isian wajib lengkap untuk review DEMO (belum ditandatangani).";notice.className=missing.length?"v16-warning":"v16-ok";}return;}
+ if(!d||d.gated||live.mode!=="form")return;
+ if(action==="save"||action==="review"){
+  var values=collectInto(ctx),bad=badInputs[recordKey(ctx,d.id)]||{};
+  live.errors=validate(d.id,values,action==="review");
+  d.groups.forEach(function(group,index){fields(group).forEach(function(f){if(bad[f.key])live.errors.push({key:f.key,group:index,message:f.label+" harus berupa angka yang valid."});});});
+  if(live.errors.length){live.group=live.errors[0].group;refresh(ctx);feedback((action==="save"?"Draft belum disimpan. ":"Review belum dapat dilanjutkan. ")+live.errors.map(function(error){return error.message;}).join(" "),false);var field=document.querySelector('#v16-active [aria-invalid="true"]');if(field)field.focus();return;}
+  if(action==="save"){
+   var snapshot=clone(values);
+   var save=function(){saveRevision(ctx,d,snapshot);};
+   b.disabled=true;
+   try{
+    if(navigator.locks)await navigator.locks.request(KEY,save);
+    else save();
+   }catch(err){
+    if(b.isConnected)feedback("Draft belum tersimpan. Penyimpanan browser gagal; periksa izin atau ruang penyimpanan lalu coba lagi.",false);
+    return;
+   }finally{b.disabled=false;}
+   if(b.isConnected){
+    collectInto(ctx);
+    refresh(ctx);
+    feedback("Draft simulasi tersimpan untuk encounter "+ctx.encounterId+" · versi "+versionsOf(raw[recordKey(ctx,d.id)]).length+". Versi sebelumnya tetap dapat dibaca di riwayat.",true);
+   }
+  }else{refresh(ctx);feedback("Isian wajib dan format data lengkap untuk review DEMO (belum ditandatangani).",true);}
+  return;
+ }
  if(["step","back","next"].includes(action)){collectInto(ctx);live.group=action==="step"?Number(b.dataset.step):live.group+(action==="next"?1:-1);live.group=Math.max(0,Math.min(d.groups.length-1,live.group));refresh(ctx);}
 });
 var root=document.getElementById("main-content");
 if(root)new MutationObserver(mount).observe(root,{childList:true,subtree:false});
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",mount);else mount();
-window.SIMRSBenchmarkV16={defs:defs,available:available,mount:mount};
+window.SIMRSBenchmarkV16={defs:defs,available:available,mount:mount,validate:validate};
 })();

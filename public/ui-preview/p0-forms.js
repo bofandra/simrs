@@ -548,7 +548,13 @@
     return true;
   }
   function clearWorkItemContext(){activeWorkItem=null;state.prefill=null;state.recordId=null;}
+  function getWorkItemContext(){
+    var selected=activeWorkItem,m=currentModule(),ctx=context();
+    if(!selected||selected.kind!=="patient"||!selected.patient||!m.patient_context||!canEdit(m)||
+      selected.role!==ctx.role||!ctx.patient||ctx.patient.id!==selected.patient.id||ctx.patient.visit!==selected.patient.visit)return null;
+    return {role:selected.role,module:m.code,patient:Object.assign({},selected.patient),workItem:Object.assign({},selected.workItem)};
+  }
   window.SIMRSFormEngine={render:render,openForRole:openForRole,clearWorkItemContext:clearWorkItemContext,
     validate:validate,collect:collect,resetDemo:resetDemo,getCatalog:function(){return catalog;},
-    getRecords:function(){return demo.records;}};
+    getRecords:function(){return demo.records;},getWorkItemContext:getWorkItemContext};
 })();

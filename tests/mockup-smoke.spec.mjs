@@ -962,7 +962,9 @@ test('V16 IGD clinical benchmark opens only one subform section, saves scoped de
  await openV13RoleForm(page,'akun.dokter-igd','m0','RME-02');
  const panel=page.locator('#benchmark-v16');
  await expect(panel).toBeVisible();
+ await expect(page.locator('#p0-editor')).toBeVisible();
  await panel.locator('summary').click();
+ await expect(page.locator('#p0-editor')).toBeHidden();
  await panel.locator('[data-v16-action="choose"][data-id="CF-01"]').click();
  await expect(panel.locator('#v16-active')).toContainText('Triase terstruktur ABCDE');
  await expect(panel.locator('.v16-fields')).toBeVisible();
@@ -979,6 +981,8 @@ test('V16 IGD clinical benchmark opens only one subform section, saves scoped de
  await expect(panel.locator('.v16-history')).toBeVisible();
  await expect(panel.locator('.v16-history')).toContainText('CF-01');
  await expect(panel.locator('.v16-history')).toContainText('Draft (demo)');
+ await panel.locator('.v16-details > summary').click();
+ await expect(page.locator('#p0-editor')).toBeVisible();
  expect(requests).toEqual([]);expect(errors).toEqual([]);
 });
 test('V16 nursing assessment and NCP are accessible, while PRMRJ and partograph remain gated',async ({page})=>{
@@ -999,9 +1003,15 @@ test('V16 nursing assessment and NCP are accessible, while PRMRJ and partograph 
  await risks.locator('[data-v16-action="choose"][data-id="CF-06"]').click();
  await expect(risks.locator('.v16-gated')).toContainText('Belum diaktifkan');
  await expect(risks.locator('[data-v16-action="save"]')).toHaveCount(0);
+ await openV13RoleForm(page,'akun.dpjp-rawat-inap','m0','RME-03');
+ const inpatient=page.locator('#benchmark-v16');
+ await inpatient.locator('summary').click();
+ await inpatient.locator('[data-v16-action="choose"][data-id="CF-13"]').click();
+ await expect(inpatient.locator('.v16-gated')).toContainText('Belum diaktifkan');
+ await expect(inpatient.locator('[data-v16-field]')).toHaveCount(0);
+ await expect(inpatient.locator('[data-v16-action="save"]')).toHaveCount(0);
  expect(errors).toEqual([]);
 });
-
 
 test('V17 reference-inspired role worklist cards and HR directory remain contextual',async ({page}) => {
   const errors=[];
@@ -1221,4 +1231,201 @@ test('V26 emergency context emphasizes simulated triage and reviewer is isolated
  await page.locator('#demo-login-form button[type="submit"]').click();
  await expect(page.locator('.v25-core')).toHaveCount(0);
  expect(errors).toEqual([]);
+});
+
+test('V16 shares the operational encounter in RJ, IGD and RI and isolates another patient task',async ({page})=>{
+ const errors=[],requests=[];
+ page.on('pageerror',e=>errors.push(e.message));
+ page.on('request',r=>{if(r.url().includes('/api/'))requests.push(r.url());});
+ for(const [account,section,module,form] of [
+  ['akun.dokter-rj','m1','RME-04',null],
+  ['akun.dokter-igd','m0','RME-02','CF-01'],
+  ['akun.perawat','m2','RME-07','CF-02']
+ ]){
+  await openV13RoleForm(page,account,section,module);
+  const selected=await page.evaluate(()=>window.SIMRSFormEngine.getWorkItemContext());
+  const panel=page.locator('#benchmark-v16');
+  await expect(page.locator('.p0-patient-banner')).toContainText(selected.patient.visit);
+  await expect(panel.locator('.v16-h')).toContainText('encounter '+selected.patient.visit+' · pekerjaan '+selected.workItem.id);
+  if(form){
+   await panel.locator('summary').click();
+   await panel.locator('[data-id="'+form+'"]').click();
+   await panel.locator('[data-v16-action="save"]').click();
+   const saved=await page.evaluate(form=>Object.values(JSON.parse(localStorage.getItem('simrs-benchmark-clinical-v16-drafts'))).find(r=>r.id===form),form);
+   expect(saved.encounterId).toBe(selected.patient.visit);
+   expect(saved.patientId).toBe(selected.patient.id);
+   expect(saved.workItem).toBe(selected.workItem.id);
+  }
+ }
+ await page.locator('[data-demo-action="section:m2"]').first().click();
+ await page.locator('[data-uxv5-row="1"] [data-demo-action="job:1"]').click();
+ await page.locator('.uxv5-detail [data-demo-action="module:RME-07"]').click();
+ const panel=page.locator('#benchmark-v16');
+ await panel.locator('summary').click();
+ await panel.locator('[data-id="CF-02"]').click();
+ await expect(panel.locator('.v16-state')).toContainText('Belum ada draft');
+ await panel.locator('[data-v16-action="history"]').click();
+ await expect(panel.locator('.v16-history')).toContainText('Belum ada catatan sintetis');
+ await page.evaluate(()=>{window.SIMRSFormEngine.clearWorkItemContext();window.SIMRSBenchmarkV16.mount();});
+ await expect(page.locator('#benchmark-v16')).toHaveCount(0);
+ expect(errors).toEqual([]);expect(requests).toEqual([]);
+});
+
+test('V16 preserves saved assessment versions through reload and opens historical values read-only',async ({page})=>{
+ await openV13RoleForm(page,'akun.perawat','m2','RME-07');
+ const panel=page.locator('#benchmark-v16');
+ await panel.locator('summary').click();
+ await panel.locator('[data-id="CF-02"]').click();
+ await panel.locator('[data-v16-field="assessment_type"]').selectOption('awal');
+ await panel.locator('[data-v16-field="complaint"]').fill('Keluhan AWAL sintetis');
+ await panel.locator('[data-v16-action="save"]').click();
+ await panel.locator('[data-v16-field="assessment_type"]').selectOption('ulang');
+ await panel.locator('[data-v16-field="complaint"]').fill('Evaluasi ULANG sintetis');
+ await panel.locator('[data-v16-action="save"]').click();
+ await panel.locator('[data-v16-action="save"]').click();
+ await panel.locator('[data-v16-action="step"][data-step="1"]').click();
+ await panel.locator('[data-v16-action="step"][data-step="2"]').click();
+ await panel.locator('[data-v16-action="step"][data-step="0"]').click();
+ await panel.locator('[data-v16-action="save"]').click();
+ const saved=await page.evaluate(()=>Object.values(JSON.parse(localStorage.getItem('simrs-benchmark-clinical-v16-drafts'))).find(r=>r.id==='CF-02'));
+ expect(saved.revisions).toHaveLength(2);
+ expect(saved.revisions[0].values.assessment_type).toBe('awal');
+ expect(saved.revisions[0].values.complaint).toBe('Keluhan AWAL sintetis');
+ expect(saved.revisions[1].values.assessment_type).toBe('ulang');
+ await panel.locator('[data-v16-field="complaint"]').fill('Perubahan yang belum disimpan');
+ await panel.locator('[data-id="CF-03"]').click();
+ await panel.locator('[data-v16-action="history"]').click();
+ await expect(panel.locator('tbody tr')).toHaveCount(2);
+ await expect(panel.locator('tbody')).not.toContainText('CF-03');
+ expect(await page.evaluate(()=>Object.values(JSON.parse(localStorage.getItem('simrs-benchmark-clinical-v16-drafts'))).find(r=>r.id==='CF-02').values.complaint)).toBe('Evaluasi ULANG sintetis');
+ await openV13RoleForm(page,'akun.perawat','m2','RME-07');
+ await panel.locator('summary').click();
+ await panel.locator('[data-id="CF-02"]').click();
+ await expect(panel.locator('[data-v16-field="assessment_type"]')).toHaveValue('ulang');
+ await panel.locator('[data-v16-action="history"]').click();
+ await expect(panel.locator('tbody tr')).toHaveCount(2);
+ await panel.locator('tr').filter({hasText:'CF-02 · awal'}).getByRole('button',{name:'Lihat versi 1'}).click();
+ await panel.locator('.v16-version summary').first().click();
+ await expect(panel.locator('.v16-version')).toContainText('Keluhan AWAL sintetis');
+ await expect(panel.locator('.v16-version')).not.toContainText('Evaluasi ULANG sintetis');
+ await expect(panel.locator('.v16-version input, .v16-version textarea, .v16-version select')).toHaveCount(0);
+ await page.screenshot({path:out+'/v16-history-version.png',fullPage:true});
+});
+
+test('V16 blocks invalid numeric draft/review and reveals errors in hidden form steps on mobile',async ({page})=>{
+ const requests=[];page.on('request',r=>{if(r.url().includes('/api/'))requests.push(r.url());});
+ await page.setViewportSize({width:390,height:844});
+ await openV13RoleForm(page,'akun.dokter-igd','m0','RME-02');
+ const panel=page.locator('#benchmark-v16');
+ await panel.locator('summary').click();
+ await panel.locator('[data-id="CF-01"]').click();
+ const groups=await page.evaluate(()=>window.SIMRSBenchmarkV16.defs.find(d=>d.id==='CF-01').groups);
+ for(let index=0;index<groups.length;index++){
+  await panel.locator('[data-v16-action="step"][data-step="'+index+'"]').click();
+  for(const spec of groups[index][1]){
+   const [key,,type,required]=spec.split('|');
+   if(required==='1')await panel.locator('[data-v16-field="'+key+'"]').fill(type==='datetime-local'?'2026-11-10T10:00':'Data sintetis');
+  }
+  if(index===1)await panel.locator('[data-v16-field="pain_score"]').fill('99');
+  if(index===2)await panel.locator('[data-v16-field="heart_rate"]').fill('-10');
+ }
+ await panel.locator('[data-v16-action="review"]').click();
+ await expect(panel.locator('[data-v16-field="pain_score"]')).toBeVisible();
+ await expect(panel.locator('[data-v16-field="pain_score"]')).toHaveAttribute('aria-invalid','true');
+ await expect(panel.locator('#v16-feedback')).toContainText('Review belum dapat dilanjutkan');
+ await panel.locator('[data-v16-action="save"]').click();
+ await expect(panel.locator('#v16-feedback')).toContainText('Draft belum disimpan');
+ expect(await page.evaluate(()=>localStorage.getItem('simrs-benchmark-clinical-v16-drafts'))).toBeNull();
+ await page.screenshot({path:out+'/v16-invalid-numeric-mobile.png',fullPage:true});
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+ await panel.locator('[data-v16-field="pain_score"]').fill('5');
+ await panel.locator('[data-v16-action="save"]').click();
+ await expect(panel.locator('[data-v16-field="heart_rate"]')).toBeVisible();
+ await expect(panel.locator('[data-v16-field="heart_rate"]')).toHaveAttribute('aria-invalid','true');
+ await panel.locator('[data-v16-field="heart_rate"]').fill('80');
+ await panel.locator('[data-v16-action="review"]').click();
+ await expect(panel.locator('#v16-feedback')).toContainText('format data lengkap');
+ await panel.locator('[data-v16-action="save"]').click();
+ await expect(panel.locator('#v16-feedback')).toContainText('Draft simulasi tersimpan');
+ expect(requests).toEqual([]);
+});
+
+test('V16 does not reassign legacy notes to a new encounter or report storage failure as success',async ({page})=>{
+ await page.addInitScript(()=>{
+  if(localStorage.getItem('simrs-benchmark-clinical-v16-drafts'))return;
+  localStorage.setItem('simrs-benchmark-clinical-v16-drafts',JSON.stringify({
+   'Perawat|p1|ENC-DEMO-247|RI-N01|RME-07|CF-02':{id:'CF-02',role:'Perawat',module:'RME-07',patientId:'p1',encounterId:'ENC-DEMO-247',workItem:'RI-N01',status:'Draft (demo)',updatedAt:'2026-11-10T01:00:00Z',values:{assessment_type:'awal',complaint:'Catatan lama sintetis'}}
+  }));
+ });
+ await openV13RoleForm(page,'akun.perawat','m2','RME-07');
+ const panel=page.locator('#benchmark-v16');
+ await panel.locator('summary').click();
+ await panel.locator('[data-id="CF-02"]').click();
+ await expect(panel.locator('[data-v16-field="complaint"]')).toHaveValue('');
+ await panel.locator('[data-v16-field="complaint"]').fill('Catatan RI baru sintetis');
+ await page.evaluate(()=>{
+  window.__v16OriginalSetItem=Storage.prototype.setItem;
+  Storage.prototype.setItem=function(key,value){if(key==='simrs-benchmark-clinical-v16-drafts')throw new DOMException('Full','QuotaExceededError');return window.__v16OriginalSetItem.call(this,key,value);};
+ });
+ await panel.locator('[data-v16-action="save"]').click();
+ await expect(panel.locator('#v16-feedback')).toContainText('Penyimpanan browser gagal');
+ await panel.locator('[data-v16-action="history"]').click();
+ await expect(panel.locator('tbody tr')).toHaveCount(1);
+ await expect(panel.locator('tbody')).toContainText('ENC-DEMO-247');
+ await expect(panel.locator('tbody')).toContainText('konteks belum diverifikasi');
+ await page.evaluate(()=>Storage.prototype.setItem=window.__v16OriginalSetItem);
+ await panel.locator('[data-id="CF-02"]').click();
+ await expect(panel.locator('[data-v16-field="complaint"]')).toHaveValue('Catatan RI baru sintetis');
+ await panel.locator('[data-v16-action="save"]').click();
+ await expect(panel.locator('#v16-feedback')).toContainText('ENC-RI-DEMO-01');
+ await panel.locator('[data-v16-action="history"]').click();
+ await expect(panel.locator('tbody tr')).toHaveCount(2);
+ const records=await page.evaluate(()=>Object.values(JSON.parse(localStorage.getItem('simrs-benchmark-clinical-v16-drafts'))));
+ expect(records.map(r=>r.encounterId).sort()).toEqual(['ENC-DEMO-247','ENC-RI-DEMO-01']);
+});
+
+test('V16 retains the original snapshot when revising a legacy note with the correct work context',async ({page})=>{
+ await page.addInitScript(()=>{
+  if(localStorage.getItem('simrs-benchmark-clinical-v16-drafts'))return;
+  localStorage.setItem('simrs-benchmark-clinical-v16-drafts',JSON.stringify({
+   'Perawat|p1|ENC-RI-DEMO-01|RI-N01|RME-07|CF-02':{id:'CF-02',role:'Perawat',module:'RME-07',patientId:'p1',encounterId:'ENC-RI-DEMO-01',workItem:'RI-N01',status:'Draft (demo)',updatedAt:'2026-11-10T01:00:00Z',values:{assessment_type:'awal',complaint:'Isi versi lama sintetis'}}
+  }));
+ });
+ await openV13RoleForm(page,'akun.perawat','m2','RME-07');
+ const panel=page.locator('#benchmark-v16');
+ await panel.locator('summary').click();
+ await panel.locator('[data-id="CF-02"]').click();
+ await expect(panel.locator('[data-v16-field="complaint"]')).toHaveValue('Isi versi lama sintetis');
+ await panel.locator('[data-v16-field="assessment_type"]').selectOption('ulang');
+ await panel.locator('[data-v16-field="complaint"]').fill('Isi revisi baru sintetis');
+ await panel.locator('[data-v16-action="save"]').click();
+ const saved=await page.evaluate(()=>Object.values(JSON.parse(localStorage.getItem('simrs-benchmark-clinical-v16-drafts')))[0]);
+ expect(saved.revisions).toHaveLength(2);
+ expect(saved.revisions[0].legacy).toBe(true);
+ expect(saved.revisions[0].values.complaint).toBe('Isi versi lama sintetis');
+ expect(saved.revisions[1].values.complaint).toBe('Isi revisi baru sintetis');
+ await panel.locator('[data-v16-action="history"]').click();
+ await expect(panel.locator('tbody tr')).toHaveCount(2);
+});
+
+test('V16 preserves both revisions when two tabs save the same draft',async ({page,context})=>{
+ const secondPage=await context.newPage();
+ const tabs=[page,secondPage];
+ await Promise.all(tabs.map(tab=>openV13RoleForm(tab,'akun.perawat','m2','RME-07')));
+ const panels=tabs.map(tab=>tab.locator('#benchmark-v16'));
+ const complaints=['Asesmen tab pertama','Asesmen tab kedua'];
+ await Promise.all(panels.map(async (panel,index)=>{
+  await panel.locator('.v16-details > summary').click();
+  await panel.locator('[data-id="CF-02"]').click();
+  await panel.locator('[data-v16-field="complaint"]').fill(complaints[index]);
+ }));
+ await Promise.all(panels.map(async panel=>{
+  await panel.locator('[data-v16-action="save"]').click();
+  await expect(panel.locator('#v16-feedback')).toContainText('Draft simulasi tersimpan');
+ }));
+ await panels[0].locator('[data-v16-action="history"]').click();
+ await expect(panels[0].locator('tbody tr')).toHaveCount(2);
+ const saved=await page.evaluate(()=>Object.values(JSON.parse(localStorage.getItem('simrs-benchmark-clinical-v16-drafts')))[0]);
+ expect(saved.revisions.map(revision=>revision.version)).toEqual([1,2]);
+ expect(saved.revisions.map(revision=>revision.values.complaint)).toEqual(expect.arrayContaining(complaints));
 });

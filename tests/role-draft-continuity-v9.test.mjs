@@ -66,3 +66,26 @@ test("V9 continues matching synthetic draft but isolates a different patient tas
  assert.match(form,/Baru \(belum tersimpan\)/);
  assert.doesNotMatch(form,/DEMO-CORE-09-0001/);
 });
+
+test("form context API exposes only a copy of the selected patient episode and denies cleared or object work",()=>{
+ const ectx={window:{__SIMRS_PREVIEW__:{patients},SIMRSRoleDemo:{isAuthenticated:()=>true,isReviewer:()=>false}},document:{addEventListener(){}},localStorage:storage};
+ runInNewContext(source("p0-form-catalog.js"),ectx);
+ runInNewContext(source("p0-forms.js"),ectx);
+ const engine=ectx.window.SIMRSFormEngine;
+ assert.equal(engine.getWorkItemContext(),null);
+ const selection={role:"Perawat",kind:"patient",workItem:{id:"RI-N01"},patient:{...patients[0],visit:"ENC-RI-DEMO-01"}};
+ assert.equal(engine.openForRole("RME-07","Perawat",selection),true);
+ engine.render({role:"Perawat",patient:patients[0]});
+ const result=engine.getWorkItemContext();
+ assert.equal(result.patient.visit,"ENC-RI-DEMO-01");
+ assert.equal(result.module,"RME-07");
+ assert.equal(result.workItem.id,"RI-N01");
+ result.patient.visit="WRONG";result.workItem.id="WRONG";
+ assert.equal(engine.getWorkItemContext().patient.visit,"ENC-RI-DEMO-01");
+ assert.equal(engine.getWorkItemContext().workItem.id,"RI-N01");
+ engine.clearWorkItemContext();
+ assert.equal(engine.getWorkItemContext(),null);
+ engine.openForRole("CORE-02","Admin Sistem",{role:"Admin Sistem",kind:"object",workItem:{id:"ACCESS-01"},patient:null});
+ engine.render({role:"Admin Sistem",patient:patients[0]});
+ assert.equal(engine.getWorkItemContext(),null);
+});
