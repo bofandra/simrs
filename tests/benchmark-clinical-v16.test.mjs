@@ -6,7 +6,9 @@ const read=name=>readFileSync(new URL('../public/ui-preview/'+name,import.meta.u
 function get(){
   const localStorage={getItem(){return '{}';},setItem(){}};
   const document={readyState:'loading',addEventListener(){},getElementById(){return null;}};
-  const window={};runInNewContext(read('benchmark-clinical-v16.js'),{window,document,localStorage},{timeout:3000});
+  const window={};
+  runInNewContext(read('p0-form-catalog.js'),{window},{timeout:3000});
+  runInNewContext(read('benchmark-clinical-v16.js'),{window,document,localStorage},{timeout:3000});
   return window.SIMRSBenchmarkV16;
 }
 test('V16 remains within 68 modules, does not add global menus, and is loaded after login',()=>{
@@ -19,6 +21,37 @@ test('V16 remains within 68 modules, does not add global menus, and is loaded af
   assert.equal(d.length,13);
   assert.equal(new Set(d.map(x=>x.id)).size,13);
   for(const x of d){assert.ok(x.modules.length);assert.ok(x.roles.length);assert.ok(x.groups.length>=2);}
+});
+
+test('V16 rejects invalid numeric values on draft and review, using existing vital constraints',()=>{
+ const api=get();
+ const valid={pain_score:'0',gcs:'15',heart_rate:'80',respiratory_rate:'20',temperature:'36.8',spo2:'99'};
+ assert.equal(api.validate('CF-01',valid,false).length,0);
+ for(const [key,value] of Object.entries({pain_score:'99',gcs:'16',heart_rate:'-10',respiratory_rate:'101',temperature:'46',spo2:'101'})){
+  for(const review of [false,true])assert.ok(api.validate('CF-01',{...valid,[key]:value},review).some(e=>e.key===key),key);
+ }
+ for(const value of ['NaN','Infinity','1e309','0x10','abc','1.5'])assert.ok(api.validate('CF-01',{gcs:value},false).some(e=>e.key==='gcs'),value);
+ assert.ok(api.validate('CF-01',{temperature:'36.85'},false).some(e=>e.key==='temperature'));
+ assert.equal(api.validate('CF-01',{pain_score:'10',gcs:'3',spo2:'0'},false).length,0);
+ assert.ok(api.validate('CF-02',{pain:'11'},false).some(e=>e.key==='pain'));
+ assert.ok(api.validate('CF-10',{quantity:'0'},false).some(e=>e.key==='quantity'));
+ assert.ok(api.validate('CF-12',{qty:'-1'},false).some(e=>e.key==='qty'));
+ assert.equal(api.validate('CF-12',{qty:'0.5'},false).length,0);
+});
+
+test('V16 allows incomplete drafts, requires review fields and rejects invalid dates, choices and time ordering',()=>{
+ const api=get();
+ assert.equal(api.validate('CF-01',{},false).length,0);
+ const errors=api.validate('CF-01',{},true);
+ assert.ok(errors.some(e=>e.key==='chief_complaint'&&e.group===0));
+ assert.ok(errors.some(e=>e.key==='airway'&&e.group===1));
+ assert.ok(errors.some(e=>e.key==='triage_decision'&&e.group===2));
+ assert.ok(api.validate('CF-02',{assessment_type:'tidak sah'},false).some(e=>e.key==='assessment_type'));
+ assert.ok(api.validate('CF-01',{triage_at:'bukan tanggal'},false).some(e=>e.key==='triage_at'));
+ for(const [id,start,end] of [['CF-05','started_at','ended_at'],['CF-07','admitted_at','discharged_at'],['CF-10','start_at','end_at']]){
+  assert.ok(api.validate(id,{[start]:'2026-11-10T12:00',[end]:'2026-11-10T11:00'},false).some(e=>e.key===end));
+ }
+ for(const id of ['CF-06','CF-13','unknown'])assert.ok(api.validate(id,{},false).length);
 });
 test('V16 covers key benchmark gap groups with source-derived fields',()=>{
   const m=Object.fromEntries(get().defs.map(x=>[x.id,x]));

@@ -45,3 +45,20 @@ Panel `Riwayat klinis (read-only)` menggabungkan draft modul yang sudah ada dan 
 ## Batasan sebelum produksi
 
 Prototipe menggunakan `localStorage` untuk **data dummy saja**, bukan penyimpanan klinis. Seluruh field tambahan dan hubungan database pada PRD v1.1 adalah rancangan untuk refinement PIC. Terutama definisi PRMRJ, tata cara restrain, hak akses Bidan/Sp.OG, form maternal, istilah klinis, grafik/alert partograf, konsistensi MAR, serta integrasi FHIR membutuhkan persetujuan SOP dan verifikasi profil SATUSEHAT sebelum pengembangan produk.
+
+## Koreksi konteks, versi dan validasi V16 (10 November 2026)
+
+Rujukan perubahan: PRD v1.1 Bab 13.1, 13.4 dan 13.8; PIC 3; `RME-02 / FR-010 / WF-03`, `RME-07 / FR-012 / WF-04`, `RME-05 / FR-034 / WF-02 dan WF-04`. Acceptance criteria utama: `USX-CLN-01 AC1–AC3`, `USX-CLN-02 AC3`, `USX-CLN-06 AC1`; `UAT-CF-01/02/06/07/08`. Pengujian otomatis mendukung review PIC, bukan bukti UAT bersama staf RS telah dilakukan.
+
+- **Konteks tunggal:** subform mengambil salinan konteks aktif dari `SIMRSFormEngine.getWorkItemContext()`, sama dengan banner form utama. Role, kode modul dan ID pekerjaan harus cocok. Tanpa konteks pasien/encounter pekerjaan yang sah, panel tidak ditampilkan. Encounter bawaan pada master pasien tidak dipakai sebagai fallback.
+- **Versi tersimpan:** setiap perubahan yang berhasil disimpan menambah snapshot berisi nilai, nomor versi, waktu dan author. Asesmen awal tetap bisa dibaca setelah asesmen ulang. Simpan ulang tanpa perubahan tidak menggandakan versi. Browser yang mendukung Web Locks mengantrekan penyimpanan dari beberapa tab. Berpindah langkah/subform, meninjau kelengkapan atau membuka histori tidak menambah versi dan tidak mengubah snapshot tersimpan.
+- **Riwayat baca-saja:** daftar menampilkan jenis asesmen, versi, encounter, waktu, sumber dan profesi. Tombol `Lihat versi` membuka isi snapshot tanpa kontrol edit. Riwayat tetap dibatasi pada pasien sintetis terpilih.
+- **Kompatibilitas data lama:** catatan tanpa daftar revisi dipertahankan sebagai versi lama; penyimpanan revisi baru mempertahankan snapshot aslinya. Encounter catatan lama tidak dipindahkan otomatis karena keterkaitannya belum dapat dibuktikan. Riwayat menandai sumber lama sebagai konteks belum diverifikasi. Versi yang sudah tertimpa sebelum perbaikan tidak bisa direkonstruksi dari penyimpanan lama.
+- **Validasi:** draft boleh belum lengkap, tetapi nilai angka/tanggal/pilihan yang tidak valid ditolak. Review juga mewajibkan seluruh field wajib. Error ditampilkan per field dengan `aria-invalid`, dan bagian pertama yang bermasalah dibuka otomatis. Urutan waktu mulai/akhir restrain, masuk/keluar ICU dan rencana obat diperiksa.
+- **Kegagalan penyimpanan:** browser yang menolak penyimpanan menampilkan pesan gagal, mempertahankan isian kerja untuk dicoba ulang, dan tidak menambahkan versi atau menampilkan keberhasilan palsu.
+
+Batas input demo: nadi 20–250, RR 1–100, suhu 25–45 dengan langkah 0,1 mengikuti katalog `RME-02/RME-05`; skala nyeri 0–10, GCS 3–15, SpO₂ 0–100, jumlah obat bilangan bulat minimal 1, dan jumlah BMHP lebih dari 0. Ini pemeriksaan format/rentang input, **bukan rentang normal, skor klinis, alarm atau keputusan terapi**, dan tetap memerlukan validasi domain/SOP untuk produk.
+
+Tes regresi mencakup kesamaan encounter RJ/IGD/RI, isolasi pasien/pekerjaan, snapshot asesmen awal/ulang setelah reload, isi versi baca-saja, migrasi data lama tanpa pemindahan encounter, angka di luar batas, error pada langkah tersembunyi di mobile, kegagalan penyimpanan, serta gate PRMRJ **dan** partograf. Semua aktivitas tetap lokal dan sintetis; tidak ada pengiriman API produksi atau pengaktifan tindakan klinis/finansial.
+
+Smoke test Chromium mencakup penyimpanan bersamaan dari dua tab serta visibilitas form utama saat panel subform dibuka dan ditutup. Tes menyimpan tangkapan layar versi historis di desktop dan error angka pada viewport 390 px.
