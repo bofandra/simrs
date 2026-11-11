@@ -121,7 +121,9 @@
    selection.appendChild(element("span","v28-selected-title",selected.title||"Objek contoh"));
    selection.appendChild(element("span","v28-selected-status","Status contoh: "+(selected.status||"Belum ditentukan")));
    if(patient)selection.appendChild(element("small","v28-selected-patient","Konteks: "+(patient.mrn||"RM-DEMO")+" · "+(patient.visit||"Encounter demo")));
-   head.appendChild(selection);
+   // Preserve the V14 above-the-fold radiology action.
+   if(spec.kind==="imaging")guide.appendChild(selection);
+   else head.appendChild(selection);
   }
  }
  shell.render=function(){

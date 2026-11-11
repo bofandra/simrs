@@ -1251,7 +1251,8 @@ test('V16 shares the operational encounter in RJ, IGD and RI and isolates anothe
    await panel.locator('summary').click();
    await panel.locator('[data-id="'+form+'"]').click();
    await panel.locator('[data-v16-action="save"]').click();
-   const saved=await page.evaluate(form=>Object.values(JSON.parse(localStorage.getItem('simrs-benchmark-clinical-v16-drafts'))).find(r=>r.id===form),form);
+   await expect.poll(async()=>page.evaluate(form=>Object.values(JSON.parse(localStorage.getItem('simrs-benchmark-clinical-v16-drafts')||'{}')).some(r=>r.id===form),form)).toBe(true);
+   const saved=await page.evaluate(form=>Object.values(JSON.parse(localStorage.getItem('simrs-benchmark-clinical-v16-drafts')||'{}')).find(r=>r.id===form),form);
    expect(saved.encounterId).toBe(selected.patient.visit);
    expect(saved.patientId).toBe(selected.patient.id);
    expect(saved.workItem).toBe(selected.workItem.id);
@@ -1399,7 +1400,11 @@ test('V16 retains the original snapshot when revising a legacy note with the cor
  await panel.locator('[data-v16-field="assessment_type"]').selectOption('ulang');
  await panel.locator('[data-v16-field="complaint"]').fill('Isi revisi baru sintetis');
  await panel.locator('[data-v16-action="save"]').click();
- const saved=await page.evaluate(()=>Object.values(JSON.parse(localStorage.getItem('simrs-benchmark-clinical-v16-drafts')))[0]);
+ await expect.poll(async()=>page.evaluate(()=>{
+  const drafts=Object.values(JSON.parse(localStorage.getItem('simrs-benchmark-clinical-v16-drafts')||'{}'));
+  return drafts[0]&&Array.isArray(drafts[0].revisions)?drafts[0].revisions.length:0;
+ })).toBe(2);
+ const saved=await page.evaluate(()=>Object.values(JSON.parse(localStorage.getItem('simrs-benchmark-clinical-v16-drafts')||'{}'))[0]);
  expect(saved.revisions).toHaveLength(2);
  expect(saved.revisions[0].legacy).toBe(true);
  expect(saved.revisions[0].values.complaint).toBe('Isi versi lama sintetis');

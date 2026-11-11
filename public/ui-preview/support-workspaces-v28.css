@@ -125,3 +125,9 @@ body.demo-authenticated:not(.demo-reviewer) .uxv5.v28-support .v12-context.v28-c
 @media print{
  .v28-support .v28-controls{display:none}
 }
+/* V30: retain the visible S12 study action at a 1654x928 viewport. */
+body.demo-authenticated:not(.demo-reviewer) .uxv5.v28-support[data-v28-kind="imaging"] .uxv4-head{margin-bottom:7px}
+body.demo-authenticated:not(.demo-reviewer) .uxv5.v28-support[data-v28-kind="imaging"] .v12-context{margin-bottom:8px}
+body.demo-authenticated:not(.demo-reviewer) .uxv5.v28-support[data-v28-kind="imaging"] .uxv5-summary{margin-bottom:8px}
+body.demo-authenticated:not(.demo-reviewer) .uxv5.v28-support[data-v28-kind="imaging"] .uxv5-summary>div{min-height:68px;padding:9px 13px}
+.v28-support[data-v28-kind="imaging"] .v28-hero>.v28-selected-task{margin:14px;border-radius:10px}

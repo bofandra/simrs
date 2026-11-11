@@ -11,7 +11,7 @@ Tanggal: 11 November 2026. Baseline normatif: PRD_SIMRS_Baru_Final_User_Stories_
 | S08 Farmasi | akun.farmasis | Resep/objek kerja terpilih, tugas prioritas, panduan alergi-dosis-lot | Tidak dispensing, posting atau mengubah stok |
 | S12 Radiologi | akun.radiografer dan akun.radiolog | Worklist studi terpilih, panduan pemeriksaan/interpretasi sesuai role | Tidak mengakuisisi DICOM, membuat viewer diagnostik atau release laporan |
 
-Urutan UI untuk Bed Manager, ATLM dan Farmasis: judul profesi + pekerjaan terpilih → panduan ringkas/read-only → banner konteks dari worklist → metrik lokal → daftar kerja dan detail (aksi existing saja) → area pekerjaan lainnya. Pada Radiografer/Radiolog, daftar kerja dan tombol buka form harus tetap lebih dahulu daripada panduan detail untuk menjaga aksi utama terlihat di viewport desktop (regresi V14). Panduan bukan indikator proses selesai.
+Urutan UI untuk Bed Manager, ATLM dan Farmasis: judul profesi + pekerjaan terpilih → panduan ringkas/read-only → banner konteks dari worklist → metrik lokal → daftar kerja dan detail (aksi existing saja) → area pekerjaan lainnya. Pada Radiografer/Radiolog, daftar kerja dan tombol buka form harus tetap lebih dahulu daripada panduan detail; ringkasan tambahan ditempatkan di bawah daftar dan kepadatan elemen S12 dijaga agar aksi utama terlihat pada viewport desktop 1654×928 (regresi V14). Panduan bukan indikator proses selesai.
 
 UI menggunakan DOM dan konteks yang sudah dihasilkan oleh V5/V12/V18/V24. Hanya beranda role aktif yang mendapat dekorasi. Akun reviewer, empat core care workspace V25, hak role, alur form, draft, dan konteks encounter tidak diubah. Konteks bed tetap objek nonpasien.
 
