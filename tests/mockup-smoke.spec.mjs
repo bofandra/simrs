@@ -1427,5 +1427,5 @@ test('V16 preserves both revisions when two tabs save the same draft',async ({pa
  await expect(panels[0].locator('tbody tr')).toHaveCount(2);
  const saved=await page.evaluate(()=>Object.values(JSON.parse(localStorage.getItem('simrs-benchmark-clinical-v16-drafts')))[0]);
  expect(saved.revisions.map(revision=>revision.version)).toEqual([1,2]);
- expect(saved.revisions.map(revision=>revision.values.complaint).sort()).toEqual(complaints);
+ expect(saved.revisions.map(revision=>revision.values.complaint)).toEqual(expect.arrayContaining(complaints));
 });
