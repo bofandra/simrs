@@ -11,6 +11,10 @@
 PRD v1.1 adalah **edisi turunan** dari baseline final 6 November 2026, bukan penggantian sepihak baseline. Semua tindakan klinis, stok, finansial dan integrasi pada situs tetap simulasi sampai SOP/UAT/otorisasi produksi disetujui.
 
 
+## Implementasi UI/UX V18–V21 — 11 November 2026
+
+**[Catatan implementasi V18–V21](design/UIUX_IMPLEMENTATION_V18_V21_2026-11-11.md)** — V18 layer visual konsisten dan responsif, V19 panel keselamatan/pekerjaan klinis, V20 tahapan operasional, V21 tes regresi Node/Playwright. Seluruh panel read-only, memakai data sintetis, tidak mengubah izin akses atau membuat transaksi sungguhan. Urutan proses hanya ilustrasi dan status UAT pengguna **belum selesai**. Baseline spesifikasi tetap PRD final 6 November 2026.
+
 ## Masterplan UI/UX SIMRS Baru — 11 November 2026
 
 **[Baca Masterplan UI/UX berbasis 13 mockup](design/UIUX_MASTERPLAN_SIMRS_BARU_2026-11-11.md)** — spesifikasi layar berdasarkan role dan pekerjaan, peta 68 modul/12 workflow, keselamatan pasien, design system, aksesibilitas, tahapan F0–F4, backlog UX-001–UX-015, dan kriteria UAT. **[Baca komparasi kompetitor](design/UIUX_BENCHMARK_KOMPETITOR_2026-11-11.md)** — Epic, Oracle Health, TrakCare, MEDITECH, Dedalus ORBIS U, SIMGOS, Khanza, SIMRS.ID dan Dribbble, dengan rujukan standar W3C/ONC/SATUSEHAT.

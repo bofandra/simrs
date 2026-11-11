@@ -1,0 +1,214 @@
+/* SIMRS V18 — canonical visual layer for the active static mockup.
+ * Design authority: PRD final 2026-11-06. Tokens are provisional, not official SATUSEHAT values.
+ * Loaded after V17 so the active site has one final component treatment without deleting legacy behaviours.
+ */
+:root{
+ --simrs-primary:#087f79;--simrs-primary-strong:#076961;--simrs-primary-soft:#e9f7f3;
+ --simrs-info:#2d62b3;--simrs-info-soft:#ecf3fd;--simrs-ink:#223648;
+ --simrs-subtle:#526b80;--simrs-line:#dce7ed;--simrs-canvas:#f4f7fa;
+ --simrs-surface:#ffffff;--simrs-warning:#956016;--simrs-danger:#a83d4e;
+ --simrs-radius:14px;--simrs-ring:#126baf;--simrs-shadow:0 6px 22px rgba(26,57,80,.045);
+ --navy:#17344b;--teal:var(--simrs-primary);--blue:var(--simrs-info);
+ --bg:var(--simrs-canvas);--ink:var(--simrs-ink);--muted:var(--simrs-subtle);
+ --border:var(--simrs-line);--shadow:var(--simrs-shadow);
+ --v17-ink:var(--simrs-ink);--v17-muted:var(--simrs-subtle);
+ --v17-blue:var(--simrs-info);--v17-teal:var(--simrs-primary);
+ --v17-bg:var(--simrs-canvas);--v17-line:var(--simrs-line);
+}
+html{scroll-padding-top:86px}
+body{line-height:1.5}
+:where(button,a,input,select,textarea,summary):focus-visible{
+ outline:3px solid var(--simrs-ring);outline-offset:3px;
+}
+body.demo-authenticated:not(.demo-reviewer) :where(.btn-primary,.p0-operational .btn-primary,.uxv5-detail-actions .btn-primary){
+ background:var(--simrs-primary);border-color:var(--simrs-primary);color:#fff;
+}
+body.demo-authenticated:not(.demo-reviewer) :where(.btn-primary,.p0-operational .btn-primary,.uxv5-detail-actions .btn-primary):hover{
+ background:var(--simrs-primary-strong);border-color:var(--simrs-primary-strong);
+}
+body.demo-authenticated:not(.demo-reviewer) #app>aside{
+ background:var(--simrs-surface);border-right:1px solid var(--simrs-line);
+}
+body.demo-authenticated:not(.demo-reviewer) #role-nav .ux-role-menu.active{
+ color:var(--simrs-primary-strong)!important;background:var(--simrs-primary-soft)!important;
+ border-color:#c5e7df!important;
+}
+body.demo-authenticated:not(.demo-reviewer) #role-nav .ux-role-menu.active .ux-menu-index{
+ background:#c8eee4;color:var(--simrs-primary-strong);
+}
+body.demo-authenticated:not(.demo-reviewer) #main .topbar{
+ background:#fffffffa;border-bottom-color:var(--simrs-line);
+}
+body.demo-authenticated:not(.demo-reviewer) :where(.uxv4-panel,.card,.p0-operational .p0-editor,.uxv5-summary>div){
+ border-color:var(--simrs-line);box-shadow:var(--simrs-shadow);border-radius:var(--simrs-radius);
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv4-head h1{color:var(--simrs-ink);letter-spacing:-.45px}
+body.demo-authenticated:not(.demo-reviewer) .uxv4-head p{color:var(--simrs-subtle);font-size:13px}
+body.demo-authenticated:not(.demo-reviewer) .uxv4-panel-head p{
+ color:var(--simrs-subtle);font-size:12px;line-height:1.6;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv4-table{width:100%;border-collapse:collapse}
+body.demo-authenticated:not(.demo-reviewer) .uxv4-table th{
+ font-size:11px;color:#36566b;background:#f5f9fa;line-height:1.45;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv4-table td{
+ font-size:12px;color:#3b5568;line-height:1.55;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv4-table td strong{font-size:12px}
+body.demo-authenticated:not(.demo-reviewer) .uxv4-table tr.uxv5-selected td{
+ background:#f1faf7;border-bottom-color:#cbece4;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv4-table-scroller{
+ max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv5-detail{min-width:0;padding-top:16px}
+/* Workflow guidance follows the complete worklist, never obscuring the sticky CTA. */
+body.demo-authenticated:not(.demo-reviewer) .uxv4-panel>.v18-workflow{margin:14px 20px 18px}
+body.demo-authenticated:not(.demo-reviewer) .uxv5-detail :where(dt,dd,li,p){
+ line-height:1.55;overflow-wrap:anywhere;
+}
+body.demo-authenticated:not(.demo-reviewer) .v17-job-card{
+ border-color:var(--simrs-line);border-radius:var(--simrs-radius);
+}
+body.demo-authenticated:not(.demo-reviewer) .v17-job-card[aria-pressed="true"]{
+ border-color:var(--simrs-primary);background:#f2faf8;
+}
+body.demo-authenticated:not(.demo-reviewer) .v17-view-switch button[aria-pressed="true"]{
+ color:var(--simrs-primary-strong);
+}
+body.demo-authenticated:not(.demo-reviewer) .v15-tab.active{
+ border-color:var(--simrs-primary)!important;background:var(--simrs-primary-soft)!important;
+}
+body.demo-authenticated:not(.demo-reviewer) #p0-editor :where(input,textarea,select){
+ max-width:100%;min-width:0;
+}
+body.demo-authenticated:not(.demo-reviewer) #p0-editor .field label{
+ color:#31516a;font-size:12px;line-height:1.45;
+}
+body.demo-authenticated:not(.demo-reviewer) #p0-editor .forminput{
+ min-height:42px;border-color:#b9cdd8;font-size:13px;
+}
+body.demo-authenticated:not(.demo-reviewer) .p0-patient-banner{
+ border:1px solid #b9e4db;border-radius:12px;background:#f1faf7;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv4-safety{font-size:12px}
+body.demo-authenticated:not(.demo-reviewer) .v18-workflow{
+ display:grid;gap:0;margin:0 0 17px;border:1px solid #cddfe5;
+ border-radius:var(--simrs-radius);background:#fff;box-shadow:var(--simrs-shadow);
+ overflow:hidden;min-width:0;
+}
+.v18-workflow-overview{
+ display:flex;align-items:flex-start;justify-content:space-between;
+ gap:16px;padding:17px 20px;
+}
+.v18-workflow-copy{min-width:0;flex:1}
+.v18-overline{
+ display:block;color:#247c75;font-size:10px;font-weight:800;letter-spacing:.9px;
+ text-transform:uppercase;margin:0 0 5px;
+}
+.v18-workflow h2{
+ margin:0;color:#19394a;font-size:16px;line-height:1.3;letter-spacing:-.2px;
+}
+.v18-workflow-overview p{
+ margin:7px 0 0;color:#496577;font-size:12px;line-height:1.6;
+ overflow-wrap:anywhere;
+}
+.v18-workflow-chip{
+ display:inline-flex;align-items:center;gap:7px;background:#eaf7f4;
+ border:1px solid #cde9df;border-radius:999px;color:#086e64;
+ font-size:11px;font-weight:750;padding:7px 11px;white-space:nowrap;
+}
+.v18-workflow-chip:before{content:"";width:7px;height:7px;border-radius:50%;background:#128477}
+.v18-workflow-details{margin:0;border-top:1px solid #e5edf0}
+.v18-workflow-details summary{
+ display:flex;align-items:center;justify-content:space-between;
+ padding:12px 20px;font-size:12px;font-weight:720;color:#2b5d79;
+ cursor:pointer;min-height:44px;list-style:none;
+}
+.v18-workflow-details summary::-webkit-details-marker{display:none}
+.v18-workflow-details summary:after{content:"+";font-size:18px;font-weight:500;color:#348278}
+.v18-workflow-details[open] summary:after{content:"−"}
+.v18-workflow-details[open] summary{background:#f8fbfc}
+.v18-flow-steps{
+ list-style:none;display:flex;gap:8px;margin:0;padding:14px 20px 10px;
+ flex-wrap:wrap;counter-reset:step;
+}
+.v18-flow-steps li{
+ display:inline-flex;align-items:center;gap:8px;min-height:37px;
+ border:1px solid #dbe7ed;border-radius:9px;padding:7px 10px;
+ background:#f8fbfc;color:#3c596c;font-size:11px;font-weight:650;
+}
+.v18-flow-steps li:before{
+ counter-increment:step;content:counter(step);width:20px;height:20px;
+ border-radius:50%;display:inline-grid;place-items:center;
+ background:#e1f2ed;color:#0b736a;font-weight:800;font-size:10px;
+}
+.v18-flow-note{
+ margin:0;padding:2px 20px 15px;color:#607588;font-size:11px;line-height:1.6;
+}
+.v18-safety-strip{
+ border-top:1px solid #e3edf0;padding:11px 20px;
+ background:#f6fafb;color:#34576a;font-size:11px;line-height:1.65;
+}
+.v18-safety-strip strong{color:#185c69}
+.v18-safety-strip.v18-clinical{
+ background:#fffaf0;border-top-color:#eeddbf;color:#785b2b;
+}
+.v18-safety-strip.v18-clinical strong{color:#82521a}
+.v18-safety-strip.v18-operation{background:#f3f8fe}
+.v18-safety-strip.v18-operation strong{color:#285e96}
+@media(max-width:1100px){
+ body.demo-authenticated:not(.demo-reviewer) #main .content{width:100%;max-width:100%}
+ body.demo-authenticated:not(.demo-reviewer) .uxv5-layout{min-width:0}
+}
+@media(max-width:700px){
+ .v18-workflow-overview{flex-direction:column;gap:10px;padding:15px}
+ .v18-workflow-chip{white-space:normal}
+ .v18-workflow-details summary{padding:13px 15px}
+ .v18-flow-steps{padding:12px 15px 9px}
+ .v18-flow-steps li{flex:1 1 100%}
+ .v18-flow-note{padding:0 15px 13px}
+ .v18-safety-strip{padding:12px 15px}
+ body.demo-authenticated:not(.demo-reviewer) .v17-job-grid{grid-template-columns:minmax(0,1fr)}
+ body.demo-authenticated:not(.demo-reviewer) .v17-job-card{min-width:0}
+ body.demo-authenticated:not(.demo-reviewer) .uxv4-table{min-width:640px}
+ body.demo-authenticated:not(.demo-reviewer) #p0-editor .v15-grid{
+  grid-template-columns:minmax(0,1fr)!important;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ html{scroll-behavior:auto}
+ .v17-job-card{transition:none}
+}
+@media print{
+ .v18-workflow-details:not([open]) .v18-flow-steps{display:none}
+ .v18-workflow-details summary{display:none}
+ .v18-safety-strip{border:1px solid #cddfe5}
+}
+
+
+/* Override the V17 high-specificity blue primary action and V15 active step.
+   A single action colour applies across clinical and operational workflows. */
+body.demo-authenticated:not(.demo-reviewer) .uxv5-detail-actions .btn-primary,
+body.demo-authenticated:not(.demo-reviewer) .p0-operational .btn-primary{
+ background:var(--simrs-primary);border-color:var(--simrs-primary);color:#fff;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv5-detail-actions .btn-primary:hover,
+body.demo-authenticated:not(.demo-reviewer) .p0-operational .btn-primary:hover{
+ background:var(--simrs-primary-strong);border-color:var(--simrs-primary-strong);
+}
+body.demo-authenticated:not(.demo-reviewer) #p0-editor .v15-tab.active{
+ background:var(--simrs-primary-soft);border-color:var(--simrs-primary);
+ color:var(--simrs-primary-strong);
+ box-shadow:inset 0 -2px 0 var(--simrs-primary);
+}
+
+
+/* V14's role-specific specificity overrides generic padding; explicitly compact
+   the detail header/action enough to keep the primary radiology CTA above 928px. */
+body.demo-authenticated:not(.demo-reviewer) .uxv5.v12-parity .uxv5-detail{
+ padding-top:16px;
+}
+body.demo-authenticated:not(.demo-reviewer) .uxv5.v12-parity .uxv14-primary-action{
+ margin-top:9px;
+}
