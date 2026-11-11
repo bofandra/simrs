@@ -1462,7 +1462,10 @@ for (const persona of [
     list:Array.from(node.children).indexOf(list),
     areas:areas?Array.from(node.children).indexOf(areas):null};
   });
-  expect(positions.guide).toBeLessThan(positions.list);
+  if(persona.kind==='imaging'){
+   // Accession action must remain above the fold (V14 safety regression).
+   expect(positions.list).toBeLessThan(positions.guide);
+  }else expect(positions.guide).toBeLessThan(positions.list);
   if(positions.areas!==null)expect(positions.list).toBeLessThan(positions.areas);
   await guide.locator('[data-v28-focus="worklist"]').click();
   await expect(worklist.locator('#uxv5-search')).toBeFocused();

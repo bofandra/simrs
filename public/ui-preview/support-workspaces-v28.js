@@ -80,7 +80,8 @@
   var badge=guide.querySelector(".v18-workflow-chip");
   if(badge)badge.textContent=String(jobs.length)+" pekerjaan demo";
   guide.classList.add("v28-hero");
-  head.insertAdjacentElement("afterend",guide);
+  // For imaging, preserve the V14 above-the-fold accession/study action.
+  // Move detailed guidance after the actionable worklist, not before it.
   var existingContext=root.querySelector(".v12-context");
   if(existingContext){
    existingContext.classList.add("v28-context");
@@ -97,6 +98,12 @@
    panels[0].classList.add("v28-other-areas");
    var otherTitle=panels[0].querySelector(".uxv4-panel-head h2");
    if(otherTitle)otherTitle.textContent="Area pekerjaan lain sesuai akun";
+  }
+  if(spec.kind==="imaging"){
+   worklist.insertAdjacentElement("afterend",guide);
+   guide.classList.add("v28-after-list");
+  }else{
+   head.insertAdjacentElement("afterend",guide);
   }
   worklist.classList.add("v28-primary-worklist");
   worklist.setAttribute("data-v28-worklist","");
