@@ -1251,7 +1251,8 @@ test('V16 shares the operational encounter in RJ, IGD and RI and isolates anothe
    await panel.locator('summary').click();
    await panel.locator('[data-id="'+form+'"]').click();
    await panel.locator('[data-v16-action="save"]').click();
-   const saved=await page.evaluate(form=>Object.values(JSON.parse(localStorage.getItem('simrs-benchmark-clinical-v16-drafts'))).find(r=>r.id===form),form);
+   await expect.poll(async()=>page.evaluate(form=>Object.values(JSON.parse(localStorage.getItem('simrs-benchmark-clinical-v16-drafts')||'{}')).some(r=>r.id===form),form)).toBe(true);
+   const saved=await page.evaluate(form=>Object.values(JSON.parse(localStorage.getItem('simrs-benchmark-clinical-v16-drafts')||'{}')).find(r=>r.id===form),form);
    expect(saved.encounterId).toBe(selected.patient.visit);
    expect(saved.patientId).toBe(selected.patient.id);
    expect(saved.workItem).toBe(selected.workItem.id);
@@ -1399,7 +1400,11 @@ test('V16 retains the original snapshot when revising a legacy note with the cor
  await panel.locator('[data-v16-field="assessment_type"]').selectOption('ulang');
  await panel.locator('[data-v16-field="complaint"]').fill('Isi revisi baru sintetis');
  await panel.locator('[data-v16-action="save"]').click();
- const saved=await page.evaluate(()=>Object.values(JSON.parse(localStorage.getItem('simrs-benchmark-clinical-v16-drafts')))[0]);
+ await expect.poll(async()=>page.evaluate(()=>{
+  const drafts=Object.values(JSON.parse(localStorage.getItem('simrs-benchmark-clinical-v16-drafts')||'{}'));
+  return drafts[0]&&Array.isArray(drafts[0].revisions)?drafts[0].revisions.length:0;
+ })).toBe(2);
+ const saved=await page.evaluate(()=>Object.values(JSON.parse(localStorage.getItem('simrs-benchmark-clinical-v16-drafts')||'{}'))[0]);
  expect(saved.revisions).toHaveLength(2);
  expect(saved.revisions[0].legacy).toBe(true);
  expect(saved.revisions[0].values.complaint).toBe('Isi versi lama sintetis');
@@ -1428,4 +1433,76 @@ test('V16 preserves both revisions when two tabs save the same draft',async ({pa
  const saved=await page.evaluate(()=>Object.values(JSON.parse(localStorage.getItem('simrs-benchmark-clinical-v16-drafts')))[0]);
  expect(saved.revisions.map(revision=>revision.version)).toEqual([1,2]);
  expect(saved.revisions.map(revision=>revision.values.complaint)).toEqual(expect.arrayContaining(complaints));
+});
+
+
+
+// V28-V30: task-first support workspaces use the existing role-safe worklists.
+for (const persona of [
+ {username:'akun.bed-manager',role:'Bed Manager',screen:'S06',kind:'bed'},
+ {username:'akun.atlm',role:'ATLM',screen:'S07',kind:'lab'},
+ {username:'akun.farmasis',role:'Farmasis',screen:'S08',kind:'pharmacy'},
+ {username:'akun.radiografer',role:'Radiografer',screen:'S12',kind:'imaging'},
+ {username:'akun.radiolog',role:'Radiolog',screen:'S12',kind:'imaging'}
+]) {
+ test('V28 support worklist and navigation: '+persona.role,async ({page})=>{
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.goto('/index.html');
+  await page.locator('[data-demo-account="'+persona.username+'"]').click();
+  await page.locator('#demo-login-form button[type="submit"]').click();
+  const root=page.locator('.uxv5.v28-support');
+  await expect(root).toBeVisible();
+  await expect(root).toHaveAttribute('data-v28-screen',persona.screen);
+  await expect(root).toHaveAttribute('data-v28-kind',persona.kind);
+  const guide=root.locator('.v28-hero');
+  const worklist=root.locator('[data-v28-worklist]');
+  await expect(guide).toBeVisible();
+  await expect(root.locator('.v28-selected-task')).toBeVisible();
+  const positions=await page.evaluate(()=>{
+   const node=document.querySelector('.uxv5.v28-support');
+   const guide=node.querySelector('.v28-hero');
+   const list=node.querySelector('[data-v28-worklist]');
+   const areas=node.querySelector('.v28-other-areas');
+   return {guide:Array.from(node.children).indexOf(guide),
+    list:Array.from(node.children).indexOf(list),
+    areas:areas?Array.from(node.children).indexOf(areas):null};
+  });
+  if(persona.kind==='imaging'){
+   // Accession action must remain above the fold (V14 safety regression).
+   expect(positions.list).toBeLessThan(positions.guide);
+  }else expect(positions.guide).toBeLessThan(positions.list);
+  if(positions.areas!==null)expect(positions.list).toBeLessThan(positions.areas);
+  await guide.locator('[data-v28-focus="worklist"]').click();
+  await expect(worklist.locator('#uxv5-search')).toBeFocused();
+  await guide.locator('[data-v28-focus="guide"]').click();
+  await expect(guide.locator('.v18-workflow-details')).toHaveJSProperty('open',true);
+  await expect(root.locator('.v28-extra-guard')).toBeVisible();
+  if(persona.kind==='bed'){
+   await expect(root.locator('.v28-context')).toHaveAttribute('data-v28-context','object');
+   await expect(root.locator('.v28-selected-patient')).toHaveCount(0);
+  }
+  await page.screenshot({path:out+'/v28-'+persona.username+'.png',fullPage:true});
+  expect(errors).toEqual([]);
+ });
+}
+test('V29 support mobile retains usable 44px focus controls and no role escalation',async ({page})=>{
+ await page.setViewportSize({width:390,height:844});
+ await page.goto('/index.html');
+ await page.locator('[data-demo-account="akun.atlm"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ const root=page.locator('.uxv5.v28-support');
+ await expect(root).toBeVisible();
+ const button=root.locator('[data-v28-focus="worklist"]');
+ await expect(button).toBeVisible();
+ expect((await button.boundingBox()).height).toBeGreaterThanOrEqual(44);
+ await button.click();
+ await expect(root.locator('#uxv5-search')).toBeFocused();
+ await expect(root.locator('[data-v28-worklist]')).toBeVisible();
+ await page.screenshot({path:out+'/v29-laboratory-mobile.png',fullPage:true});
+ await expect(page.locator('.uxv5.v25-core')).toHaveCount(0);
+});
+test('V30 reviewer does not inherit clinical support decorations',async ({page})=>{
+ await start(page);
+ await expect(page.locator('.v28-support')).toHaveCount(0);
+ await expect(page.locator('.v28-command')).toHaveCount(0);
 });

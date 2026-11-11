@@ -11,6 +11,10 @@
 PRD v1.1 adalah **edisi turunan** dari baseline final 6 November 2026, bukan penggantian sepihak baseline. Semua tindakan klinis, stok, finansial dan integrasi pada situs tetap simulasi sampai SOP/UAT/otorisasi produksi disetujui.
 
 
+## Implementasi UI/UX V28–V30 — 11 November 2026
+
+**[Lihat dokumentasi V28–V30](design/UIUX_IMPLEMENTATION_V28_V30_2026-11-11.md)** — lima role penunjang: Bed Manager (S06), ATLM (S07), Farmasis (S08), Radiografer dan Radiolog (S12). Beranda diubah menjadi task-first, dengan konteks objek/pasien yang aman, panduan read-only, tombol fokus, dan gaya desktop/mobile. Tanpa mengubah izin, encounter, transaksi, atau pengiriman API.
+
 ## Implementasi UI/UX V25–V27 — 11 November 2026
 
 **[Lihat dokumentasi V25–V27](design/UIUX_IMPLEMENTATION_V25_V27_2026-11-11.md)** — fokus pembaruan tampilan empat role **Pendaftaran (S02), Dokter RJ (S03), Perawat (S04), dan Dokter IGD (S05)**. Urutan halaman task-first, panduan kerja dan konteks sintetis lebih jelas, tombol akses langsung ke antrean/panduan, warna semantic berbeda per profesi, responsive 390 px, serta tes regresi dan screenshot pada CI. Kode ini hanya UI mockup; 44 akun, 68 modul, draft dan authorization demo tidak berubah.
