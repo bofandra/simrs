@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 export default defineConfig({
   testDir: '.',
-  testMatch: '**/mockup-smoke.spec.mjs',
+  testMatch: '**/*.spec.mjs',
   fullyParallel: true,
   timeout: 40_000,
   retries: process.env.CI ? 1 : 0,
