@@ -1130,3 +1130,95 @@ test('V24 pharmacy mobile preserves work item and reviewer sees no role-form ret
  await expect(page.locator('.v23-returnbar')).toHaveCount(0);
  expect(errors).toEqual([]);
 });
+
+
+test('V25 registration prioritizes worklist above module shortcuts and supports keyboard search',async ({page})=>{
+ const errors=[],requests=[];
+ page.on('pageerror',e=>errors.push(e.message));
+ page.on('request',r=>{if(r.url().includes('/api/v1/'))requests.push(r.url());});
+ await page.goto('/index.html');
+ await page.locator('[data-demo-account="akun.pendaftaran"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ const root=page.locator('.uxv5.v25-core[data-v25-screen="S02"]');
+ await expect(root).toBeVisible();
+ await expect(root.locator('.v25-hero')).toContainText('Meja pendaftaran');
+ await expect(root.locator('.v25-current-id')).toHaveText('REG-D001');
+ await expect(root.locator('.v25-active-context')).toHaveAttribute('aria-live','polite');
+ const positions=await root.evaluate(el=>{
+  const top=selector=>el.querySelector(selector).getBoundingClientRect().top;
+  return {hero:top('.v25-hero'),worklist:top('[data-v25-main-worklist]'),related:top('.v25-related-areas')};
+ });
+ expect(positions.hero).toBeLessThan(positions.worklist);
+ expect(positions.worklist).toBeLessThan(positions.related);
+ await root.locator('[data-v25-focus="worklist"]').click();
+ await expect(root.locator('#uxv5-search')).toBeFocused();
+ await root.locator('#uxv5-search').fill('REG-D002');
+ await expect(root.locator('.uxv4-table tbody tr:not([data-v12-hidden])')).toHaveCount(1);
+ await page.screenshot({path:out+'/v25-registration-desktop.png',fullPage:true});
+ expect(errors).toEqual([]);expect(requests).toEqual([]);
+});
+
+test('V25 doctor shows scoped demo context and accessible workflow without approving care',async ({page})=>{
+ const errors=[],requests=[];
+ page.on('pageerror',e=>errors.push(e.message));
+ page.on('request',r=>{if(r.url().includes('/api/v1/'))requests.push(r.url());});
+ await page.goto('/index.html');
+ await page.locator('[data-demo-account="akun.dokter-rj"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ await page.locator('#role-nav [data-demo-action="section:m1"]').click();
+ const root=page.locator('.uxv5.v25-core[data-v25-screen="S03"]');
+ await expect(root).toBeVisible();
+ await root.locator('.uxv4-table [data-demo-action="job:1"]').click();
+ await expect(root.locator('.v25-current-id')).toHaveText('ENC-RJ02');
+ await expect(root.locator('.v25-active-context')).toHaveAttribute('data-v25-context','patient');
+ await expect(root.locator('.v25-active-context .v25-context-age')).toBeVisible();
+ await expect(root.locator('.v25-active-context .v25-context-payer')).toBeVisible();
+ await root.locator('[data-v25-focus="guidance"]').click();
+ await expect(root.locator('.v25-hero .v18-workflow-details')).toHaveAttribute('open','');
+ await expect(root.locator('.v25-hero')).toContainText('Baca alergi');
+ await expect(root.locator('.v25-hero .v18-flow-steps li')).toHaveCount(5);
+ await page.screenshot({path:out+'/v25-doctor-workspace.png',fullPage:true});
+ expect(errors).toEqual([]);expect(requests).toEqual([]);
+});
+
+test('V26 nursing worklist at 390px remains readable and does not overflow screen',async ({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:390,height:844});
+ await page.goto('/index.html');
+ await page.locator('[data-demo-account="akun.perawat"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ const root=page.locator('.uxv5.v25-core[data-v25-screen="S04"]');
+ await expect(root).toBeVisible();
+ await expect(root.locator('.v25-hero')).toContainText('Ruang keperawatan');
+ await expect(root.locator('.v25-related-areas')).toBeVisible();
+ const dimensions=await page.evaluate(()=>({
+  viewport:innerWidth,htmlWidth:document.documentElement.scrollWidth,
+  heroWidth:document.querySelector('.v25-hero').getBoundingClientRect().width
+ }));
+ expect(dimensions.htmlWidth).toBeLessThanOrEqual(dimensions.viewport+2);
+ expect(dimensions.heroWidth).toBeLessThanOrEqual(dimensions.viewport);
+ await root.locator('[data-v25-focus="worklist"]').click();
+ await expect(root.locator('#uxv5-search')).toBeFocused();
+ await page.screenshot({path:out+'/v26-nursing-mobile.png',fullPage:true});
+ expect(errors).toEqual([]);
+});
+
+test('V26 emergency context emphasizes simulated triage and reviewer is isolated',async ({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('/index.html');
+ await page.locator('[data-demo-account="akun.dokter-igd"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ const root=page.locator('.uxv5.v25-core[data-v25-screen="S05"]');
+ await expect(root).toBeVisible();
+ await expect(root).toHaveAttribute('data-v25-role','emergency');
+ await expect(root.locator('.v25-hero')).toContainText('Ruang pelayanan IGD');
+ await expect(root.locator('.v25-extra-safety')).toContainText('tidak menentukan kegawatan');
+ await page.locator('#role-nav [data-demo-action="section:m0"]').click();
+ await expect(page.locator('.v25-core .v25-current-id')).toHaveText('IGD-D01');
+ await page.screenshot({path:out+'/v26-emergency-workspace.png',fullPage:true});
+ await page.locator('#demo-logout').click();
+ await page.locator('[data-demo-account="reviewer.demo"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ await expect(page.locator('.v25-core')).toHaveCount(0);
+ expect(errors).toEqual([]);
+});
