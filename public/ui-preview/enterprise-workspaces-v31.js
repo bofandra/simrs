@@ -88,6 +88,23 @@
    ctx.classList.add("v31-context");
    ctx.setAttribute("data-v31-context",patient?"patient":"object");
    ctx.setAttribute("aria-live","polite");
+   if(spec.kind==="admin"||spec.kind==="management"){
+    // V12 may generate a generic patient-oriented context for some fixtures.
+    // Render these enterprise tasks strictly as objects, not as patient episodes.
+    var titleRoot=ctx.querySelector(".v12-context-title");
+    if(titleRoot){
+     titleRoot.replaceChildren(
+      el("span","v12-context-eyebrow",account.role+" · DATA DEMO"),
+      el("strong",null,current?current.title:"Pekerjaan unit"),
+      el("small",null,spec.object+" · pekerjaan administratif / agregat")
+     );
+    }
+    var chips=ctx.querySelector(".v12-context-chips");
+    if(chips)chips.replaceChildren(
+     el("span",null,current?current.id:"—"),
+     el("span",null,"Tanpa tautan pasien")
+    );
+   }
   }
   var featurePanels=Array.prototype.filter.call(root.querySelectorAll(".uxv4-panel"),function(panel){
    return !!panel.querySelector(".uxv4-features");
