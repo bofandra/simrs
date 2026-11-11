@@ -84,7 +84,14 @@ ux.renderPage=function(ctx){
  if(!ctx||!ctx.role||!ctx.username||String(ctx.username).startsWith("reviewer.")||
     !flows[ctx.role]||typeof html!=="string"||html.indexOf('class="uxv4 uxv5')<0)return html;
  var insertion=guidance(ctx,flows[ctx.role]);
- return insertion?html.replace("</header>","</header>"+insertion):html;
+ if(!insertion)return html;
+ // Keep the worklist's primary "Buka form" action above the fold; V14 asserts
+ // this on radiology. Place guidance immediately AFTER that action, before metadata.
+ var detailMarker='</div><dl><div><dt>Status</dt>';
+ if(html.includes(detailMarker))return html.replace(detailMarker,'</div>'+insertion+'<dl><div><dt>Status</dt>');
+ var safetyMarker='<p class="uxv4-safety">';
+ return html.includes(safetyMarker)?html.replace(safetyMarker,insertion+safetyMarker):
+   html.replace("</header>","</header>"+insertion);
 };
 window.SIMRSUnifiedUXV18={
  version:"18-21-preview",
