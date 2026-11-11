@@ -328,7 +328,7 @@ test('Dokter RJ v2 stores reviewed SOAP per patient and creates an addendum draf
 
 
 
-test('login-first entry exposes 44 demo roles and opens Front Office for Pendaftaran',async ({page})=>{
+test('V22 login-first entry exposes 44 roles and opens Pendaftaran native worklist',async ({page})=>{
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto('/index.html');
   await expect(page.locator('#demo-login-form')).toBeVisible();
@@ -339,7 +339,9 @@ test('login-first entry exposes 44 demo roles and opens Front Office for Pendaft
   await page.locator('[data-demo-account="akun.pendaftaran"]').click();
   await expect(page.locator('#demo-username')).toHaveValue('akun.pendaftaran');
   await page.locator('#demo-login-form button[type="submit"]').click();
-  await expect(page.locator('#ux-registration')).toBeVisible();
+  await expect(page.locator('.uxv5 h1')).toHaveText('Beranda Pendaftaran');
+  await expect(page.locator('[data-v18-screen="S02"]')).toBeVisible();
+  await expect(page.locator('#ux-registration')).toHaveCount(0);
   await expect(page.locator('#demo-current-role')).toHaveText('Pendaftaran');
   await expect(page.locator('#navlist')).toBeHidden();
   await expect(page.locator('#role')).toBeHidden();
@@ -367,13 +369,14 @@ test('specialist role login opens only their work area with role task navigation
   expect(errors).toEqual([]);
 });
 
-test('Nurse role login shows nursing tabs, not doctor prescribing worklist',async ({page})=>{
+test('V22 nurse role login opens dedicated nursing worklist, not physician prescribing',async ({page})=>{
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto('/index.html');
   await page.locator('[data-demo-account="akun.perawat"]').click();
   await page.locator('#demo-login-form button[type="submit"]').click();
-  await expect(page.locator('#main-content h1')).toHaveText('Workspace Keperawatan');
-  await expect(page.getByRole('tab',{name:'CPPT Keperawatan'})).toBeVisible();
+  await expect(page.locator('#main-content h1')).toHaveText('Beranda Perawat');
+  await expect(page.locator('#role-nav')).toContainText('CPPT dan serah terima');
+  await expect(page.locator('[data-v18-screen="S04"]')).toBeVisible();
   await expect(page.getByRole('tab',{name:'E-Resep'})).toHaveCount(0);
   await expect(page.getByRole('tab',{name:'CPOE'})).toHaveCount(0);
   expect(errors).toEqual([]);
@@ -1073,4 +1076,54 @@ test('V21 reviewer retains original QA catalog without role-specific workflow st
  await page.locator('[data-nav="forms"]').click();
  await expect(page.getByText('68/68 modul memiliki form demo')).toBeVisible();
  await expect(page.locator('.v18-workflow')).toHaveCount(0);
+});
+
+
+test('V23 doctor returns from scoped SOAP form to the same selected work item',async ({page})=>{
+ const errors=[],apiCalls=[];
+ page.on('pageerror',e=>errors.push(e.message));
+ page.on('request',r=>{if(r.url().includes('/api/v1/'))apiCalls.push(r.url());});
+ await page.goto('/index.html');
+ await page.locator('[data-demo-account="akun.dokter-rj"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ await expect(page.locator('.uxv5 h1')).toHaveText('Beranda Dokter RJ');
+ await page.locator('#role-nav [data-demo-action="section:m1"]').click();
+ await page.locator('.uxv4-table [data-demo-action="job:1"]').click();
+ await expect(page.locator('.uxv5-detail')).toContainText('ENC-RJ02');
+ await page.locator('.uxv5-detail [data-demo-action="module:RME-04"]').click();
+ const bar=page.locator('.v23-returnbar');
+ await expect(bar).toBeVisible();
+ await expect(bar).toHaveAttribute('data-v23-role','Dokter RJ');
+ await expect(bar).toHaveAttribute('data-v23-module','RME-04');
+ await expect(bar).toHaveAttribute('data-v23-workitem','ENC-RJ02');
+ await bar.locator('[data-v23-focus-form]').click();
+ await expect(page.locator('#p0-editor')).toBeVisible();
+ await bar.locator('[data-demo-action="backToWorklist"]').click();
+ await expect(page.locator('.uxv5 h1')).toHaveText('Asesmen dan SOAP');
+ await expect(page.locator('.uxv5-detail')).toContainText('ENC-RJ02');
+ await expect(page.locator('.uxv4-table [data-demo-action="job:1"]')).toHaveAttribute('aria-pressed','true');
+ await expect(page.locator('.v23-returnbar')).toHaveCount(0);
+ expect(errors).toEqual([]);expect(apiCalls).toEqual([]);
+});
+
+test('V24 pharmacy mobile preserves work item and reviewer sees no role-form return bar',async ({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:390,height:844});
+ await page.goto('/index.html');
+ await page.locator('[data-demo-account="akun.farmasis"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ await page.locator('#demo-mobile-nav-toggle').click();
+ await page.locator('#role-nav [data-demo-action="section:m0"]').click();
+ await page.locator('.uxv5-detail [data-demo-action="module:MED-04"]').click();
+ await expect(page.locator('.v23-returnbar')).toBeVisible();
+ const width=await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);
+ expect(width).toBeLessThanOrEqual(2);
+ await page.locator('.v23-returnbar [data-demo-action="backToWorklist"]').click();
+ await expect(page.locator('.uxv5 h1')).toHaveText('Antrean resep');
+ await page.locator('#demo-logout').click();
+ await page.locator('[data-demo-account="reviewer.demo"]').click();
+ await page.locator('#demo-login-form button[type="submit"]').click();
+ await page.locator('[data-nav="forms"]').click();
+ await expect(page.locator('.v23-returnbar')).toHaveCount(0);
+ expect(errors).toEqual([]);
 });
