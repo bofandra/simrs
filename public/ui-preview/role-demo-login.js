@@ -8,14 +8,11 @@ var KEY="simrs-demo-login-session-v1";
 var roleList=(window.__SIMRS_PREVIEW__&&window.__SIMRS_PREVIEW__.roles)||[];
 var ACCOUNT_PREFIX="akun.";
 var reviewer={username:"reviewer.demo",role:"Reviewer UI/QA",label:"Reviewer UI/QA",department:"Pengujian Mockup",reviewer:true};
-/* Dedicated legacy screens are retained only where they are already role-scoped.
- * Generic finance/pharmacy/acute/management pages mix duties, so those accounts
- * now enter their PRD-specific operational worklist instead.
+/* V22: all 44 staff/demo roles open their role-native worklist.
+ * Legacy generic screens remain for reviewer.demo only (QA reference),
+ * not the landing page for front office, doctors or nurses.
  */
-var areaByRole={
- "Pendaftaran":"front","Dokter RJ":"clinical","Perawat":"clinical",
- /* ATLM dan MCU memakai worklist role-native V10. */
-};
+var areaByRole={};
 var descriptions={
  "Pendaftaran":"Pencarian pasien, identitas, registrasi, janji temu, dan antrean",
  "Dokter RJ":"Daftar pasien poli, asesmen, SOAP, diagnosis, resep, dan order",
@@ -294,6 +291,16 @@ function logout(){
 function handleDemoCommand(command){
  var shell=window.__SIMRS_PREVIEW__;
  if(!shell||!current)return;
+ if(command==="backToWorklist"){
+  if(isReviewer()||shell.state.active!=="forms")return;
+  closeMobileNav();
+  shell.state.active="rolehome";
+  location.hash="#/rolehome/"+currentSection;
+  shell.render();
+  var detail=document.querySelector(".uxv5-detail-header h3");
+  if(detail&&typeof detail.focus==="function"){detail.setAttribute("tabindex","-1");detail.focus({preventScroll:true});}
+  return;
+ }
  if(command==="home"){closeMobileNav();currentSection="home";currentJob=0;shell.state.active="rolehome";location.hash="#/rolehome";shell.render();return;}
  if(command.startsWith("section:")){
   var section=command.slice(8);
@@ -384,7 +391,7 @@ document.addEventListener("input",function(e){
 },true);
 window.SIMRSRoleDemo={accounts:accounts,login:login,logout:logout,renderHome:renderHome,
  beforeRender:beforeRender,paintRoleNav:paintRoleNav,allowArea:allowArea,allowModule:allowModule,
- isAuthenticated:authenticated,isReviewer:isReviewer,getAccount:getAccount,getCurrentSection:getCurrentSection,tasks:tasks,areaFor:areaFor};
+ isAuthenticated:authenticated,isReviewer:isReviewer,getAccount:getAccount,getCurrentSection:getCurrentSection,getCurrentJobIndex:function(){return currentJob;},tasks:tasks,areaFor:areaFor};
 var restored=null;
 try{restored=lookup(sessionStorage.getItem(KEY)||"");}catch(_error){}
 if(restored){current=restored;showApp();}else showLogin();
