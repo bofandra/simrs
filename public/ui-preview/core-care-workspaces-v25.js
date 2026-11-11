@@ -65,7 +65,13 @@ function decorate(){
   var title=copy.querySelector("h2");
   if(title)title.textContent=spec.title;
   var description=copy.querySelector("p");
-  if(description)description.textContent=spec.caption;
+  if(description){
+   // V19's existing summary contains the selected work-item ID and reason.
+   // Keep it intact so contextual selections remain visible and accessible.
+   var profession=make("p","v25-profession-caption",spec.caption);
+   copy.insertBefore(profession,description);
+   description.classList.add("v25-active-job-summary");
+  }
   var commands=make("div","v25-hero-commands");
   commands.appendChild(actionButton("Lihat antrean kerja","worklist"));
   commands.appendChild(actionButton("Tinjau langkah kerja","guidance"));
