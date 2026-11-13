@@ -140,7 +140,7 @@
     '<label for="simrs-api-operation">Operation ID</label><select id="simrs-api-operation"></select>'+
     '<p id="simrs-api-route" style="overflow-wrap:anywhere"></p>'+
     '<label for="simrs-api-payload">Request JSON (dummy)</label><textarea id="simrs-api-payload" spellcheck="false"></textarea>'+
-    '<div class="lab-row"><button id="simrs-api-trigger" type="button">Trigger API demo</button><a href="https://github.com/bofandra/simrs-api" target="_blank" rel="noopener">Kontrak OpenAPI</a></div>'+
+    '<div class="lab-row"><button id="simrs-api-trigger" type="button">Trigger API demo</button><a href="./api-docs/" target="_blank" rel="noopener">Explorer OpenAPI</a></div>'+
     '<p id="simrs-api-result-status" aria-live="polite"></p><pre id="simrs-api-result" aria-live="polite">{}</pre>';
   document.body.appendChild(root);
   const mod=root.querySelector('#simrs-api-module'),operation=root.querySelector('#simrs-api-operation');
