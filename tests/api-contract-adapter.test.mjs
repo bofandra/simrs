@@ -7,7 +7,7 @@ const html=readFileSync(new URL('index.html',base),'utf8');
 const adapter=readFileSync(new URL('api-contract-demo.js',base),'utf8');
 test('PRD v3.1: FE manifest covers 180 operation IDs and 22 module/portal tags',()=>{
  assert.equal(catalog.operations.length,180);
- assert.equal(new Set(catalog.operations.map(x=>x.operationId)).size,106);
+ assert.equal(new Set(catalog.operations.map(x=>x.operationId)).size,180);
  assert.equal(new Set(catalog.operations.map(x=>x.module)).size,22);
  assert.equal(catalog.operations.filter(x=>x.source==='v3.1-proposal').length,74);
  assert(catalog.operations.every(x=>/^\/api\/v1\//.test(x.path)));
