@@ -16,6 +16,8 @@ test('Published FE includes isolated synthetic API adapter after role login',()=
  assert(html.lastIndexOf('api-contract-demo.js')>html.lastIndexOf('role-demo-login.js'));
  assert(adapter.includes('SIMRSApiContract'));
  assert(adapter.includes('X-SIMRS-Mock'));
- assert(adapter.includes('Idempotency'));
+ assert(adapter.includes('idempotencyKey'));
+ assert(adapter.includes('SIMRSApiContract'));
+ assert(adapter.includes('simulated:true'));
  assert(adapter.includes('SIMRSRoleDemo'));
 });
