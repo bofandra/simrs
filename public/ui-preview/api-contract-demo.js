@@ -26,7 +26,7 @@
   function definition(op){return openapi?.paths?.[op.path]?.[op.method.toLowerCase()]}
   function requestExample(op){return clone(definition(op)?.requestBody?.content?.['application/json']?.example??{})}
   function shape(op,value){
-    const d=definition(op),status=Object.keys(d?.responses||{}).find(k=>/^2\\d\\d$/.test(k));
+    const d=definition(op),status=Object.keys(d?.responses||{}).find(k=>/^2\d\d$/.test(k));
     const schema=d?.responses?.[status]?.content?.['application/json']?.schema;
     if(schema?.properties?.items && Array.isArray(value))return {items:value,pageInfo:{nextCursor:null,pageSize:20,hasMore:false}};
     return value;
@@ -55,7 +55,7 @@
     }return result;
   }
   function responseExample(op){
-    const d=definition(op),status=Object.keys(d?.responses||{}).find(k=>/^2\\d\\d$/.test(k));
+    const d=definition(op),status=Object.keys(d?.responses||{}).find(k=>/^2\d\d$/.test(k));
     return clone(d?.responses?.[status]?.content?.['application/json']?.example??{});
   }
   function failure(status,code,message,details=[]){
@@ -128,7 +128,7 @@
       if(missing.length)return failure(422,'VALIDATION_ERROR','Field wajib belum ada',missing.map(k=>({field:k,reason:'REQUIRED'})));
       const generated=fixture(operationId,payload,pathParams);
       if(generated?.error)return generated.error;
-      const status=Object.keys(detail.responses).find(k=>/^2\\d\\d$/.test(k));
+      const status=Object.keys(detail.responses).find(k=>/^2\d\d$/.test(k));
       const result={status:Number(status),headers:{'X-SIMRS-Mock':'true'},
         simulated:true,data:shape(op,generated??responseExample(op))};
       runtime.replays.set(unique,{input:JSON.stringify(payload),result:clone(result)});
@@ -136,7 +136,7 @@
     }
     const generated=fixture(operationId,payload,pathParams);
     if(generated===null)return failure(404,'NOT_FOUND','Objek demo tidak tersedia');
-    const status=Object.keys(detail.responses).find(k=>/^2\\d\\d$/.test(k));
+    const status=Object.keys(detail.responses).find(k=>/^2\d\d$/.test(k));
     return {status:Number(status),headers:{'X-SIMRS-Mock':'true'},simulated:true,
       data:shape(op,generated??responseExample(op))};
   }
